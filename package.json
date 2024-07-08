@@ -18,10 +18,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bhargavpatelinfo/sanity-seo-plugin"
+    "url": "https://github.com/bhargav-bkpatel/sanity-plugin-seo"
   },
   "bugs": {
-    "url": "https://github.com/bhargavpatelinfo/sanity-seo-plugin/issues"
+    "url": "https://github.com/bhargav-bkpatel/sanity-plugin-seo/issues"
   },
   "exports": {
     ".": {
