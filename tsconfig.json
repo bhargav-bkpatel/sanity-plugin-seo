@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "emitDeclarationOnly": true,
+    "downlevelIteration": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "rootDir": ".",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noImplicitAny": false,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "outDir": "dist",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@schemas/*": ["src/schemas/*"],
+      "@patterns/*": ["src/patterns/*"],
+      "@utils/*": ["src/utils/*"]
+    },
+    "incremental": true
+  },
+  "include": ["./src", "./package.config.ts", "./.eslintrc.js", "./test"],
+  "exclude": ["node_modules"]
+}
