@@ -74,9 +74,9 @@ const myDocument = {
 
 ## Usage with Next.js and React.js
 
-Create query for SEO fields in `/lib/sanity/queries/demo.ts` frontend
+Create query for SEO fields in `/lib/sanity/queries/demo.ts` frontend (Typescript or Javascript)
 
-```Typescript (or js)
+```Typescript
 const groqQuery = groq`*[_type == "page"]{
 _type,
 "slug":slug.current,
@@ -156,7 +156,7 @@ asset->{...}
 `;
 ```
 
-Create type for all the fields `/lib/sanity/queries/demo.d.ts`
+Create type for all the fields `/lib/sanity/queries/demo.d.ts` (Typescript)
 
 ``` Typescript
 
@@ -238,7 +238,7 @@ export type SanityImageAssetType = {
 
 ```
 
-Call MetaData on CustomNextSeo
+Call MetaData on CustomNextSeo (Typescript or Javascript)
 
 ```Typescript (or js)
 
