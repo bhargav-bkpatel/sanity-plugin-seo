@@ -1,3 +1,3 @@
-const seoType = ['SEO'];
+const seoType = ["SEO"];
 
 export default seoType;

@@ -1,10 +1,11 @@
-import { Image } from 'sanity';
+import { Image } from "sanity";
 
 export type Seo = {
   type: string;
   nofollowAttributes?: boolean;
   metaTitle?: string;
   metaDescription?: string;
+  metaImage?: Image;
   seoKeywords?: Array<{
     type?: string;
   }>;

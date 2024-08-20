@@ -1,5 +1,5 @@
-import seoMetaFields from './plugin';
+import seoMetaFields from "./plugin";
 
-export * from './types/Types';
+export * from "./types/Types";
 
 export { seoMetaFields };

@@ -1,41 +1,41 @@
-import SEODescriptionFeedback from '../../../../../components/SEODescriptionFeedback';
-import SEOTitleFeedback from '../../../../../components/SEOTitleFeedback';
+import SEODescriptionFeedback from "../../../../../components/SEODescriptionFeedback";
+import SEOTitleFeedback from "../../../../../components/SEOTitleFeedback";
 
 export default {
-  name: 'openGraph',
-  title: 'Open Graph',
-  type: 'object',
+  name: "openGraph",
+  title: "Open Graph",
+  type: "object",
   fields: [
     {
-      name: 'url',
-      title: 'URL',
-      type: 'string'
+      name: "url",
+      title: "URL",
+      type: "string",
     },
     {
-      name: 'image',
-      title: 'Image',
-      type: 'image'
+      name: "image",
+      title: "Image",
+      type: "image",
     },
     {
-      name: 'title',
-      title: 'Title',
-      type: 'string',
+      name: "title",
+      title: "Title",
+      type: "string",
       components: {
-        input: SEOTitleFeedback
-      }
+        input: SEOTitleFeedback,
+      },
     },
     {
-      name: 'description',
-      title: 'Description',
-      type: 'string',
+      name: "description",
+      title: "Description",
+      type: "string",
       components: {
-        input: SEODescriptionFeedback
-      }
+        input: SEODescriptionFeedback,
+      },
     },
     {
-      name: 'siteName',
-      title: 'Site Name',
-      type: 'string'
-    }
-  ]
+      name: "siteName",
+      title: "Site Name",
+      type: "string",
+    },
+  ],
 };
