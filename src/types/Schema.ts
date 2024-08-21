@@ -1,3 +1,3 @@
-import { Seo } from './Seo';
+import { Seo } from "./Seo";
 
 export type Schema = Seo;

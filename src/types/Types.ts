@@ -1,2 +1,2 @@
-export * from './Seo';
-export * from './Schema';
+export * from "./Seo";
+export * from "./Schema";
