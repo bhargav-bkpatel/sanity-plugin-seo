@@ -9,11 +9,11 @@ const schema = defineType({
   fields: [
     {
       name: "nofollowAttributes",
-      title: "Index",
+      title: "Prevent Indexing",
       type: "boolean",
       initialValue: false,
       description:
-        "To prevent a URL from being indexed, you'll also need to select the true index on the tag.",
+        "Enable this option to prevent search engines from indexing this URL (applies a `noindex` tag).",
     },
     {
       name: "metaTitle",
