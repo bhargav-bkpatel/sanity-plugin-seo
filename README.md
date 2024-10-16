@@ -19,7 +19,10 @@ The `sanity-plugin-seo` Plugin is designed to simplify the process of generating
 ## Demo links for sanity with Next.js plugin integration
 
 Here is the frontend.
-[Frontend Demo](https://sanity-nextjs-seo-boilerplate.vercel.app/)
+[Frontend Demo](https://sanity-nextjs-seo-boilerplate.vercel.app/) 
+
+Here is the frontend with NextJs app router.
+[Frontend Demo With NextJs App Router](https://sanity-nextjs-with-app-router-seo-boilerplate.vercel.app/)
 
 Here is the sanity studio.
 [Studio Demo](https://sanity-nextjs-seo-boilerplate.vercel.app/studio/)
