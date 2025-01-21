@@ -7,25 +7,26 @@ const SEOTitleFeedback = (props: StringInputProps) => {
   const { value, onChange, renderDefault } = props;
 
   // Access the parent object to get keywords from the `seoKeywords` field
-  const parentPath = props.path.slice(0, -1);
+  const { path } = props;
+  const parentPath = path.slice(0, -1);
   const parent = useFormValue(parentPath) as {
     seoKeywords?: string[];
   };
 
   const keywords = parent?.seoKeywords || [];
 
-    // If current value is empty, fetch `metaTitle` from `homePage` and set
-    useEffect(() => {
-      if (value) return; // Only fetch if there's no title yet
-      const fetchData = async () => {
-        const data = await client.fetch("*[_type=='homePage'][0]{'title':seo.metaTitle}");
-        const titleFromHomePage = data?.title;
-        if (titleFromHomePage && !value) {
-          onChange(set(titleFromHomePage));
-        }
-      };
-      fetchData();
-    }, [client, onChange, value]);
+  // If current value is empty, fetch `metaTitle` from `homePage` and set
+  useEffect(() => {
+    if (value) return; // Only fetch if there's no title yet
+    const fetchData = async () => {
+      const data = await client.fetch("*[_type=='homePage'][0]{'title':seo.metaTitle}");
+      const titleFromHomePage = data?.title;
+      if (titleFromHomePage && !value) {
+        onChange(set(titleFromHomePage));
+      }
+    };
+    fetchData();
+  }, [client, onChange, value]);
 
   /**
    * Returns an array of feedback items.
@@ -33,10 +34,9 @@ const SEOTitleFeedback = (props: StringInputProps) => {
    */
   const getTitleFeedback = (
     title: string,
-    keywords: string[]
+    seoKeywords: string[],
   ): { text: string; color: "green" | "orange" | "red" }[] => {
-    const feedbackItems: { text: string; color: "green" | "orange" | "red" }[] =
-      [];
+    const feedbackItems: { text: string; color: "green" | "orange" | "red" }[] = [];
 
     if (!title?.trim()) {
       feedbackItems.push({
@@ -69,16 +69,14 @@ const SEOTitleFeedback = (props: StringInputProps) => {
     }
 
     // 2) Keyword usage check
-    if (keywords.length > 0) {
-      const foundKeyword = keywords.some((kw) =>
-        title.toLowerCase().includes(kw.toLowerCase())
-      );
+    if (seoKeywords.length > 0) {
+      const foundKeyword = seoKeywords.some((kw) => title.toLowerCase().includes(kw.toLowerCase()));
       if (!foundKeyword) {
         feedbackItems.push({
           text: "You have defined keywords but none appear in the title.",
           color: "red",
         });
-      }else{
+      } else {
         feedbackItems.push({
           text: "Your keyword is in the title. Good job!",
           color: "green",
@@ -104,11 +102,8 @@ const SEOTitleFeedback = (props: StringInputProps) => {
 
       {/* Map over feedback items, each with its own color-coded bullet */}
       <Stack space={2}>
-        {feedbackItems.map((item, i) => (
-          <div
-            key={i}
-            style={{ display: "flex", alignItems: "center", gap: "7px" }}
-          >
+        {feedbackItems.map((item) => (
+          <div key={item.text} style={{ display: "flex", alignItems: "center", gap: "7px" }}>
             <div
               style={{
                 width: "10px",
