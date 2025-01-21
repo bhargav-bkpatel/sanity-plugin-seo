@@ -5,6 +5,8 @@ export default {
   name: "openGraph",
   title: "Open Graph",
   type: "object",
+  description:
+    "Control how your content appears when shared on social media platforms (e.g., Facebook, LinkedIn) or in messaging apps (e.g., Slack, WhatsApp).",
   fields: [
     {
       name: "url",
