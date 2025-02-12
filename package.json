@@ -1,6 +1,7 @@
 {
   "name": "sanity-plugin-seo",
-  "version": "1.2.6-alpha",
+  "version": "1.2.7-alpha",
+  "homepage": "https://sanity-seo-plugin-latest.vercel.app/",
   "description": "The Sanity SEO Field Plugin simplifies the process of generating SEO fields for various types of content. It enhances structured data, making your content more accessible and understandable for search engines, ultimately improving your site's visibility and search performance.",
   "keywords": [
     "sanity",
