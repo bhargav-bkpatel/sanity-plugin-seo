@@ -1,33 +1,37 @@
-# sanity-plugin-seo
+![Alt Text](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/background.png)
 
-> This is a **Sanity Studio v3** plugin.
+## ⚡ Sanity Plugin SEO
 
-# What it is
+[![npm version](https://img.shields.io/badge/npm-v9.3.1-blue)](https://www.npmjs.com/package/sanity-plugin-seo)
+[![npm downloads](https://img.shields.io/badge/downloads-22k-brightgreen)](https://www.npmjs.com/package/sanity-plugin-seo)
+[![TypeScript](https://img.shields.io/badge/types-TypeScript-blue)](https://www.typescriptlang.org/)
+[![Built with Sanity](https://img.shields.io/badge/Built%20With-Sanity-8a2be2?logo=sanity&logoColor=white)](https://www.sanity.io/)
+[![Sanity V3](https://img.shields.io/badge/Sanity%20V3%20Plugin-4e5452)](https://www.sanity.io/)
 
 The `sanity-plugin-seo` Plugin is designed to simplify the process of generating SEO fields for various types of content. This plugin is particularly useful for enhancing the structured data of your content, making it more accessible and understandable for search engines. By integrating seamlessly with Sanity Studio, it provides an easy way to add and configure SEO fields within your document schemas, ensuring your content is fully optimized for search visibility.
 
 ![Alt Text](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/demo-1.gif)
 
-## Key Features
+## ✨ Key Features
 
-- **Customizable SEO Fields:** Easily add and configure essential SEO fields such as title, description, keywords, and more within your document schemas.
+- 🔍 **Customizable SEO Fields:** Easily add and configure essential SEO fields such as title, description, keywords, and more within your document schemas.
 
-- **Sanity Studio Integration:** Effortlessly incorporate SEO field creation into your Sanity Studio workflow, ensuring that SEO optimization becomes an integral part of your content development process.
+- 🔌 **Sanity Studio Integration:** Effortlessly incorporate SEO field creation into your Sanity Studio workflow, ensuring that SEO optimization becomes an integral part of your content development process.
 
-- **Compatibility:** Fully compatible with Sanity v3 and integrates seamlessly with your existing schemas and plugins. It is also compatible with Next.js and React, ensuring a smooth integration with modern web development frameworks.
+- 🔗 **Compatibility:** Fully compatible with Sanity v3 and integrates seamlessly with your existing schemas and plugins. It is also compatible with Next.js and React, ensuring a smooth integration with modern web development frameworks.
 
-## Demo links for sanity with Next.js plugin integration
+## 🌐 Demo links for sanity with Next.js plugin integration
 
-Here is the frontend.
+🧑‍💻 Here is the frontend.
 [Frontend Demo](https://sanity-nextjs-seo-boilerplate.vercel.app/) 
 
-Here is the frontend with NextJs app router.
+💻 Here is the frontend with NextJs app router.
 [Frontend Demo With NextJs App Router](https://sanity-nextjs-with-app-router-seo-boilerplate.vercel.app/)
 
-Here is the sanity studio.
+🎨 Here is the sanity studio.
 [Studio Demo](https://sanity-nextjs-seo-boilerplate.vercel.app/studio/)
 
-## Installation
+## 📦 Installation
 
 To get started, install the plugin using npm:
 
@@ -35,7 +39,7 @@ To get started, install the plugin using npm:
 npm install sanity-plugin-seo
 ```
 
-## Usage in Sanity Studio
+## 📋 Usage in Sanity Studio
 
 Add it as a plugin in `sanity.config.ts` (or .js):
 
@@ -75,7 +79,7 @@ const myDocument = {
 };
 ```
 
-## Usage with Next.js and React.js
+## ⚛️ Usage with Next.js and React.js
 
 Create query for SEO fields in `/lib/sanity/queries/demo.ts` frontend (Typescript or Javascript)
 
@@ -359,6 +363,10 @@ export default CustomNextSeo;
 
 ```
 
-## License
+## 💼 Explore my personal work and projects:
+
+Visit my portfolio at [Bhargav Patel](https://bkpatel.com/) to explore my work, projects, and what I’ve been building lately.
+
+## 🪪 License
 
 MIT
