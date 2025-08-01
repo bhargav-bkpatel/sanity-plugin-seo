@@ -7,6 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/types-TypeScript-blue)](https://www.typescriptlang.org/)
 [![Built with Sanity](https://img.shields.io/badge/Built%20With-Sanity-8a2be2?logo=sanity&logoColor=white)](https://www.sanity.io/)
 [![Sanity V3](https://img.shields.io/badge/Sanity%20V3%20Plugin-4e5452)](https://www.sanity.io/)
+[![Sanity V4](https://img.shields.io/badge/Sanity%20V4%20Plugin-4e5452)](https://www.sanity.io/)
 
 The `sanity-plugin-seo` Plugin is designed to simplify the process of generating SEO fields for various types of content. This plugin is particularly useful for enhancing the structured data of your content, making it more accessible and understandable for search engines. By integrating seamlessly with Sanity Studio, it provides an easy way to add and configure SEO fields within your document schemas, ensuring your content is fully optimized for search visibility.
 
@@ -18,7 +19,7 @@ The `sanity-plugin-seo` Plugin is designed to simplify the process of generating
 
 - 🔌 **Sanity Studio Integration:** Effortlessly incorporate SEO field creation into your Sanity Studio workflow, ensuring that SEO optimization becomes an integral part of your content development process.
 
-- 🔗 **Compatibility:** Fully compatible with Sanity v3 and integrates seamlessly with your existing schemas and plugins. It is also compatible with Next.js and React, ensuring a smooth integration with modern web development frameworks.
+- 🔗 **Compatibility:** Fully compatible with Sanity v3 and v4, it integrates seamlessly with your existing schemas and plugins. It also works well with Next.js and React, ensuring smooth integration with modern web development frameworks.
 
 ## 🌐 Demo links for sanity with Next.js plugin integration
 
