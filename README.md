@@ -2,7 +2,9 @@
 
 ## ⚡ Sanity Plugin SEO
 
-> This is a Sanity Studio plugin compatible with both v3 and v4.
+<blockquote>
+  🚀 <b>Sanity Studio Plugin</b> – Compatible with <b>v3</b> and <b>v4</b>
+</blockquote>
 
 [![npm version](https://img.shields.io/badge/npm-v9.3.1-blue)](https://www.npmjs.com/package/sanity-plugin-seo)
 [![npm downloads](https://img.shields.io/badge/downloads-22k-brightgreen)](https://www.npmjs.com/package/sanity-plugin-seo)
