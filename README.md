@@ -2,6 +2,8 @@
 
 ## ⚡ Sanity Plugin SEO
 
+> This is a Sanity Studio plugin compatible with both v3 and v4.
+
 [![npm version](https://img.shields.io/badge/npm-v9.3.1-blue)](https://www.npmjs.com/package/sanity-plugin-seo)
 [![npm downloads](https://img.shields.io/badge/downloads-22k-brightgreen)](https://www.npmjs.com/package/sanity-plugin-seo)
 [![TypeScript](https://img.shields.io/badge/types-TypeScript-blue)](https://www.typescriptlang.org/)
