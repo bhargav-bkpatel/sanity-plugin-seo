@@ -1,6 +1,6 @@
 {
   "name": "sanity-plugin-seo",
-  "version": "1.3.6",
+  "version": "1.3.7",
   "homepage": "https://sanity-seo-plugin-latest.vercel.app/",
   "description": "The Sanity SEO Field Plugin simplifies the process of generating SEO fields for various types of content. It enhances structured data, making your content more accessible and understandable for search engines, ultimately improving your site's visibility and search performance.",
   "keywords": [
@@ -19,7 +19,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bhargav-bkpatel/sanity-plugin-seo"
+    "url": "git+https://github.com/bhargav-bkpatel/sanity-plugin-seo.git"
   },
   "bugs": {
     "url": "https://github.com/bhargav-bkpatel/sanity-plugin-seo/issues"
@@ -28,8 +28,8 @@
     ".": {
       "types": "./dist/index.d.ts",
       "source": "./src/index.ts",
-      "require": "./dist/index.js",
       "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
       "default": "./dist/index.esm.js"
     },
     "./package.json": "./package.json"
@@ -55,9 +55,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@sanity/incompatible-plugin": "^1.0.4",
-    "@sanity/ui": "^2.6.1",
-    "eslint-config-airbnb-typescript": "^17.1.0",
+    "@sanity/incompatible-plugin": "^1.0.5",
     "react-helmet": "^6.1.0",
     "react-schemaorg": "^2.0.0",
     "schema-dts": "^1.1.2"
@@ -66,15 +64,16 @@
     "@sanity/eslint-config-studio": "^3.0.1",
     "@sanity/pkg-utils": "^3.0.0",
     "@sanity/plugin-kit": "^3.1.10",
+    "@sanity/ui": "^3.1.11",
     "@types/jest": "^29.5.10",
-    "@types/react": "^18.2.28",
+    "@types/react": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
     "autoprefixer": "^10.4.11",
     "eslint": "^8.53.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-config-next": "^13.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-sanity": "^7.0.1",
@@ -92,21 +91,29 @@
     "postcss": "^8.4.16",
     "prettier": "3.0.3",
     "prettier-plugin-packagejson": "^2.4.6",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-is": "^18.2.0",
+    "react": "^19.2.2",
+    "react-dom": "^19.2.2",
+    "react-is": "^19.2.2",
     "rimraf": "^5.0.5",
-    "sanity": "^3.18.0",
+    "sanity": "^5.0.0",
     "styled-components": "^6.1.15",
     "ts-jest": "^29.1.1",
-    "typescript": "^5.3.2"
+    "typescript": "^5.2.2"
   },
   "peerDependencies": {
+    "@sanity/ui": "^3",
     "react": "^18 || ^19",
-    "sanity": "^3 || ^4"
+    "react-dom": "^18 || ^19",
+    "sanity": "^3 || ^4 || ^5",
+    "styled-components": "^6"
+  },
+  "sanityPlugin": {
+    "verifyPackage": {
+      "nodeEngine": false
+    }
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "publishConfig": {
     "access": "public"
