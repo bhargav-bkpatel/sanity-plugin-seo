@@ -41,7 +41,7 @@ The `sanity-plugin-seo` Plugin is designed to simplify the process of generating
 
 To get started, install the plugin using npm:
 
-```sh
+```text
 npm install sanity-plugin-seo
 ```
 
@@ -49,7 +49,7 @@ npm install sanity-plugin-seo
 
 Add it as a plugin in `sanity.config.ts` (or .js):
 
-```ts
+```text
 import { defineConfig } from "sanity";
 import { seoMetaFields } from "sanity-plugin-seo";
 
@@ -60,7 +60,7 @@ export default defineConfig({
 
 You can then add the `seoMetaFields` field type to any Sanity document schema.
 
-```javascript
+```text
 const myDocument = {
   type: "page",
   name: "page",
@@ -89,7 +89,7 @@ const myDocument = {
 
 Create query for SEO fields in `/lib/sanity/queries/demo.ts` frontend (Typescript or Javascript)
 
-```Typescript
+```text
 const groqQuery = groq`*[_type == "page"]{
 _type,
 "slug":slug.current,
@@ -171,7 +171,7 @@ asset->{...}
 
 Create type for all the fields `/lib/sanity/queries/demo.d.ts` (Typescript)
 
-``` Typescript
+```text
 
 export type SeoType = {
   _type?: "seo";
@@ -253,7 +253,7 @@ export type SanityImageAssetType = {
 
 Call MetaData on CustomNextSeo (Typescript or Javascript)
 
-```Typescript (or js)
+```text
 
 import React, { useMemo } from "react";
 import type { PropsWithChildren } from "react";
