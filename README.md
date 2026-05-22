@@ -227,124 +227,172 @@ The plugin automatically renders a tabbed SEO panel with **Basic SEO**, **Social
 
 ## Next.js Integration
 
-Fetch your SEO data from Sanity with a GROQ query and pass it to the Next.js `Metadata` API (App Router) or `next-seo` / `next/head` (Pages Router).
+Fetch SEO data from Sanity and pipe it into the Next.js `Metadata` API (App Router) or `next-seo` (Pages Router). All examples below are copy-paste ready.
 
-### GROQ query (copy this into your project)
+### 1. Install and configure the Sanity client
+
+```bash
+npm install @sanity/client
+```
 
 ```ts
-// lib/sanity/queries.ts
-import { groq } from 'next-sanity'
+// lib/sanity.ts
+import { createClient } from '@sanity/client'
 
-export const pageQuery = groq`*[_type == "page" && slug.current == $slug][0]{
-  title,
-  seo {
-    metaTitle,
-    metaDescription,
-    focusKeyword,
-    canonicalUrl,
-    nofollowAttributes,
-    robotsMeta,
-    seoKeywords,
-    metaImage { asset->{ url } },
-    openGraph {
-      title,
-      description,
-      url,
-      siteName,
-      image { asset->{ url } }
-    },
-    twitter {
-      cardType,
-      site,
-      creator,
-      handle
-    },
-    hreflang[] { locale, url },
-    schemaOrg {
-      schemaType,
-      name,
-      description,
-      url,
-      author,
-      datePublished,
-      dateModified,
-      price,
-      priceCurrency,
-      availability,
-      ratingValue,
-      ratingCount,
-      startDate,
-      endDate,
-      location,
-      faqItems[] { question, answer }
-    }
+export const client = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  useCdn: false,
+  apiVersion: '2024-01-01',
+})
+
+// Full SEO GROQ fragment — paste this into any query that needs SEO fields
+export const SEO_GROQ = `seo {
+  metaTitle, metaDescription, focusKeyword,
+  canonicalUrl, nofollowAttributes, robotsMeta, seoKeywords,
+  seoStatus, seoReviewNotes,
+  metaImage { asset->{ url } },
+  openGraph { title, description, url, siteName, image { asset->{ url } } },
+  twitter { cardType, site, creator, handle },
+  hreflang[] { locale, url },
+  schemaOrg {
+    schemaType, name, description, url, author,
+    datePublished, dateModified,
+    price, priceCurrency, availability,
+    ratingValue, ratingCount,
+    startDate, endDate, location,
+    faqItems[] { question, answer }
   }
 }`
 ```
 
----
+```bash
+# .env.local
+NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SITE_URL=https://your-site.com
+```
 
-### App Router
+### 2. Create shared SEO helpers
 
 ```ts
-// app/[slug]/page.tsx
+// app/_seo.ts
 import type { Metadata } from 'next'
-import { client } from '@/lib/sanity/client'
-import { pageQuery } from '@/lib/sanity/queries'
 
-interface Props {
-  params: { slug: string }
+export type SeoField = {
+  metaTitle?: string
+  metaDescription?: string
+  canonicalUrl?: string
+  nofollowAttributes?: boolean
+  robotsMeta?: string[]
+  seoKeywords?: string[]
+  seoStatus?: 'draft' | 'review' | 'approved'
+  seoReviewNotes?: string
+  metaImage?: { asset?: { url?: string } }
+  openGraph?: { title?: string; description?: string; url?: string; siteName?: string; image?: { asset?: { url?: string } } }
+  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
+  hreflang?: { locale: string; url: string }[]
+  schemaOrg?: {
+    schemaType?: string; name?: string; description?: string; url?: string; author?: string
+    datePublished?: string; dateModified?: string
+    faqItems?: { question: string; answer: string }[]
+    [key: string]: unknown
+  }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const page = await client.fetch(pageQuery, { slug: params.slug })
-  const seo = page?.seo
-  if (!seo) return {}
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
-  const canonical = seo.canonicalUrl ?? `${siteUrl}/${params.slug}`
-  const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
+export function buildMetadata(seo: SeoField | undefined, fallbackTitle: string | undefined, slug: string): Metadata {
+  const s = seo ?? {}
+  const canonical = s.canonicalUrl ?? `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/${slug}`
+  const ogImage = s.openGraph?.image?.asset?.url ?? s.metaImage?.asset?.url
 
   const robots: string[] = []
-  if (seo.nofollowAttributes) robots.push('noindex', 'nofollow')
-  seo.robotsMeta?.forEach((r: string) => { if (!robots.includes(r)) robots.push(r) })
+  if (s.nofollowAttributes) robots.push('noindex', 'nofollow')
+  s.robotsMeta?.forEach((r) => { if (!robots.includes(r)) robots.push(r) })
+
+  // Build hreflang map for alternates
+  const languages: Record<string, string> = {}
+  s.hreflang?.forEach(({ locale, url }) => { languages[locale] = url })
 
   return {
-    title: seo.metaTitle,
-    description: seo.metaDescription,
-    alternates: { canonical },
+    title: s.metaTitle ?? fallbackTitle,
+    description: s.metaDescription,
+    ...(s.seoKeywords?.length && { keywords: s.seoKeywords.join(', ') }),
     ...(robots.length && { robots: robots.join(', ') }),
-    ...(seo.seoKeywords?.length && { keywords: seo.seoKeywords.join(', ') }),
+    alternates: {
+      canonical,
+      ...(Object.keys(languages).length && { languages }),
+    },
     openGraph: {
-      title: seo.openGraph?.title ?? seo.metaTitle,
-      description: seo.openGraph?.description ?? seo.metaDescription,
-      url: seo.openGraph?.url ?? canonical,
-      siteName: seo.openGraph?.siteName,
+      title: s.openGraph?.title ?? s.metaTitle ?? fallbackTitle,
+      description: s.openGraph?.description ?? s.metaDescription,
+      url: s.openGraph?.url ?? canonical,
+      siteName: s.openGraph?.siteName,
       ...(ogImage && { images: [{ url: ogImage }] }),
     },
     twitter: {
-      card: seo.twitter?.cardType ?? 'summary_large_image',
-      site: seo.twitter?.site,
-      creator: seo.twitter?.creator ?? seo.twitter?.handle,
+      card: (s.twitter?.cardType as 'summary' | 'summary_large_image') ?? 'summary_large_image',
+      site: s.twitter?.site,
+      creator: s.twitter?.creator ?? s.twitter?.handle,
     },
   }
 }
 
-export default async function Page({ params }: Props) {
-  const page = await client.fetch(pageQuery, { slug: params.slug })
+// Builds JSON-LD — handles FAQPage, any generic schemaType, and WebPage fallback
+export function buildJsonLd(seo: SeoField | undefined, fallbackTitle?: string): string {
+  const schema = seo?.schemaOrg
+  if (!schema?.schemaType) {
+    return JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebPage', name: seo?.metaTitle ?? fallbackTitle, description: seo?.metaDescription })
+  }
+  if (schema.schemaType === 'FAQPage' && schema.faqItems?.length) {
+    return JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: schema.faqItems.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
+      })),
+    })
+  }
+  const { schemaType, faqItems, ...rest } = schema
+  return JSON.stringify({ '@context': 'https://schema.org', '@type': schemaType, ...rest })
+}
+```
 
-  // JSON-LD structured data
-  const schema = page?.seo?.schemaOrg
-  const jsonLd = schema?.schemaType
-    ? JSON.stringify({ '@context': 'https://schema.org', '@type': schema.schemaType, name: schema.name, description: schema.description, url: schema.url })
-    : null
+### 3. App Router — `[slug]/page.tsx`
+
+> **Next.js 15 note:** `params` is a `Promise` — always `await` it before reading.
+
+```tsx
+// app/[slug]/page.tsx
+import type { Metadata } from 'next'
+import { client, SEO_GROQ } from '@/lib/sanity'
+import { buildMetadata, buildJsonLd } from '@/app/_seo'
+
+const query = `*[_type == "page" && slug.current == $slug][0]{ title, ${SEO_GROQ} }`
+
+type Props = { params: Promise<{ slug: string }> }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const page = await client.fetch(query, { slug })
+  return buildMetadata(page?.seo, page?.title, slug)
+}
+
+export default async function Page({ params }: Props) {
+  const { slug } = await params
+  const page = await client.fetch(query, { slug })
+
+  if (!page) return <main><p>Page not found.</p></main>
+
+  const jsonLd = buildJsonLd(page.seo, page.title)
 
   return (
     <>
-      {jsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
-      )}
-      <main>{page?.title}</main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+      <main>
+        <h1>{page.title}</h1>
+      </main>
     </>
   )
 }
@@ -352,9 +400,7 @@ export default async function Page({ params }: Props) {
 
 ---
 
-### Pages Router — with `next-seo`
-
-[next-seo](https://github.com/garmeeh/next-seo) is a popular package that simplifies head tag management in the Pages Router.
+### Pages Router — `pages/[slug].tsx` with `next-seo`
 
 ```bash
 npm install next-seo
@@ -364,25 +410,35 @@ npm install next-seo
 // pages/[slug].tsx
 import { NextSeo } from 'next-seo'
 import { GetStaticProps } from 'next'
-import { client } from '@/lib/sanity/client'
-import { pageQuery } from '@/lib/sanity/queries'
+import { client, SEO_GROQ } from '@/lib/sanity'
+import type { SeoField } from '@/app/_seo'
 
-interface Props { page: any }
+type Props = { page: { title: string; slug: string; seo?: SeoField } }
 
 export default function Page({ page }: Props) {
   const seo = page?.seo ?? {}
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
-  const canonical = seo.canonicalUrl ?? `${siteUrl}/${page?.slug?.current}`
+  const canonical = seo.canonicalUrl ?? `${siteUrl}/${page.slug}`
   const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
 
-  const noindex = seo.nofollowAttributes || seo.robotsMeta?.includes('noindex') || false
-  const nofollow = seo.nofollowAttributes || seo.robotsMeta?.includes('nofollow') || false
+  const noindex = !!(seo.nofollowAttributes || seo.robotsMeta?.includes('noindex'))
+  const nofollow = !!(seo.nofollowAttributes || seo.robotsMeta?.includes('nofollow'))
 
-  // JSON-LD structured data
+  // JSON-LD — FAQPage, generic schemaType, or WebPage fallback
   const schema = seo.schemaOrg
-  const jsonLd = schema?.schemaType
-    ? JSON.stringify({ '@context': 'https://schema.org', '@type': schema.schemaType, name: schema.name, description: schema.description, url: schema.url })
-    : null
+  let jsonLd: string | null = null
+  if (schema?.schemaType === 'FAQPage' && schema.faqItems?.length) {
+    jsonLd = JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'FAQPage',
+      mainEntity: schema.faqItems.map((i) => ({
+        '@type': 'Question', name: i.question,
+        acceptedAnswer: { '@type': 'Answer', text: i.answer },
+      })),
+    })
+  } else if (schema?.schemaType) {
+    const { schemaType, faqItems, ...rest } = schema
+    jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': schemaType, ...rest })
+  }
 
   return (
     <>
@@ -396,11 +452,7 @@ export default function Page({ page }: Props) {
           ...(seo.seoKeywords?.length ? [{ name: 'keywords', content: seo.seoKeywords.join(', ') }] : []),
         ]}
         additionalLinkTags={
-          seo.hreflang?.map(({ locale, url }: { locale: string; url: string }) => ({
-            rel: 'alternate',
-            hrefLang: locale,
-            href: url,
-          })) ?? []
+          seo.hreflang?.map(({ locale, url }) => ({ rel: 'alternate', hrefLang: locale, href: url })) ?? []
         }
         openGraph={{
           title: seo.openGraph?.title ?? seo.metaTitle,
@@ -415,112 +467,57 @@ export default function Page({ page }: Props) {
           handle: seo.twitter?.handle ?? seo.twitter?.creator,
         }}
       />
-      {jsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
-      )}
-      <main>
-        <h1>{page?.title}</h1>
-      </main>
+      {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />}
+      <main><h1>{page.title}</h1></main>
     </>
   )
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const page = await client.fetch(pageQuery, { slug: params?.slug })
-  return { props: { page }, revalidate: 60 }
-}
-
-export async function getStaticPaths() {
-  const slugs = await client.fetch(`*[_type == "page"].slug.current`)
-  return {
-    paths: slugs.map((slug: string) => ({ params: { slug } })),
-    fallback: 'blocking',
-  }
-}
-```
-
-<details>
-<summary>Pages Router — without next-seo (raw next/head)</summary>
-
-```tsx
-// pages/[slug].tsx
-import Head from 'next/head'
-import { GetStaticProps } from 'next'
-import { client } from '@/lib/sanity/client'
-import { pageQuery } from '@/lib/sanity/queries'
-
-interface Props { page: any }
-
-export default function Page({ page }: Props) {
-  const seo = page?.seo ?? {}
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
-  const canonical = seo.canonicalUrl ?? `${siteUrl}/${page?.slug?.current}`
-  const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
-
-  const robots: string[] = []
-  if (seo.nofollowAttributes) robots.push('noindex', 'nofollow')
-  seo.robotsMeta?.forEach((r: string) => { if (!robots.includes(r)) robots.push(r) })
-
-  return (
-    <>
-      <Head>
-        <title>{seo.metaTitle}</title>
-        <meta name="description" content={seo.metaDescription} />
-        {canonical && <link rel="canonical" href={canonical} />}
-        {robots.length > 0 && <meta name="robots" content={robots.join(', ')} />}
-        {seo.seoKeywords?.length > 0 && (
-          <meta name="keywords" content={seo.seoKeywords.join(', ')} />
-        )}
-        <meta property="og:title" content={seo.openGraph?.title ?? seo.metaTitle} />
-        <meta property="og:description" content={seo.openGraph?.description ?? seo.metaDescription} />
-        {canonical && <meta property="og:url" content={seo.openGraph?.url ?? canonical} />}
-        {seo.openGraph?.siteName && <meta property="og:site_name" content={seo.openGraph.siteName} />}
-        {ogImage && <meta property="og:image" content={ogImage} />}
-        <meta name="twitter:card" content={seo.twitter?.cardType ?? 'summary_large_image'} />
-        {seo.twitter?.site && <meta name="twitter:site" content={seo.twitter.site} />}
-        {(seo.twitter?.creator ?? seo.twitter?.handle) && (
-          <meta name="twitter:creator" content={seo.twitter.creator ?? seo.twitter.handle} />
-        )}
-        {seo.hreflang?.map(({ locale, url }: { locale: string; url: string }) => (
-          <link key={locale} rel="alternate" hrefLang={locale} href={url} />
-        ))}
-      </Head>
-      <main>
-        <h1>{page?.title}</h1>
-      </main>
-    </>
+  const page = await client.fetch(
+    `*[_type == "page" && slug.current == $slug][0]{ title, "slug": slug.current, ${SEO_GROQ} }`,
+    { slug: params?.slug },
   )
-}
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const page = await client.fetch(pageQuery, { slug: params?.slug })
   return { props: { page }, revalidate: 60 }
 }
 
 export async function getStaticPaths() {
   const slugs = await client.fetch(`*[_type == "page"].slug.current`)
-  return {
-    paths: slugs.map((slug: string) => ({ params: { slug } })),
-    fallback: 'blocking',
-  }
+  return { paths: slugs.map((slug: string) => ({ params: { slug } })), fallback: 'blocking' }
 }
 ```
-
-</details>
 
 ---
 
 ## Astro Integration
 
-Fetch SEO data from Sanity with a GROQ query and render it in your page `<head>`. You can use native Astro head tags or the `astro-seo` component.
+Fetch SEO data server-side in each `.astro` page and render it into `<head>`. Works with native Astro head tags or the `astro-seo` component.
 
-#### 1. Install the Sanity client
+### 1. Configure Astro for SSR and install dependencies
+
+Dynamic routes need server-side rendering so each page can fetch its own slug at request time.
 
 ```bash
-npm install @sanity/client
+npm install @sanity/client astro-seo
 ```
 
-#### 2. Create a Sanity client
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config'
+
+export default defineConfig({
+  output: 'server', // required for dynamic routes
+})
+```
+
+```bash
+# .env
+PUBLIC_SANITY_PROJECT_ID=your-project-id
+PUBLIC_SANITY_DATASET=production
+PUBLIC_SITE_URL=https://your-site.com
+```
+
+### 2. Create a Sanity client and shared helpers
 
 ```ts
 // src/lib/sanity.ts
@@ -529,317 +526,424 @@ import { createClient } from '@sanity/client'
 export const client = createClient({
   projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID,
   dataset: import.meta.env.PUBLIC_SANITY_DATASET ?? 'production',
-  useCdn: true,
+  useCdn: false,
   apiVersion: '2024-01-01',
 })
+
+// Full SEO GROQ fragment — paste into any query
+export const SEO_GROQ = `seo {
+  metaTitle, metaDescription, focusKeyword,
+  canonicalUrl, nofollowAttributes, robotsMeta, seoKeywords,
+  seoStatus, seoReviewNotes,
+  metaImage { asset->{ url } },
+  openGraph { title, description, url, siteName, image { asset->{ url } } },
+  twitter { cardType, site, creator, handle },
+  hreflang[] { locale, url },
+  schemaOrg {
+    schemaType, name, description, url, author,
+    datePublished, dateModified,
+    price, priceCurrency, availability,
+    ratingValue, ratingCount,
+    startDate, endDate, location,
+    faqItems[] { question, answer }
+  }
+}`
+
+export type SeoField = {
+  metaTitle?: string; metaDescription?: string; canonicalUrl?: string
+  nofollowAttributes?: boolean; robotsMeta?: string[]; seoKeywords?: string[]
+  seoStatus?: string; seoReviewNotes?: string
+  metaImage?: { asset?: { url?: string } }
+  openGraph?: { title?: string; description?: string; url?: string; siteName?: string; image?: { asset?: { url?: string } } }
+  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
+  hreflang?: { locale: string; url: string }[]
+  schemaOrg?: { schemaType?: string; faqItems?: { question: string; answer: string }[]; [key: string]: unknown }
+}
+
+// Builds JSON-LD string — handles FAQPage, generic schemaType, and WebPage fallback
+export function buildJsonLd(schema: SeoField['schemaOrg'], fallbackTitle?: string, fallbackDesc?: string): string | null {
+  if (!schema?.schemaType) {
+    return JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebPage', name: fallbackTitle, description: fallbackDesc })
+  }
+  if (schema.schemaType === 'FAQPage' && schema.faqItems?.length) {
+    return JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'FAQPage',
+      mainEntity: schema.faqItems.map((item) => ({
+        '@type': 'Question', name: item.question,
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
+      })),
+    })
+  }
+  const { schemaType, faqItems, ...rest } = schema
+  return JSON.stringify({ '@context': 'https://schema.org', '@type': schemaType, ...rest })
+}
 ```
 
-#### 3. Fetch SEO data and render tags
-
-**Option A — native Astro head tags**
-
-```astro
----
-// src/pages/[slug].astro
-import { client } from '../lib/sanity'
-
-const { slug } = Astro.params
-
-const page = await client.fetch(
-  `*[_type == "page" && slug.current == $slug][0]{
-    title,
-    seo {
-      metaTitle, metaDescription, canonicalUrl, nofollowAttributes, robotsMeta, seoKeywords,
-      metaImage { asset->{ url } },
-      openGraph { title, description, url, siteName, image { asset->{ url } } },
-      twitter { cardType, site, creator, handle },
-      hreflang[] { locale, url },
-      schemaOrg { schemaType, name, description, url }
-    }
-  }`,
-  { slug }
-)
-
-const seo = page?.seo ?? {}
-const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? ''
-const canonical = seo.canonicalUrl ?? `${siteUrl}/${slug}`
-const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
-
-const robots: string[] = []
-if (seo.nofollowAttributes) robots.push('noindex', 'nofollow')
-seo.robotsMeta?.forEach((r: string) => { if (!robots.includes(r)) robots.push(r) })
-
-// JSON-LD
-const schema = seo.schemaOrg
-const jsonLd = schema?.schemaType
-  ? JSON.stringify({ '@context': 'https://schema.org', '@type': schema.schemaType, name: schema.name, description: schema.description, url: schema.url })
-  : null
----
-
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>{seo.metaTitle}</title>
-    <meta name="description" content={seo.metaDescription} />
-    {canonical && <link rel="canonical" href={canonical} />}
-    {robots.length > 0 && <meta name="robots" content={robots.join(', ')} />}
-    {seo.seoKeywords?.length > 0 && <meta name="keywords" content={seo.seoKeywords.join(', ')} />}
-
-    <!-- Open Graph -->
-    <meta property="og:title" content={seo.openGraph?.title ?? seo.metaTitle} />
-    <meta property="og:description" content={seo.openGraph?.description ?? seo.metaDescription} />
-    {canonical && <meta property="og:url" content={seo.openGraph?.url ?? canonical} />}
-    {seo.openGraph?.siteName && <meta property="og:site_name" content={seo.openGraph.siteName} />}
-    {ogImage && <meta property="og:image" content={ogImage} />}
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content={seo.twitter?.cardType ?? 'summary_large_image'} />
-    {seo.twitter?.site && <meta name="twitter:site" content={seo.twitter.site} />}
-    {(seo.twitter?.creator ?? seo.twitter?.handle) && (
-      <meta name="twitter:creator" content={seo.twitter.creator ?? seo.twitter.handle} />
-    )}
-
-    <!-- hreflang -->
-    {seo.hreflang?.map(({ locale, url }: { locale: string; url: string }) => (
-      <link rel="alternate" hreflang={locale} href={url} />
-    ))}
-
-    <!-- JSON-LD -->
-    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
-  </head>
-  <body>
-    <h1>{page?.title}</h1>
-  </body>
-</html>
-```
-
-**Option B — with `astro-seo`**
-
-[astro-seo](https://github.com/jonasmerlin/astro-seo) provides a component that handles all head tags in one place.
-
-```bash
-npm install astro-seo
-```
+### 3. Dynamic route — `src/pages/[slug].astro`
 
 ```astro
 ---
 // src/pages/[slug].astro
 import { SEO } from 'astro-seo'
-import { client } from '../lib/sanity'
+import { client, SEO_GROQ, buildJsonLd } from '../lib/sanity'
+
+export const prerender = false // required for every dynamic SSR route in Astro
 
 const { slug } = Astro.params
 const page = await client.fetch(
-  `*[_type == "page" && slug.current == $slug][0]{
-    title,
-    seo {
-      metaTitle, metaDescription, canonicalUrl, nofollowAttributes, robotsMeta, seoKeywords,
-      metaImage { asset->{ url } },
-      openGraph { title, description, url, siteName, image { asset->{ url } } },
-      twitter { cardType, site, creator, handle },
-      hreflang[] { locale, url },
-      schemaOrg { schemaType, name, description, url }
-    }
-  }`,
-  { slug }
+  `*[_type == "page" && slug.current == $slug][0]{ title, description, ${SEO_GROQ} }`,
+  { slug },
 )
+if (!page) return Astro.redirect('/404')
 
-const seo = page?.seo ?? {}
+const seo = page.seo ?? {}
 const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? ''
-const canonical = seo.canonicalUrl ?? `${siteUrl}/${slug}`
+const pageUrl = `${siteUrl}/${slug}`
+const title = seo.metaTitle ?? page.title
+const description = seo.metaDescription ?? page.description ?? ''
 const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
-
-const schema = seo.schemaOrg
-const jsonLd = schema?.schemaType
-  ? JSON.stringify({ '@context': 'https://schema.org', '@type': schema.schemaType, name: schema.name, description: schema.description, url: schema.url })
-  : null
+const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
 ---
 
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <SEO
-      title={seo.metaTitle}
-      description={seo.metaDescription}
-      canonical={canonical}
-      noindex={seo.nofollowAttributes || seo.robotsMeta?.includes('noindex')}
-      nofollow={seo.nofollowAttributes || seo.robotsMeta?.includes('nofollow')}
+      title={title}
+      description={description}
+      canonical={seo.canonicalUrl ?? pageUrl}
+      noindex={seo.robotsMeta?.includes('noindex') ?? false}
+      nofollow={seo.nofollowAttributes ?? false}
       openGraph={{
         basic: {
-          title: seo.openGraph?.title ?? seo.metaTitle ?? '',
+          title: seo.openGraph?.title ?? title,
           type: 'website',
           image: ogImage ?? '',
-          url: seo.openGraph?.url ?? canonical,
+          url: seo.openGraph?.url ?? pageUrl,
         },
         optional: {
+          description: seo.openGraph?.description ?? description,
           siteName: seo.openGraph?.siteName,
-          description: seo.openGraph?.description ?? seo.metaDescription,
         },
       }}
       twitter={{
-        card: (seo.twitter?.cardType as any) ?? 'summary_large_image',
+        card: (seo.twitter?.cardType ?? 'summary_large_image') as any,
         site: seo.twitter?.site,
         creator: seo.twitter?.creator ?? seo.twitter?.handle,
       }}
       extend={{
-        link: seo.hreflang?.map(({ locale, url }: { locale: string; url: string }) => ({
-          rel: 'alternate',
-          hreflang: locale,
-          href: url,
+        meta: [
+          { name: 'robots', content: seo.robotsMeta?.join(', ') ?? 'index,follow' },
+          ...(seo.seoKeywords?.length ? [{ name: 'keywords', content: seo.seoKeywords.join(', ') }] : []),
+        ],
+        link: seo.hreflang?.map((h: { locale: string; url: string }) => ({
+          rel: 'alternate', hreflang: h.locale, href: h.url,
         })) ?? [],
-        meta: seo.seoKeywords?.length
-          ? [{ name: 'keywords', content: seo.seoKeywords.join(', ') }]
-          : [],
       }}
     />
+
     {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
   </head>
   <body>
-    <h1>{page?.title}</h1>
+    <main>
+      <h1>{page.title}</h1>
+    </main>
   </body>
 </html>
 ```
+
+<details>
+<summary>Option B — native Astro head tags (no astro-seo)</summary>
+
+```astro
+---
+// src/pages/[slug].astro
+import { client, SEO_GROQ, buildJsonLd } from '../lib/sanity'
+
+export const prerender = false
+
+const { slug } = Astro.params
+const page = await client.fetch(
+  `*[_type == "page" && slug.current == $slug][0]{ title, description, ${SEO_GROQ} }`,
+  { slug },
+)
+if (!page) return Astro.redirect('/404')
+
+const seo = page.seo ?? {}
+const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? ''
+const pageUrl = `${siteUrl}/${slug}`
+const title = seo.metaTitle ?? page.title
+const description = seo.metaDescription ?? page.description ?? ''
+const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
+const robots = seo.robotsMeta?.join(', ') ?? 'index,follow'
+const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={seo.canonicalUrl ?? pageUrl} />
+    <meta name="robots" content={robots} />
+    {seo.seoKeywords?.length && <meta name="keywords" content={seo.seoKeywords.join(', ')} />}
+    <meta property="og:title" content={seo.openGraph?.title ?? title} />
+    <meta property="og:description" content={seo.openGraph?.description ?? description} />
+    <meta property="og:url" content={seo.openGraph?.url ?? pageUrl} />
+    <meta property="og:type" content="website" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {seo.openGraph?.siteName && <meta property="og:site_name" content={seo.openGraph.siteName} />}
+    <meta name="twitter:card" content={seo.twitter?.cardType ?? 'summary_large_image'} />
+    {seo.twitter?.site && <meta name="twitter:site" content={seo.twitter.site} />}
+    {(seo.twitter?.creator ?? seo.twitter?.handle) && (
+      <meta name="twitter:creator" content={seo.twitter.creator ?? seo.twitter.handle} />
+    )}
+    {seo.hreflang?.map((h: { locale: string; url: string }) => (
+      <link rel="alternate" hreflang={h.locale} href={h.url} />
+    ))}
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+  </head>
+  <body>
+    <main><h1>{page.title}</h1></main>
+  </body>
+</html>
+```
+
+</details>
 
 ---
 
 ## Vue 3 / Nuxt Integration
 
-Fetch SEO data from Sanity and apply it using Nuxt's built-in `useHead` composable or the `@nuxtjs/seo` module.
+Fetch SEO data from Sanity using a custom `useSanityFetch` composable and apply it with Nuxt's built-in `useHead`.
+
+> **Do not use `@nuxtjs/sanity`** — it pulls in React-based Sanity packages that conflict with Vite's module graph and cause a `react-compiler-runtime` 500 error on page hydration. Use `@sanity/client` directly instead.
 
 ### Nuxt 3
 
-#### 1. Install the Sanity module
+#### 1. Install dependencies
 
 ```bash
-npm install @nuxtjs/sanity
+npm install @sanity/client
 ```
 
-#### 2. Configure the Sanity module
+#### 2. Configure Nuxt and environment
 
 ```ts
 // nuxt.config.ts
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/sanity'],
-  sanity: {
-    projectId: process.env.NUXT_PUBLIC_SANITY_PROJECT_ID,
-    dataset: 'production',
-    apiVersion: '2024-01-01',
-    useCdn: true,
+  runtimeConfig: {
+    public: {
+      sanityProjectId: process.env.NUXT_PUBLIC_SANITY_PROJECT_ID ?? '',
+      sanityDataset: process.env.NUXT_PUBLIC_SANITY_DATASET ?? 'production',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? '',
+    },
   },
 })
 ```
 
-#### 3. Fetch SEO data and apply head tags
+```bash
+# .env
+NUXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
+NUXT_PUBLIC_SANITY_DATASET=production
+NUXT_PUBLIC_SITE_URL=https://your-site.com
+```
+
+> **CORS:** If you get a 500 or network error after client-side navigation, add your dev origin to the Sanity project's [CORS settings](https://sanity.io/manage) (e.g. `http://localhost:3000`). Server-side rendering doesn't need it, but browser fetches during SPA navigation do.
+
+#### 3. Create composables (Nuxt auto-imports `composables/`)
+
+**`composables/useSanityFetch.ts`** — wraps `@sanity/client` with `useAsyncData` so SSR-fetched data is reused on the client instead of re-fetched (prevents the hydration-time CORS 500):
+
+```ts
+// composables/useSanityFetch.ts
+import { createClient } from '@sanity/client'
+
+let _client: ReturnType<typeof createClient> | null = null
+
+function getSanityClient() {
+  if (_client) return _client
+  const config = useRuntimeConfig()
+  _client = createClient({
+    projectId: config.public.sanityProjectId,
+    dataset: config.public.sanityDataset,
+    useCdn: false,
+    apiVersion: '2024-01-01',
+  })
+  return _client
+}
+
+export function useSanityFetch<T>(query: string, params?: Record<string, unknown>) {
+  const key = query + (params ? JSON.stringify(params) : '')
+  return useAsyncData<T>(key, () => getSanityClient().fetch<T>(query, params ?? {}))
+}
+```
+
+**`composables/useSeo.ts`** — shared SEO types, the full GROQ fragment, and a JSON-LD builder:
+
+```ts
+// composables/useSeo.ts
+export type SeoField = {
+  metaTitle?: string
+  metaDescription?: string
+  canonicalUrl?: string
+  nofollowAttributes?: boolean
+  robotsMeta?: string[]
+  seoKeywords?: string[]
+  seoStatus?: string
+  seoReviewNotes?: string
+  metaImage?: { asset?: { url?: string } }
+  openGraph?: { title?: string; description?: string; url?: string; siteName?: string; image?: { asset?: { url?: string } } }
+  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
+  hreflang?: { locale: string; url: string }[]
+  schemaOrg?: {
+    schemaType?: string; name?: string; description?: string; url?: string; author?: string
+    datePublished?: string; dateModified?: string
+    faqItems?: { question: string; answer: string }[]
+    [key: string]: unknown
+  }
+}
+
+export const SEO_GROQ = `seo {
+  metaTitle, metaDescription, focusKeyword,
+  canonicalUrl, nofollowAttributes, robotsMeta, seoKeywords,
+  seoStatus, seoReviewNotes,
+  metaImage { asset->{ url } },
+  openGraph { title, description, url, siteName, image { asset->{ url } } },
+  twitter { cardType, site, creator, handle },
+  hreflang[] { locale, url },
+  schemaOrg {
+    schemaType, name, description, url, author,
+    datePublished, dateModified,
+    price, priceCurrency, availability,
+    ratingValue, ratingCount,
+    startDate, endDate, location,
+    faqItems[] { question, answer }
+  }
+}`
+
+// Builds JSON-LD — handles FAQPage, generic schemaType, and WebPage fallback
+export function buildJsonLd(
+  schema: SeoField['schemaOrg'],
+  fallbackTitle?: string,
+  fallbackDesc?: string,
+): string | null {
+  if (!schema?.schemaType) {
+    return JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebPage', name: fallbackTitle, description: fallbackDesc })
+  }
+  if (schema.schemaType === 'FAQPage' && schema.faqItems?.length) {
+    return JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'FAQPage',
+      mainEntity: schema.faqItems.map((item) => ({
+        '@type': 'Question', name: item.question,
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
+      })),
+    })
+  }
+  const { schemaType, faqItems, ...rest } = schema
+  return JSON.stringify({ '@context': 'https://schema.org', '@type': schemaType, ...rest })
+}
+```
+
+#### 4. Dynamic route — `pages/[slug].vue`
 
 ```vue
 <!-- pages/[slug].vue -->
 <script setup lang="ts">
+import { SEO_GROQ, buildJsonLd, type SeoField } from '~/composables/useSeo'
+
 const route = useRoute()
-
-const { data: page } = await useSanityQuery(
-  `*[_type == "page" && slug.current == $slug][0]{
-    title,
-    seo {
-      metaTitle, metaDescription, canonicalUrl, nofollowAttributes, robotsMeta, seoKeywords,
-      metaImage { asset->{ url } },
-      openGraph { title, description, url, siteName, image { asset->{ url } } },
-      twitter { cardType, site, creator, handle },
-      hreflang[] { locale, url },
-      schemaOrg { schemaType, name, description, url }
-    }
-  }`,
-  { slug: route.params.slug as string }
-)
-
-const seo = computed(() => page.value?.seo ?? {})
-const siteUrl = useRuntimeConfig().public.siteUrl ?? ''
 const slug = route.params.slug as string
-const canonical = computed(() => seo.value.canonicalUrl ?? `${siteUrl}/${slug}`)
-const ogImage = computed(
-  () => seo.value.openGraph?.image?.asset?.url ?? seo.value.metaImage?.asset?.url
+const config = useRuntimeConfig()
+const siteUrl = config.public.siteUrl
+
+type Page = { title: string; slug: string; description?: string; seo?: SeoField }
+
+const { data: page } = await useSanityFetch<Page | null>(
+  `*[_type == "page" && slug.current == $slug][0]{ title, "slug": slug.current, description, ${SEO_GROQ} }`,
+  { slug },
 )
 
-const robots = computed(() => {
-  const r: string[] = []
-  if (seo.value.nofollowAttributes) r.push('noindex', 'nofollow')
-  seo.value.robotsMeta?.forEach((v: string) => { if (!r.includes(v)) r.push(v) })
-  return r.join(', ')
-})
+if (!page.value) throw createError({ statusCode: 404, statusMessage: 'Page not found' })
 
-// JSON-LD
-const schema = computed(() => seo.value.schemaOrg)
-const jsonLd = computed(() =>
-  schema.value?.schemaType
-    ? { '@context': 'https://schema.org', '@type': schema.value.schemaType, name: schema.value.name, description: schema.value.description, url: schema.value.url }
-    : null
-)
+const seo = computed(() => page.value?.seo)
+const pageUrl = `${siteUrl}/${slug}`
+const title = computed(() => seo.value?.metaTitle ?? page.value?.title ?? '')
+const description = computed(() => seo.value?.metaDescription ?? page.value?.description ?? '')
+const ogImage = computed(() => seo.value?.openGraph?.image?.asset?.url ?? seo.value?.metaImage?.asset?.url)
+const jsonLd = computed(() => buildJsonLd(seo.value?.schemaOrg, title.value, description.value))
 
 useHead({
-  title: () => seo.value.metaTitle,
+  title: title.value,
   meta: [
-    { name: 'description', content: () => seo.value.metaDescription },
-    { name: 'robots', content: robots },
-    ...(seo.value.seoKeywords?.length
-      ? [{ name: 'keywords', content: seo.value.seoKeywords.join(', ') }]
+    { name: 'description', content: description.value },
+    { name: 'robots', content: seo.value?.robotsMeta?.join(', ') ?? 'index,follow' },
+    ...(seo.value?.seoKeywords?.length ? [{ name: 'keywords', content: seo.value.seoKeywords.join(', ') }] : []),
+    { property: 'og:title', content: seo.value?.openGraph?.title ?? title.value },
+    { property: 'og:description', content: seo.value?.openGraph?.description ?? description.value },
+    { property: 'og:type', content: 'article' },
+    { property: 'og:url', content: seo.value?.openGraph?.url ?? pageUrl },
+    ...(ogImage.value ? [{ property: 'og:image', content: ogImage.value }] : []),
+    ...(seo.value?.openGraph?.siteName ? [{ property: 'og:site_name', content: seo.value.openGraph.siteName }] : []),
+    { name: 'twitter:card', content: seo.value?.twitter?.cardType ?? 'summary_large_image' },
+    ...(seo.value?.twitter?.site ? [{ name: 'twitter:site', content: seo.value.twitter.site }] : []),
+    ...(seo.value?.twitter?.creator ?? seo.value?.twitter?.handle
+      ? [{ name: 'twitter:creator', content: seo.value?.twitter?.creator ?? seo.value?.twitter?.handle ?? '' }]
       : []),
-    { property: 'og:title', content: () => seo.value.openGraph?.title ?? seo.value.metaTitle },
-    { property: 'og:description', content: () => seo.value.openGraph?.description ?? seo.value.metaDescription },
-    { property: 'og:url', content: () => seo.value.openGraph?.url ?? canonical.value },
-    { property: 'og:site_name', content: () => seo.value.openGraph?.siteName },
-    { property: 'og:image', content: ogImage },
-    { name: 'twitter:card', content: () => seo.value.twitter?.cardType ?? 'summary_large_image' },
-    { name: 'twitter:site', content: () => seo.value.twitter?.site },
-    { name: 'twitter:creator', content: () => seo.value.twitter?.creator ?? seo.value.twitter?.handle },
   ],
   link: [
-    { rel: 'canonical', href: canonical },
-    ...(seo.value.hreflang?.map(({ locale, url }: { locale: string; url: string }) => ({
-      rel: 'alternate',
-      hreflang: locale,
-      href: url,
-    })) ?? []),
+    { rel: 'canonical', href: seo.value?.canonicalUrl ?? pageUrl },
+    ...(seo.value?.hreflang?.map(({ locale, url }) => ({ rel: 'alternate', hreflang: locale, href: url })) ?? []),
   ],
-  script: jsonLd.value
-    ? [{ type: 'application/ld+json', children: JSON.stringify(jsonLd.value) }]
-    : [],
+  script: jsonLd.value ? [{ type: 'application/ld+json', innerHTML: jsonLd.value }] : [],
 })
 </script>
 
 <template>
   <main>
     <h1>{{ page?.title }}</h1>
+    <p>{{ page?.description }}</p>
   </main>
 </template>
 ```
 
 ---
 
-### Vue 3 (standalone, with @unhead/vue)
+### Vue 3 standalone (Vite + @unhead/vue)
 
-#### 1. Install dependencies
+For Vue 3 apps that don't use Nuxt, install `@unhead/vue` for head management and `@sanity/client` for data fetching.
 
 ```bash
 npm install @sanity/client @unhead/vue
 ```
 
-#### 2. Fetch and apply SEO in a composable
-
 ```ts
-// composables/usePage.ts
+// src/composables/useSeo.ts — same helpers as the Nuxt version above
 import { createClient } from '@sanity/client'
 import { useHead } from '@unhead/vue'
 
 const client = createClient({
   projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
-  dataset: 'production',
-  useCdn: true,
+  dataset: import.meta.env.VITE_SANITY_DATASET ?? 'production',
+  useCdn: false,
   apiVersion: '2024-01-01',
 })
 
-export async function usePage(slug: string) {
-  const page = await client.fetch(
+type SeoField = {
+  metaTitle?: string; metaDescription?: string; canonicalUrl?: string
+  nofollowAttributes?: boolean; robotsMeta?: string[]; seoKeywords?: string[]
+  metaImage?: { asset?: { url?: string } }
+  openGraph?: { title?: string; description?: string; url?: string; siteName?: string; image?: { asset?: { url?: string } } }
+  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
+  hreflang?: { locale: string; url: string }[]
+  schemaOrg?: { schemaType?: string; faqItems?: { question: string; answer: string }[]; [key: string]: unknown }
+}
+
+export async function useSanityPage(slug: string) {
+  const page = await client.fetch<{ title: string; seo?: SeoField } | null>(
     `*[_type == "page" && slug.current == $slug][0]{
       title,
       seo {
@@ -848,10 +952,10 @@ export async function usePage(slug: string) {
         openGraph { title, description, url, siteName, image { asset->{ url } } },
         twitter { cardType, site, creator, handle },
         hreflang[] { locale, url },
-        schemaOrg { schemaType, name, description, url }
+        schemaOrg { schemaType, name, description, url, faqItems[] { question, answer } }
       }
     }`,
-    { slug }
+    { slug },
   )
 
   const seo = page?.seo ?? {}
@@ -859,24 +963,31 @@ export async function usePage(slug: string) {
   const canonical = seo.canonicalUrl ?? `${siteUrl}/${slug}`
   const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
 
-  const robots: string[] = []
-  if (seo.nofollowAttributes) robots.push('noindex', 'nofollow')
-  seo.robotsMeta?.forEach((r: string) => { if (!robots.includes(r)) robots.push(r) })
-
+  // JSON-LD — FAQPage, generic schemaType, or null
+  let jsonLd: string | null = null
   const schema = seo.schemaOrg
-  const jsonLd = schema?.schemaType
-    ? { '@context': 'https://schema.org', '@type': schema.schemaType, name: schema.name, description: schema.description, url: schema.url }
-    : null
+  if (schema?.schemaType === 'FAQPage' && schema.faqItems?.length) {
+    jsonLd = JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'FAQPage',
+      mainEntity: schema.faqItems.map((i) => ({
+        '@type': 'Question', name: i.question,
+        acceptedAnswer: { '@type': 'Answer', text: i.answer },
+      })),
+    })
+  } else if (schema?.schemaType) {
+    const { schemaType, faqItems, ...rest } = schema
+    jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': schemaType, ...rest })
+  }
 
   useHead({
     title: seo.metaTitle,
     meta: [
       { name: 'description', content: seo.metaDescription },
-      ...(robots.length ? [{ name: 'robots', content: robots.join(', ') }] : []),
+      { name: 'robots', content: seo.robotsMeta?.join(', ') ?? 'index,follow' },
       ...(seo.seoKeywords?.length ? [{ name: 'keywords', content: seo.seoKeywords.join(', ') }] : []),
       { property: 'og:title', content: seo.openGraph?.title ?? seo.metaTitle },
       { property: 'og:description', content: seo.openGraph?.description ?? seo.metaDescription },
-      ...(canonical ? [{ property: 'og:url', content: seo.openGraph?.url ?? canonical }] : []),
+      { property: 'og:url', content: seo.openGraph?.url ?? canonical },
       ...(seo.openGraph?.siteName ? [{ property: 'og:site_name', content: seo.openGraph.siteName }] : []),
       ...(ogImage ? [{ property: 'og:image', content: ogImage }] : []),
       { name: 'twitter:card', content: seo.twitter?.cardType ?? 'summary_large_image' },
@@ -886,14 +997,10 @@ export async function usePage(slug: string) {
         : []),
     ],
     link: [
-      ...(canonical ? [{ rel: 'canonical', href: canonical }] : []),
-      ...(seo.hreflang?.map(({ locale, url }: { locale: string; url: string }) => ({
-        rel: 'alternate', hreflang: locale, href: url,
-      })) ?? []),
+      { rel: 'canonical', href: canonical },
+      ...(seo.hreflang?.map(({ locale, url }) => ({ rel: 'alternate', hreflang: locale, href: url })) ?? []),
     ],
-    script: jsonLd
-      ? [{ type: 'application/ld+json', children: JSON.stringify(jsonLd) }]
-      : [],
+    script: jsonLd ? [{ type: 'application/ld+json', innerHTML: jsonLd }] : [],
   })
 
   return { page }
@@ -901,11 +1008,11 @@ export async function usePage(slug: string) {
 ```
 
 ```vue
-<!-- views/PageView.vue -->
+<!-- src/views/PageView.vue -->
 <script setup lang="ts">
-import { usePage } from '@/composables/usePage'
+import { useSanityPage } from '@/composables/useSeo'
 const props = defineProps<{ slug: string }>()
-const { page } = await usePage(props.slug)
+const { page } = await useSanityPage(props.slug)
 </script>
 
 <template>
