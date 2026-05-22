@@ -61,7 +61,8 @@ export default function BulkSEOPanel() {
     setCsvError(null);
     try {
       const results: any[] = await client.fetch(`
-        *[defined(seo) && !(_id in path("drafts.**"))] | order(_updatedAt desc) [0...200] {
+        *[!(_id in path("drafts.**")) && (defined(seo) || defined(slug))]
+          | order(_updatedAt desc) [0...200] {
           _id, _type,
           "docTitle": coalesce(title, name, slug.current, "Untitled"),
           "seo": seo
@@ -365,11 +366,11 @@ export default function BulkSEOPanel() {
       <Box style={{ minHeight: "100vh", background: "#070d1a", padding: "32px 40px" }}>
         <div style={{ maxWidth: 1040, margin: "0 auto" }}>
           <Stack space={5}>
-            {/* Header */}
+            {/* Header — fix-queue / action identity (green accent) */}
             <div
               style={{
-                background: "linear-gradient(135deg, #0f172a 0%, #0d1f3c 100%)",
-                border: "1px solid #1e3a5f",
+                background: "linear-gradient(135deg, #051a0f 0%, #071f12 60%, #04160b 100%)",
+                border: "1px solid #14532d",
                 borderRadius: 16,
                 padding: "28px 32px",
                 display: "flex",
@@ -379,28 +380,30 @@ export default function BulkSEOPanel() {
               }}
             >
               <div>
-                <div
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: "#3b82f6",
-                    letterSpacing: 2,
-                    textTransform: "uppercase",
-                    marginBottom: 8,
-                  }}
-                >
-                  Pro Feature
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                  <SearchIcon style={{ fontSize: 14, color: "#4ade80" }} />
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      color: "#4ade80",
+                      letterSpacing: 2,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Fix Queue
+                  </span>
                 </div>
-                <Text size={4} weight="bold" style={{ color: "#f8fafc" }}>
-                  Bulk SEO Management
+                <Text size={4} weight="bold" style={{ color: "#f0fdf4" }}>
+                  SEO Optimizer
                 </Text>
                 <div style={{ marginTop: 6 }}>
-                  <Text size={1} style={{ color: "#64748b" }}>
+                  <Text size={1} style={{ color: "#4b5563" }}>
                     {loaded
-                      ? `Found ${docs.length} page${
+                      ? `${docs.length} page${
                           docs.length !== 1 ? "s" : ""
-                        } with SEO issues — click any row to edit inline`
-                      : "Scan all your content at once to find and fix SEO issues in bulk"}
+                        } with issues — click a row to edit, select multiple for bulk fixes`
+                      : "Scan your content to find SEO issues and fix them inline or in bulk"}
                   </Text>
                 </div>
               </div>
@@ -413,15 +416,15 @@ export default function BulkSEOPanel() {
                   alignItems: "center",
                   gap: 8,
                   padding: "12px 24px",
-                  background: loading ? "#1e293b" : "#1d4ed8",
-                  border: "none",
+                  background: loading ? "#052e16" : "#166534",
+                  border: `1px solid ${loading ? "#14532d" : "#16a34a"}`,
                   borderRadius: 10,
-                  color: loading ? "#475569" : "#fff",
+                  color: loading ? "#374151" : "#bbf7d0",
                   fontSize: 14,
                   fontWeight: 700,
                   cursor: loading ? "not-allowed" : "pointer",
                   whiteSpace: "nowrap",
-                  boxShadow: loading ? "none" : "0 0 20px #1d4ed840",
+                  boxShadow: loading ? "none" : "0 0 20px #16a34a30",
                   transition: "all 0.2s",
                   flexShrink: 0,
                 }}

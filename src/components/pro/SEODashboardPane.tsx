@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useClient } from "sanity";
-import { useRouter } from "sanity/router";
+import { IntentLink } from "sanity/router";
 import { Stack, Text, Flex, Spinner, Box } from "@sanity/ui";
-import { RefreshIcon } from "@sanity/icons";
+import { RefreshIcon, ActivityIcon, ChevronLeftIcon, ChevronRightIcon } from "@sanity/icons";
 import useProEnabled from "../../hooks/useProEnabled";
 import { computeSEOScore } from "../../utils/seoScore";
 import ProGate from "./ProGate";
@@ -24,7 +24,7 @@ interface ScoredDoc extends DocSEO {
 }
 
 function getIssues(seo: Record<string, any> | null): string[] {
-  if (!seo) return ["No SEO fields configured"];
+  if (!seo) return ["No SEO data — open this document and fill in SEO fields"];
   const issues: string[] = [];
   if (!seo.metaTitle) issues.push("Missing meta title");
   else if (seo.metaTitle.length < 50 || seo.metaTitle.length > 60)
@@ -39,7 +39,7 @@ function getIssues(seo: Record<string, any> | null): string[] {
   return issues;
 }
 
-function scoreColor(score: number): string {
+function scoreColorHex(score: number): string {
   if (score >= 80) return "#22c55e";
   if (score >= 50) return "#f59e0b";
   return "#ef4444";
@@ -52,21 +52,26 @@ function scoreLabel(score: number): string {
 }
 
 function ScoreBar({ score }: { score: number }) {
-  const color = scoreColor(score);
+  const color = scoreColorHex(score);
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <div
           style={{
             width: 80,
-            height: 4,
+            height: 6,
             background: "#1e293b",
             borderRadius: 99,
             overflow: "hidden",
           }}
         >
           <div
-            style={{ width: `${score}%`, height: "100%", background: color, borderRadius: 99 }}
+            style={{
+              width: score === 0 ? 3 : `${score}%`,
+              height: "100%",
+              background: color,
+              borderRadius: 99,
+            }}
           />
         </div>
         <span style={{ fontSize: 13, fontWeight: 700, color, minWidth: 26 }}>{score}</span>
@@ -82,7 +87,7 @@ function StatCard({
   sub,
   accent,
 }: {
-  value: number;
+  value: number | string;
   label: string;
   sub: string;
   accent: string;
@@ -90,35 +95,166 @@ function StatCard({
   return (
     <div
       style={{
-        background: "#0f172a",
-        border: `1px solid ${accent}40`,
-        borderTop: `3px solid ${accent}`,
-        borderRadius: 12,
-        padding: "20px 24px",
+        background: "#0a0f1e",
+        border: `1px solid ${accent}30`,
+        borderLeft: `3px solid ${accent}`,
+        borderRadius: 10,
+        padding: "16px 20px",
         flex: 1,
-        position: "relative",
-        overflow: "hidden",
       }}
     >
+      <div style={{ fontSize: 36, fontWeight: 900, color: accent, lineHeight: 1 }}>{value}</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: "#cbd5e1", marginTop: 8 }}>{label}</div>
+      <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>{sub}</div>
+    </div>
+  );
+}
+
+// Score distribution strip — shows proportion of good / needs work / poor
+function DistributionStrip({
+  good,
+  ok,
+  poor,
+  total,
+}: {
+  good: number;
+  ok: number;
+  poor: number;
+  total: number;
+}) {
+  if (total === 0) return null;
+  const pct = (n: number) => `${Math.round((n / total) * 100)}%`;
+  return (
+    <div>
       <div
         style={{
-          position: "absolute",
-          top: -20,
-          right: -20,
-          width: 80,
-          height: 80,
-          borderRadius: "50%",
-          background: `${accent}18`,
-          pointerEvents: "none",
+          display: "flex",
+          height: 8,
+          borderRadius: 99,
+          overflow: "hidden",
+          background: "#1e293b",
+          gap: 1,
         }}
-      />
-      <div
-        style={{ fontSize: 40, fontWeight: 900, color: accent, lineHeight: 1, letterSpacing: -1 }}
       >
-        {value}
+        {good > 0 && <div style={{ flex: good, background: "#22c55e", transition: "flex 0.4s" }} />}
+        {ok > 0 && <div style={{ flex: ok, background: "#f59e0b", transition: "flex 0.4s" }} />}
+        {poor > 0 && <div style={{ flex: poor, background: "#ef4444", transition: "flex 0.4s" }} />}
       </div>
-      <div style={{ fontSize: 13, fontWeight: 700, color: "#f1f5f9", marginTop: 10 }}>{label}</div>
-      <div style={{ fontSize: 11, color: "#64748b", marginTop: 3 }}>{sub}</div>
+      <div style={{ display: "flex", gap: 16, marginTop: 8 }}>
+        {[
+          { count: good, color: "#22c55e", label: "Good" },
+          { count: ok, color: "#f59e0b", label: "Needs Work" },
+          { count: poor, color: "#ef4444", label: "Poor" },
+        ].map(({ count, color, label }) => (
+          <div key={label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: color }} />
+            <span style={{ fontSize: 11, color: "#94a3b8" }}>
+              {label}: {count} ({pct(count)})
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Pagination({
+  page,
+  total,
+  pageSize,
+  onPage,
+}: {
+  page: number;
+  total: number;
+  pageSize: number;
+  onPage: (n: number) => void;
+}) {
+  const totalPages = Math.ceil(total / pageSize);
+  if (totalPages <= 1) return null;
+  const isFirst = page === 0;
+  const isLast = page >= totalPages - 1;
+
+  const navStyle = (disabled: boolean): React.CSSProperties => ({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    border: `1px solid ${disabled ? "#111827" : "#1e3a5f"}`,
+    background: disabled ? "transparent" : "#0d2040",
+    color: disabled ? "#1e293b" : "#7dd3fc",
+    cursor: disabled ? "not-allowed" : "pointer",
+    transition: "all 0.15s",
+    flexShrink: 0,
+  });
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginTop: 20,
+        padding: "12px 16px",
+        background: "#080e1c",
+        border: "1px solid #111827",
+        borderRadius: 12,
+      }}
+    >
+      <span style={{ fontSize: 12, color: "#475569" }}>
+        <span style={{ color: "#7dd3fc", fontWeight: 600 }}>
+          {Math.min(page * pageSize + 1, total)}–{Math.min((page + 1) * pageSize, total)}
+        </span>{" "}
+        of <span style={{ color: "#94a3b8" }}>{total}</span> pages
+      </span>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <button
+          type="button"
+          onClick={() => onPage(Math.max(0, page - 1))}
+          disabled={isFirst}
+          style={navStyle(isFirst)}
+        >
+          <ChevronLeftIcon style={{ fontSize: 18 }} />
+        </button>
+
+        {Array.from({ length: totalPages }).map((_, i) => (
+          <button
+            // eslint-disable-next-line react/no-array-index-key
+            key={i}
+            type="button"
+            onClick={() => onPage(i)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 36,
+              height: 36,
+              borderRadius: 10,
+              border: "none",
+              background: page === i ? "linear-gradient(135deg, #1d4ed8, #2563eb)" : "transparent",
+              color: page === i ? "#fff" : "#475569",
+              fontSize: 13,
+              fontWeight: page === i ? 700 : 400,
+              cursor: "pointer",
+              boxShadow: page === i ? "0 0 12px #2563eb50" : "none",
+              transition: "all 0.15s",
+            }}
+          >
+            {i + 1}
+          </button>
+        ))}
+
+        <button
+          type="button"
+          onClick={() => onPage(Math.min(totalPages - 1, page + 1))}
+          disabled={isLast}
+          style={navStyle(isLast)}
+        >
+          <ChevronRightIcon style={{ fontSize: 18 }} />
+        </button>
+      </div>
     </div>
   );
 }
@@ -132,18 +268,22 @@ const FILTER_TABS = [
 
 export default function SEODashboardPane() {
   const client = useClient({ apiVersion: "2024-01-01" });
-  const router = useRouter();
   const [docs, setDocs] = useState<ScoredDoc[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "poor" | "ok" | "good">("all");
   const [issueFilter, setIssueFilter] = useState<string>("all");
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 5;
   const { isPro } = useProEnabled();
 
   const fetchDocs = useCallback(async () => {
     setLoading(true);
     try {
+      // Include ANY published document that has a slug or seo field — catches
+      // content pages that haven't had their SEO tab touched yet (score = 0).
       const results: DocSEO[] = await client.fetch(`
-        *[defined(seo) && !(_id in path("drafts.**"))] | order(_updatedAt desc) [0...200] {
+        *[!(_id in path("drafts.**")) && (defined(seo) || defined(slug))]
+          | order(_updatedAt desc) [0...200] {
           _id, _type, _updatedAt,
           "docTitle": coalesce(title, name, slug.current, "Untitled"),
           "seo": seo
@@ -155,7 +295,7 @@ export default function SEODashboardPane() {
         return { ...doc, score: result.score, color: result.color, issues: getIssues(doc.seo) };
       });
 
-      // Detect duplicate meta titles across all fetched docs
+      // Flag duplicate meta titles
       const titleCounts: Record<string, number> = {};
       results.forEach((doc) => {
         if (doc.seo?.metaTitle) {
@@ -204,45 +344,57 @@ export default function SEODashboardPane() {
   }
 
   return (
-    <Box style={{ minHeight: "100vh", background: "#070d1a", padding: "32px 40px" }}>
+    <Box style={{ minHeight: "100vh", background: "#060b14", padding: "32px 40px" }}>
       <div style={{ maxWidth: 1040, margin: "0 auto" }}>
         <Stack space={5}>
-          {/* Header — matches SEO Optimizer banner style */}
+          {/* Header — analytics / monitoring identity */}
           <div
             style={{
-              background: "linear-gradient(135deg, #0f172a 0%, #0d1f3c 100%)",
-              border: "1px solid #1e3a5f",
+              background: "linear-gradient(135deg, #0a1628 0%, #0f1f3d 60%, #091428 100%)",
+              border: "1px solid #1a3a6b",
               borderRadius: 16,
               padding: "28px 32px",
               display: "flex",
-              alignItems: "center",
+              alignItems: "flex-start",
               justifyContent: "space-between",
               gap: 24,
             }}
           >
-            <div>
-              <div
-                style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  color: "#3b82f6",
-                  letterSpacing: 2,
-                  textTransform: "uppercase",
-                  marginBottom: 8,
-                }}
-              >
-                Pro Feature
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                <ActivityIcon style={{ fontSize: 16, color: "#38bdf8" }} />
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: "#38bdf8",
+                    letterSpacing: 2,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  SEO Analytics
+                </span>
               </div>
-              <Text size={4} weight="bold" style={{ color: "#f8fafc" }}>
+              <Text size={4} weight="bold" style={{ color: "#f0f9ff" }}>
                 SEO Health Dashboard
               </Text>
-              <div style={{ marginTop: 6 }}>
+              <div style={{ marginTop: 6, marginBottom: loading ? 0 : 20 }}>
                 <Text size={1} style={{ color: "#64748b" }}>
                   {loading
                     ? "Loading SEO health data…"
-                    : `Showing SEO health for ${totalDocs} page${totalDocs !== 1 ? "s" : ""}`}
+                    : `Monitoring ${totalDocs} page${
+                        totalDocs !== 1 ? "s" : ""
+                      } across your content`}
                 </Text>
               </div>
+              {!loading && totalDocs > 0 && (
+                <DistributionStrip
+                  good={goodCount}
+                  ok={okCount}
+                  poor={poorCount}
+                  total={totalDocs}
+                />
+              )}
             </div>
             <button
               type="button"
@@ -252,65 +404,74 @@ export default function SEODashboardPane() {
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                padding: "12px 24px",
-                background: loading ? "#1e293b" : "#1d4ed8",
-                border: "none",
+                padding: "10px 20px",
+                background: loading ? "#0f1d33" : "#0c4a84",
+                border: `1px solid ${loading ? "#1e293b" : "#1d6aad"}`,
                 borderRadius: 10,
-                color: loading ? "#475569" : "#fff",
-                fontSize: 14,
-                fontWeight: 700,
+                color: loading ? "#334155" : "#bae6fd",
+                fontSize: 13,
+                fontWeight: 600,
                 cursor: loading ? "not-allowed" : "pointer",
                 whiteSpace: "nowrap",
-                boxShadow: loading ? "none" : "0 0 20px #1d4ed840",
                 transition: "all 0.2s",
                 flexShrink: 0,
+                marginTop: 4,
               }}
             >
-              <RefreshIcon style={{ fontSize: 16 }} />
+              <RefreshIcon style={{ fontSize: 15 }} />
               {loading ? "Loading…" : "Refresh"}
             </button>
           </div>
 
           {/* Stat cards */}
-          <div style={{ display: "flex", gap: 14 }}>
+          <div style={{ display: "flex", gap: 12 }}>
             <StatCard
               value={avgScore}
               label="Avg SEO Score"
               sub="across all pages"
-              accent={scoreColor(avgScore)}
+              accent={scoreColorHex(avgScore)}
             />
             <StatCard value={goodCount} label="Good" sub="score ≥ 80" accent="#22c55e" />
             <StatCard value={okCount} label="Needs Work" sub="score 50–79" accent="#f59e0b" />
             <StatCard value={poorCount} label="Poor" sub="score < 50" accent="#ef4444" />
           </div>
 
-          {/* Filters */}
-          <Flex gap={3} align="center" wrap="wrap">
+          {/* Filters — uniform 36px height for tabs and dropdown */}
+          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            {/* Tab group */}
             <div
               style={{
                 display: "flex",
-                gap: 4,
-                padding: "4px",
-                background: "#0f172a",
+                alignItems: "center",
+                gap: 2,
+                padding: "3px",
+                height: 36,
+                background: "#0a1020",
                 borderRadius: 8,
-                border: "1px solid #1e293b",
+                border: "1px solid #1a2a40",
+                boxSizing: "border-box",
               }}
             >
               {FILTER_TABS.map((f) => (
                 <button
                   key={f.key}
                   type="button"
-                  onClick={() => setFilter(f.key)}
+                  onClick={() => {
+                    setFilter(f.key);
+                    setPage(0);
+                  }}
                   style={{
-                    padding: "5px 14px",
+                    height: 28,
+                    padding: "0 14px",
                     borderRadius: 6,
                     border: "none",
                     cursor: "pointer",
                     fontSize: 12,
                     fontWeight: filter === f.key ? 600 : 400,
-                    background: filter === f.key ? "#1e3a5f" : "transparent",
-                    color: filter === f.key ? "#60a5fa" : "#64748b",
+                    background: filter === f.key ? "#0c2d50" : "transparent",
+                    color: filter === f.key ? "#7dd3fc" : "#475569",
                     transition: "all 0.15s",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {f.label}
@@ -318,18 +479,24 @@ export default function SEODashboardPane() {
               ))}
             </div>
 
+            {/* Issue dropdown — same 36px height */}
             <select
               value={issueFilter}
-              onChange={(e) => setIssueFilter(e.target.value)}
+              onChange={(e) => {
+                setIssueFilter(e.target.value);
+                setPage(0);
+              }}
               style={{
+                height: 36,
                 fontSize: 12,
-                padding: "6px 12px",
-                background: "#0f172a",
-                border: "1px solid #1e293b",
+                padding: "0 12px",
+                background: "#0a1020",
+                border: "1px solid #1a2a40",
                 borderRadius: 8,
-                color: "#94a3b8",
+                color: "#7dd3fc",
                 cursor: "pointer",
                 outline: "none",
+                boxSizing: "border-box",
               }}
             >
               <option value="all">All issues</option>
@@ -339,7 +506,7 @@ export default function SEODashboardPane() {
                 </option>
               ))}
             </select>
-          </Flex>
+          </div>
 
           {/* Table */}
           {loading ? (
@@ -365,7 +532,7 @@ export default function SEODashboardPane() {
                       fontSize: 10,
                       fontWeight: 700,
                       letterSpacing: 1.5,
-                      color: "#475569",
+                      color: "#334155",
                       textTransform: "uppercase",
                     }}
                   >
@@ -374,25 +541,24 @@ export default function SEODashboardPane() {
                 ))}
               </div>
 
-              {/* Rows */}
               <Stack space={2}>
                 {filtered.length === 0 && (
                   <div
                     style={{
                       padding: "40px 0",
                       textAlign: "center",
-                      color: "#475569",
+                      color: "#334155",
                       fontSize: 14,
-                      background: "#0f172a",
+                      background: "#0a1020",
                       borderRadius: 10,
-                      border: "1px solid #1e293b",
+                      border: "1px solid #1a2a40",
                     }}
                   >
                     No pages match this filter
                   </div>
                 )}
 
-                {filtered.map((doc) => (
+                {filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((doc) => (
                   <div
                     key={doc._id}
                     style={{
@@ -401,10 +567,9 @@ export default function SEODashboardPane() {
                       gap: 16,
                       alignItems: "center",
                       padding: "14px 16px",
-                      background: "#0f172a",
-                      border: "1px solid #1e293b",
+                      background: "#0a1020",
+                      border: "1px solid #1a2a40",
                       borderRadius: 10,
-                      transition: "border-color 0.15s",
                     }}
                   >
                     <ScoreBar score={doc.score} />
@@ -414,14 +579,14 @@ export default function SEODashboardPane() {
                         style={{
                           fontSize: 13,
                           fontWeight: 600,
-                          color: "#e2e8f0",
+                          color: "#cbd5e1",
                           lineHeight: 1.4,
                           marginBottom: 3,
                         }}
                       >
                         {doc.docTitle}
                       </div>
-                      <div style={{ fontSize: 11, color: "#475569" }}>
+                      <div style={{ fontSize: 11, color: "#334155" }}>
                         Updated {new Date(doc._updatedAt).toLocaleDateString()}
                       </div>
                     </div>
@@ -431,10 +596,11 @@ export default function SEODashboardPane() {
                         display: "inline-flex",
                         alignItems: "center",
                         padding: "2px 8px",
-                        background: "#1e293b",
+                        background: "#0f1d33",
+                        border: "1px solid #1a2a40",
                         borderRadius: 99,
                         fontSize: 11,
-                        color: "#94a3b8",
+                        color: "#64748b",
                         fontWeight: 500,
                         width: "fit-content",
                       }}
@@ -467,12 +633,12 @@ export default function SEODashboardPane() {
                                 width: 5,
                                 height: 5,
                                 borderRadius: "50%",
-                                background: "#ef4444",
+                                background: doc.score === 0 ? "#64748b" : "#ef4444",
                                 flexShrink: 0,
                                 marginTop: 4,
                               }}
                             />
-                            <span style={{ fontSize: 11, color: "#94a3b8", lineHeight: 1.4 }}>
+                            <span style={{ fontSize: 11, color: "#64748b", lineHeight: 1.4 }}>
                               {issue}
                             </span>
                           </div>
@@ -481,36 +647,36 @@ export default function SEODashboardPane() {
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          router.navigate({
-                            intent: "edit",
-                            params: { id: doc._id, type: doc._type },
-                          })
-                        }
+                      <IntentLink
+                        intent="edit"
+                        params={{ id: doc._id, type: doc._type }}
                         style={{
-                          background: "none",
-                          border: "none",
-                          color: "#3b82f6",
+                          color: "#38bdf8",
                           fontSize: 12,
                           fontWeight: 600,
-                          cursor: "pointer",
-                          padding: 0,
-                          textDecoration: "underline",
+                          textDecoration: "none",
+                          padding: "4px 10px",
+                          border: "1px solid #0c3d5e",
+                          borderRadius: 6,
+                          background: "#071929",
                           whiteSpace: "nowrap",
+                          display: "inline-block",
                         }}
                       >
                         Open →
-                      </button>
+                      </IntentLink>
                     </div>
                   </div>
                 ))}
               </Stack>
 
-              <div style={{ textAlign: "center", marginTop: 16, fontSize: 12, color: "#475569" }}>
-                Showing {filtered.length} of {totalDocs} pages
-              </div>
+              {/* Pagination */}
+              <Pagination
+                page={page}
+                total={filtered.length}
+                pageSize={PAGE_SIZE}
+                onPage={setPage}
+              />
             </div>
           )}
         </Stack>
