@@ -1,121 +1,112 @@
+import React, { useEffect, useCallback } from "react";
 import { StringInputProps, useFormValue, useClient, set } from "sanity";
-import React, { useEffect } from "react";
-import { Stack, Text } from "@sanity/ui";
+import { Stack, Text, Flex } from "@sanity/ui";
+import AIGenerateButton from "./AIGenerateButton";
 
-const SEOTitleFeedback = (props: StringInputProps) => {
+const DOT = (color: string) => (
+  <div
+    style={{
+      width: 10,
+      height: 10,
+      borderRadius: "50%",
+      backgroundColor: color,
+      flexShrink: 0,
+    }}
+  />
+);
+
+const SEOTitleFeedback = ({ value, onChange, renderDefault, path, ...rest }: StringInputProps) => {
   const client = useClient({ apiVersion: "2021-06-07" });
-  const { value, onChange, renderDefault } = props;
 
-  // Access the parent object to get keywords from the `seoKeywords` field
-  const { path } = props;
   const parentPath = path.slice(0, -1);
   const parent = useFormValue(parentPath) as {
     seoKeywords?: string[];
+    focusKeyword?: string;
   };
 
   const keywords = parent?.seoKeywords || [];
+  const focusKeyword = parent?.focusKeyword || "";
+  const defaultFetchType = "homePage";
 
-  // If current value is empty, fetch `metaTitle` from `homePage` and set
   useEffect(() => {
-    if (value) return; // Only fetch if there's no title yet
+    if (value) return;
     const fetchData = async () => {
-      const data = await client.fetch("*[_type=='homePage'][0]{'title':seo.metaTitle}");
-      const titleFromHomePage = data?.title;
-      if (titleFromHomePage && !value) {
-        onChange(set(titleFromHomePage));
-      }
+      const data = await client.fetch(`*[_type=='${defaultFetchType}'][0]{'title':seo.metaTitle}`);
+      if (data?.title && !value) onChange(set(data.title));
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client, onChange, value]);
 
-  /**
-   * Returns an array of feedback items.
-   * Each item has its own text + color for an individual bullet.
-   */
-  const getTitleFeedback = (
+  const handleAIGenerate = useCallback((generated: string) => onChange(set(generated)), [onChange]);
+
+  const getFeedback = (
     title: string,
-    seoKeywords: string[],
-  ): { text: string; color: "green" | "orange" | "red" }[] => {
-    const feedbackItems: { text: string; color: "green" | "orange" | "red" }[] = [];
+    kw: string,
+    kwArr: string[],
+  ): { text: string; color: string }[] => {
+    if (!title?.trim())
+      return [{ text: "Title is empty. Add a title for better SEO.", color: "red" }];
 
-    if (!title?.trim()) {
-      feedbackItems.push({
-        text: "Your title is empty. Please add some content for better SEO.",
-        color: "red",
+    const items: { text: string; color: string }[] = [];
+    const len = title.length;
+
+    if (len >= 50 && len <= 60) {
+      items.push({
+        text: `Title length (${len}) is perfect for SEO.`,
+        color: "#43d675",
       });
-      return feedbackItems;
-    }
-
-    const charCount = title.length;
-    const minChar = 50;
-    const maxChar = 60;
-
-    // 1) Title length check
-    if (charCount < minChar) {
-      feedbackItems.push({
-        text: `Your title is only ${charCount} characters long — below ${minChar}.`,
-        color: "orange",
-      });
-    } else if (charCount > maxChar) {
-      feedbackItems.push({
-        text: `Your title is ${charCount} characters long — above ${maxChar}.`,
-        color: "red",
+    } else if (len < 50) {
+      items.push({
+        text: `Title is short (${len}/50–60 chars).`,
+        color: "#f59e0b",
       });
     } else {
-      feedbackItems.push({
-        text: `Great! Your title length (${charCount}) looks good for SEO.`,
-        color: "green",
+      items.push({
+        text: `Title is too long (${len}/60 chars max).`,
+        color: "#ef4444",
       });
     }
 
-    // 2) Keyword usage check
-    if (seoKeywords.length > 0) {
-      const foundKeyword = seoKeywords.some((kw) => title.toLowerCase().includes(kw.toLowerCase()));
-      if (!foundKeyword) {
-        feedbackItems.push({
-          text: "You have defined keywords but none appear in the title.",
-          color: "red",
+    const primary = kw || (kwArr.length > 0 ? kwArr[0] : "");
+    if (primary) {
+      if (title.toLowerCase().includes(primary.toLowerCase())) {
+        items.push({
+          text: `Focus keyword "${primary}" found in title.`,
+          color: "#43d675",
         });
       } else {
-        feedbackItems.push({
-          text: "Your keyword is in the title. Good job!",
-          color: "green",
+        items.push({
+          text: `Focus keyword "${primary}" not in title.`,
+          color: "#ef4444",
         });
       }
     } else {
-      feedbackItems.push({
-        text: "No keywords defined. Consider adding relevant keywords for better SEO.",
-        color: "orange",
+      items.push({
+        text: "No focus keyword set. Consider adding one.",
+        color: "#f59e0b",
       });
     }
 
-    return feedbackItems;
+    return items;
   };
 
-  // Get an array of feedback items for the current title
-  const feedbackItems = getTitleFeedback(value || "", keywords);
+  const feedbackItems = getFeedback(value || "", focusKeyword, keywords);
+
+  const props = { value, onChange, renderDefault, path, ...rest };
 
   return (
     <Stack space={3}>
-      {/* Default input field */}
       {renderDefault(props)}
-
-      {/* Map over feedback items, each with its own color-coded bullet */}
+      <AIGenerateButton field="title" focusKeyword={focusKeyword} onGenerate={handleAIGenerate} />
       <Stack space={2}>
         {feedbackItems.map((item) => (
-          <div key={item.text} style={{ display: "flex", alignItems: "center", gap: "7px" }}>
-            <div
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                backgroundColor: item.color,
-              }}
-            />
-            <Text weight="bold" muted size={14}>
+          <Flex key={item.text} align="center" gap={2}>
+            {DOT(item.color)}
+            <Text size={1} muted>
               {item.text}
             </Text>
-          </div>
+          </Flex>
         ))}
       </Stack>
     </Stack>
