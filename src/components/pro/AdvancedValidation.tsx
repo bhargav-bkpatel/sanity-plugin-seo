@@ -185,16 +185,13 @@ export default function AdvancedValidation({ value, onChange }: Props) {
       });
 
       // 5. Canonical URL present
-      const fixCanonical = () => {
-        onChange(PatchEvent.from(set("https://yoursite.com/page", ["canonicalUrl"])));
-      };
       results.push({
         key: "canonicalUrl",
         label: "Canonical URL set",
         pass: hasCanonical,
-        description: hasCanonical ? undefined : "No canonical URL — add one in the Advanced tab.",
-        onFix: hasCanonical ? undefined : fixCanonical,
-        fixLabel: hasCanonical ? undefined : "Auto-fill placeholder",
+        description: hasCanonical
+          ? undefined
+          : "No canonical URL — use SEO Automation below to build one from your slug.",
       });
 
       // 6. Focus keyword in meta title

@@ -8,7 +8,6 @@ import GEOChecklist from "./GEOChecklist";
 import MetaTagsPreview from "./MetaTagsPreview";
 import SERPPreview from "./pro/SERPPreview";
 import AdvancedValidation from "./pro/AdvancedValidation";
-import AutomationPanel from "./pro/AutomationPanel";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -60,13 +59,11 @@ const SEOMetaFieldsWrapper = ({
         </>
       )}
 
-      {/* Advanced Validation + Automation — Advanced tab */}
+      {/* Advanced Validation — Advanced tab */}
       {activeGroup === "advanced" && (
         <>
           <HR />
           <AdvancedValidation value={value} onChange={onChange} />
-          <HR />
-          <AutomationPanel value={value} onChange={onChange} />
         </>
       )}
 
