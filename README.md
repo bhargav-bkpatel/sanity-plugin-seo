@@ -10,7 +10,9 @@
 [![Sanity V4](https://img.shields.io/badge/Sanity%20V4%20Plugin-4e5452)](https://www.sanity.io/)
 [![Sanity V5](https://img.shields.io/badge/Sanity%20V5%20Plugin-4e5452)](https://www.sanity.io/)
 
-The most complete SEO plugin for Sanity Studio — live SEO score, GEO checklist, AI-powered suggestions, SERP preview, Schema.org wizard (30+ types), social previews, advanced validation, team workflow, and integration guides for **Next.js**, **Astro**, and **Vue / Nuxt**. Free core features, optional Pro unlock.
+The most complete SEO plugin for Sanity Studio — live SEO score, GEO checklist, AI-powered suggestions, SERP preview, Schema.org wizard (30+ types), social previews, advanced validation, team workflow, and integration guides for **Next.js**, **Astro**, and **Vue / Nuxt**.
+
+**Free** and **AI** features are available now. **Pro features are coming soon.**
 
 ![Demo](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/demo-1.gif)
 
@@ -18,31 +20,33 @@ The most complete SEO plugin for Sanity Studio — live SEO score, GEO checklist
 
 ## Feature Comparison
 
-| Feature | Free | Pro | AI |
+| Feature | Free | AI | 🔜 Pro |
 |---|:---:|:---:|:---:|
-| Live SEO Score (0–100) | ✅ | ✅ | ✅ |
-| GEO Checklist (AI Overview readiness) | ✅ | ✅ | ✅ |
-| Meta Tags Preview + HTML snippet | ✅ | ✅ | ✅ |
-| Social Preview Cards (X, Facebook, LinkedIn, WhatsApp) | ✅ | ✅ | ✅ |
-| Focus Keyword tracking | ✅ | ✅ | ✅ |
-| Canonical URL field | ✅ | ✅ | ✅ |
-| Robots Meta (noindex, nofollow, noarchive…) | ✅ | ✅ | ✅ |
-| hreflang / multi-language targeting | ✅ | ✅ | ✅ |
-| Open Graph & Twitter/X card fields | ✅ | ✅ | ✅ |
-| Additional meta tags | ✅ | ✅ | ✅ |
-| Frontend integration guides (Next.js, Astro, Vue) | ✅ | ✅ | ✅ |
-| Readability score | ✅ | ✅ | ✅ |
-| AI Keyword Suggestions | — | — | ✅ |
-| AI Meta Title & Description generation | — | — | ✅ |
-| SERP Preview (desktop + mobile) | — | ✅ | ✅ |
-| Schema.org Wizard (30+ structured data types) | — | ✅ | ✅ |
-| Live JSON-LD preview | — | ✅ | ✅ |
-| SEO Health Dashboard (site-wide scores) | — | ✅ | ✅ |
-| SEO Optimizer (bulk edit across documents) | — | ✅ | ✅ |
-| Advanced Validation (7 checks + auto-fix) | — | ✅ | ✅ |
-| SEO Automation (canonical, OG, focus keyword) | — | ✅ | ✅ |
-| Team Workflow (Draft → Review → Approved) | — | ✅ | ✅ |
-| Duplicate meta title detection (GROQ) | — | ✅ | ✅ |
+| Live SEO Score (0–100) | ✅ | ✅ | — |
+| GEO Checklist (AI Overview readiness) | ✅ | ✅ | — |
+| Meta Tags Preview + HTML snippet | ✅ | ✅ | — |
+| Social Preview Cards (X, Facebook, LinkedIn, WhatsApp) | ✅ | ✅ | — |
+| Focus Keyword tracking | ✅ | ✅ | — |
+| Canonical URL field | ✅ | ✅ | — |
+| Robots Meta (noindex, nofollow, noarchive…) | ✅ | ✅ | — |
+| hreflang / multi-language targeting | ✅ | ✅ | — |
+| Open Graph & Twitter/X card fields | ✅ | ✅ | — |
+| Additional meta tags | ✅ | ✅ | — |
+| Frontend integration guides (Next.js, Astro, Vue) | ✅ | ✅ | — |
+| Readability score | ✅ | ✅ | — |
+| AI Keyword Suggestions | — | ✅ | — |
+| AI Meta Title & Description generation | — | ✅ | — |
+| SERP Preview (desktop + mobile) | — | — | 🔜 |
+| Schema.org Wizard (30+ structured data types) | — | — | 🔜 |
+| Live JSON-LD preview | — | — | 🔜 |
+| SEO Health Dashboard (site-wide scores) | — | — | 🔜 |
+| SEO Optimizer — inline bulk edit, type filter, CSV import/export | — | — | 🔜 |
+| Bulk Canonical URL generation (base URL + slug) | — | — | 🔜 |
+| Bulk Open Graph sync (copy meta → OG per page) | — | — | 🔜 |
+| Advanced Validation (7 checks + auto-fix) | — | — | 🔜 |
+| Team Workflow (Draft → Review → Approved) | — | — | 🔜 |
+| Duplicate meta title detection (GROQ) | — | — | 🔜 |
+| AI Bulk SEO Generation (title + description for all pages) | — | — | 🔜 |
 
 ---
 
@@ -56,8 +60,8 @@ The most complete SEO plugin for Sanity Studio — live SEO score, GEO checklist
 - [Astro Integration](#astro-integration)
 - [Vue 3 / Nuxt Integration](#vue-3--nuxt-integration)
 - [GROQ Fragment](#groq-fragment)
-- [Pro Features](#pro-features)
-- [Pro License Setup](#pro-license-setup)
+- [Pro Features — Coming Soon](#pro-features--coming-soon)
+- [Pro License Setup — Coming Soon](#pro-license-setup--coming-soon)
 - [AI Setup](#ai-setup)
 - [Upgrading from Earlier Versions](#upgrading-from-earlier-versions)
 
@@ -118,7 +122,9 @@ export default defineConfig({
 })
 ```
 
-### With Pro license
+### With Pro license (Coming Soon)
+
+> **Pro features are coming soon.** The `proFeature` config key is reserved for the upcoming license system.
 
 ```ts
 import { defineConfig } from 'sanity'
@@ -127,7 +133,7 @@ import { seoMetaFields } from 'sanity-plugin-seo'
 export default defineConfig({
   plugins: [
     seoMetaFields({
-      proFeature: process.env.SANITY_STUDIO_SEO_LICENSE,
+      proFeature: process.env.SANITY_STUDIO_SEO_LICENSE, // reserved — Pro coming soon
       bodyField: 'body',
       slugField: 'slug',
     }),
@@ -135,19 +141,18 @@ export default defineConfig({
 })
 ```
 
-### Full setup (Pro + AI)
+### Full setup (AI + Pro — Coming Soon)
 
 ```ts
 import { defineConfig } from 'sanity'
 import { seoMetaFields } from 'sanity-plugin-seo'
 
 export default defineConfig({
+  // Pro license key — coming soon, reserve the env var now
+  // proFeature: process.env.SANITY_STUDIO_SEO_LICENSE,
+
   plugins: [
     seoMetaFields({
-      // Pro license key — unlocks SERP preview, Schema.org wizard,
-      // advanced validation, automation, team workflow, and dashboards
-      proFeature: process.env.SANITY_STUDIO_SEO_LICENSE,
-
       // AI-powered title, description, and keyword generation
       aiFeature: {
         provider: 'openai',                          // 'openai' | 'anthropic' | 'groq'
@@ -214,7 +219,7 @@ The plugin automatically renders a tabbed SEO panel with **Basic SEO**, **Social
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `proFeature` | `string` | — | Pro license key from Lemon Squeezy |
+| `proFeature` | `string` | — | Pro license key — **coming soon**, reserve the env var now |
 | `aiFeature` | `AIConfig` | — | AI provider config for keyword/title/description generation |
 | `aiFeature.provider` | `'openai' \| 'anthropic' \| 'groq'` | — | AI provider |
 | `aiFeature.apiKey` | `string` | — | API key for the chosen provider |
@@ -1129,23 +1134,25 @@ The plugin shows the grade score as a color indicator directly beneath the conte
 
 ---
 
-## Pro Features
+## Pro Features — Coming Soon
+
+> Pro features are coming soon. Watch the [npm package](https://www.npmjs.com/package/sanity-plugin-seo) or star the repository to get notified when they launch.
 
 ### SERP Preview
 
-Renders a pixel-accurate Google search result mockup (desktop and mobile) using the document's meta title, description, and URL. Updates live as you type.
+Shows a live Google search result mockup in both **desktop** and **mobile** view — toggled with a tab switcher. Title and description are pixel-width-truncated to match how Google actually cuts them off, so you see exactly what searchers will see before you publish.
 
 ### Schema.org Wizard
 
-Guided form for 30+ structured data types — all eligible for Google Rich Results:
+A guided form for 30 structured data types, all eligible for Google Rich Results:
 
-Article, Product, FAQ Page, Local Business, Event, Organization, Web Page, Video, Recipe, Person, Course, Job Posting, Breadcrumb, Blog Post, News Article, How-To Guide, Review, Software/App, Book, Movie, Service, Professional Service, Medical Condition, Dataset, Podcast, Podcast Episode, Tourist Attraction, Accommodation, Sports Team, Collection Page, About Page
+Article / Blog Post, Product, FAQ Page, Local Business, Event, Organization, Web Page, Video, Recipe, Person / Author, Course, Job Posting, Breadcrumb, Blog Post, News Article, How-To Guide, Review, Software / App, Book, Movie / Film, Service, Professional Service, Medical Condition, Dataset, Podcast, Podcast Episode, Tourist Attraction, Accommodation / Hotel, Sports Team, Collection Page, About Page
 
-Each type surfaces only the fields relevant to it. A live **JSON-LD preview** shows the exact `<script type="application/ld+json">` block that will be rendered, with a completion counter showing how many fields are filled.
+Each type shows only the fields relevant to it. The output is a live **JSON-LD preview** — the exact `<script type="application/ld+json">` block that will render on your page — updated in real time as you type.
 
 ### Advanced Validation
 
-Runs 7 automated checks against your document on every save and surfaces actionable fix buttons:
+Runs 7 checks on the current document and surfaces one-click fix buttons for the issues that can be auto-resolved:
 
 | Check | Auto-fixable |
 |---|:---:|
@@ -1153,48 +1160,68 @@ Runs 7 automated checks against your document on every save and surfaces actiona
 | No noindex + canonical conflict | — |
 | Open Graph image present | — |
 | Open Graph title set | ✅ Copy from meta title |
-| Canonical URL set | ✅ Auto-fill placeholder |
+| Canonical URL set | ✅ Auto-fill from slug |
 | Focus keyword in meta title | — |
 | Meta description length (100–160 chars) | — |
 
-A progress bar and issue count badge give instant visual feedback. A **"Fix N issues automatically"** bulk button applies all auto-fixable patches in one click.
-
-### SEO Automation
-
-One-click actions that fill missing fields without manual copying:
-
-| Action | What it does |
-|---|---|
-| **Auto Canonical URL** | Builds canonical URL from the document slug: `SITE_URL/slug` |
-| **Copy Meta → Open Graph** | Copies meta title and description into OG fields when empty |
-| **Auto Focus Keyword** | Extracts the most prominent word from the meta title |
-
-All three actions can be applied together with a single **"Apply all automations"** button. Each shows a 2.5-second "Applied!" confirmation after running. Fields that are already set show a **Re-apply** button to overwrite if needed.
+A progress bar tracks how many checks pass. An issue count badge (e.g. "3 issues") turns green when all checks clear. A **"Fix all"** button applies every auto-fixable patch in one click — each fix shows a 2.5-second "Fixed!" confirmation inline.
 
 ### Team Workflow
 
-Visual pipeline with three statuses: **Draft → Needs SEO Review → Approved**
+Visual pipeline with three statuses: **Draft → Needs SEO Review → SEO Approved**
 
-- Status badge in the panel header updates live
-- Clickable step indicators to move between statuses directly
-- Context-aware action buttons: "Request Review", "Mark Approved", "Reset to Draft"
-- Review Notes field for leaving feedback to content editors
+- Clickable step indicators — click any status to jump directly to it
+- Quick-action buttons that change based on current status:
+  - **Request Review** — moves Draft → Needs SEO Review
+  - **Mark Approved** — moves any status → SEO Approved
+  - **Reset to Draft** — moves Approved → Draft
+- **Review Notes** field — a text area for leaving feedback or instructions for content editors
 - `seoStatus` and `seoReviewNotes` are stored on the document and queryable via GROQ
 
 ### SEO Health Dashboard
 
-A top-level Studio tool (toolbar icon) showing site-wide SEO scores across all documents. Filter by score range, document type, or missing fields. Click any document to open it directly.
+A top-level Studio tool showing site-wide SEO scores across all documents at a glance.
+
+- **Stat cards**: average score, poor / needs work / good page counts, duplicate title count, pages missing Open Graph
+- **Score filter**: view all pages or filter by Poor (< 50), Needs Work (50–79), or Good (≥ 80)
+- **Issue filter**: dropdown listing every distinct issue type found — filter to show only pages with a specific problem (e.g. "Missing description")
+- Paginated document list with score bar, type badge, issue tags, and last-updated date
+- Click any row to open that document directly in the Studio editor
 
 ### SEO Optimizer (Bulk Edit)
 
-Identifies all documents missing key SEO fields (title, description, canonical, OG image). Lets you apply fixes in bulk without opening each document individually.
+Scans all documents for SEO issues and presents them as a fix queue. Stat cards show average score, total issues, missing keywords, and missing OG images across the entire site.
+
+**Per-document inline editing** — expand any row to edit all SEO fields (meta title, description, canonical URL, focus keyword, OG title, OG description) without leaving the Optimizer. Character counters flag title and description lengths in real time. Each collapsed row shows an issue count badge so you can prioritise at a glance.
+
+**Type filter** — a dropdown filters the table by document type so you can select-all and bulk-apply to one content type (e.g. all `post` documents) without touching others.
+
+**Bulk actions** — select one or more documents and apply changes across all of them in one click:
+
+| Action | What it does |
+|---|---|
+| **Canonical URLs** | Generates `{base-url}/{slug}` for every selected page — you set the base URL once |
+| **Sync Open Graph** | Copies each page's own meta title and description into its OG fields — pages missing a meta title show a warning before you apply |
+| **Import CSV** | Upload a CSV exported from the Optimizer; matched rows are previewed before applying |
+
+After every bulk operation a **result log appears inline** inside the panel — no scrolling needed. Each page shows whether it was updated or skipped and why. The table re-scans automatically after applying.
+
+**Export CSV** — downloads the current table as a spreadsheet pre-filled with all current SEO values. Edit in Excel or Google Sheets and re-import via the CSV tab.
+
+### AI Bulk SEO Generation — Coming Soon
+
+Generate optimised meta titles and descriptions for every page in one operation — powered by your configured AI provider (OpenAI, Anthropic, or Groq). Select pages in the SEO Optimizer, choose a target field, and the AI writes unique, keyword-aware copy for each document individually.
 
 ---
 
-## Pro License Setup
+## Pro License Setup — Coming Soon
 
-1. Purchase a Pro license at **[themejam.lemonsqueezy.com](https://themejam.lemonsqueezy.com/checkout/buy/f2e069ff-cfaf-43a0-8dc2-2b46185e7f24)**
-2. You will receive a license key by email via Lemon Squeezy
+> **Pro is not yet available.** It is coming soon — star the repository or watch the [npm package](https://www.npmjs.com/package/sanity-plugin-seo) to be notified on launch.
+
+When Pro launches, setup will be:
+
+1. Purchase a Pro license (link will be shared on launch)
+2. You will receive a license key by email
 3. Add the key to your environment file:
 
 ```bash
@@ -1211,7 +1238,7 @@ seoMetaFields({
 })
 ```
 
-The license is validated silently on Studio load. Pro features unlock automatically once the key is verified. The validated state is cached in the browser so it does not re-validate on every page load.
+The license will be validated silently on Studio load. Pro features unlock automatically once the key is verified. The validated state is cached in the browser so it does not re-validate on every page load.
 
 > **Note:** Environment variables exposed to Sanity Studio must be prefixed with `SANITY_STUDIO_` to be available in the browser bundle.
 
@@ -1392,4 +1419,4 @@ Built by [Bhargav Patel](https://bkpatel.com/)
 
 ## License
 
-MIT — free tier features are open source. Pro features require a valid license key purchased at [themejam.lemonsqueezy.com](https://themejam.lemonsqueezy.com/checkout/buy/f2e069ff-cfaf-43a0-8dc2-2b46185e7f24).
+MIT — free tier features are fully open source. Pro features are coming soon — watch the repository for launch announcements.
