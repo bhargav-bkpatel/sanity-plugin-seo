@@ -2,7 +2,6 @@ import { defineType } from "sanity";
 import SEOTitleFeedback from "../components/SEOTitleFeedback";
 import SEODescriptionFeedback from "../components/SEODescriptionFeedback";
 import SEOMetaFieldsWrapper from "../components/SEOMetaFieldsWrapper";
-import { isProEnabled } from "../config";
 import SchemaWizardFieldInput from "../components/pro/SchemaWizardFieldInput";
 
 const schema = defineType({
@@ -300,24 +299,7 @@ const schema = defineType({
         },
       ],
     },
-    // ── Pro Workflow ──────────────────────────────────────
-    {
-      name: "seoStatus",
-      title: "SEO Status",
-      type: "string",
-      group: "workflow",
-      initialValue: "draft",
-      hidden: () => isProEnabled(),
-      options: {
-        list: [
-          { title: "Draft", value: "draft" },
-          { title: "Needs Review", value: "review" },
-          { title: "Approved", value: "approved" },
-        ],
-        layout: "radio",
-        direction: "horizontal",
-      },
-    },
+    // ── Workflow ──────────────────────────────────────────
     {
       name: "seoReviewNotes",
       title: "Review Notes",
