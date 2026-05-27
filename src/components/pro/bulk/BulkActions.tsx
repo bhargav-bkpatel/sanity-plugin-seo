@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { DownloadIcon, UploadIcon } from "@sanity/icons";
-import { BulkTab, SEO_STATUSES, INPUT_STYLE, FIELD_LABEL } from "./types";
+import { BulkTab, INPUT_STYLE, FIELD_LABEL } from "./types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -9,7 +9,6 @@ interface CsvRow {
   title: string;
   canonicalUrl: string;
   focusKeyword: string;
-  seoStatus: string;
   found: boolean;
 }
 
@@ -24,9 +23,6 @@ interface Props {
   bulkKeyword: string;
   onKeywordChange: (v: string) => void;
 
-  bulkStatus: string;
-  onStatusChange: (v: string) => void;
-
   bulkProcessing: boolean;
   onApply: () => void;
 
@@ -40,7 +36,6 @@ interface Props {
 const TAB_LABELS: Record<BulkTab, string> = {
   canonical: "Canonical URLs",
   keyword: "Focus Keyword",
-  status: "SEO Status",
   csv: "Import CSV",
 };
 
@@ -52,8 +47,6 @@ export default function BulkActions({
   onCanonicalBaseChange,
   bulkKeyword,
   onKeywordChange,
-  bulkStatus,
-  onStatusChange,
   bulkProcessing,
   onApply,
   csvPreview,
@@ -186,29 +179,6 @@ export default function BulkActions({
           </>
         )}
 
-        {/* SEO Status */}
-        {bulkTab === "status" && (
-          <>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={FIELD_LABEL}>Set Status</span>
-              <select
-                value={bulkStatus}
-                onChange={(e) => onStatusChange(e.target.value)}
-                style={{ ...INPUT_STYLE, flex: "0 0 200px", cursor: "pointer" }}
-              >
-                {SEO_STATUSES.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div style={{ marginTop: 8, fontSize: 11, color: "#475569" }}>
-              Updates the team workflow status on all selected pages.
-            </div>
-          </>
-        )}
-
         {/* CSV Import */}
         {bulkTab === "csv" && (
           <CsvImportTab
@@ -287,8 +257,7 @@ function CsvImportTab({
           Expected CSV headers (first row):
         </div>
         <code style={{ color: "#60a5fa", fontSize: 11 }}>
-          _id, metaTitle, metaDescription, canonicalUrl, focusKeyword, ogTitle, ogDescription,
-          seoStatus
+          _id, metaTitle, metaDescription, canonicalUrl, focusKeyword, ogTitle, ogDescription
         </code>
         <div style={{ marginTop: 6 }}>
           Use{" "}
@@ -382,7 +351,7 @@ function CsvImportTab({
                 key={i}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "16px 1fr 1fr 1fr 90px",
+                  gridTemplateColumns: "16px 1fr 1fr 1fr",
                   gap: 8,
                   padding: "8px 12px",
                   borderBottom: i < csvPreview.length - 1 ? "1px solid #1e293b" : "none",
@@ -424,7 +393,6 @@ function CsvImportTab({
                   {row.canonicalUrl || "—"}
                 </span>
                 <span style={{ fontSize: 11, color: "#64748b" }}>{row.focusKeyword || "—"}</span>
-                <span style={{ fontSize: 11, color: "#64748b" }}>{row.seoStatus || "—"}</span>
               </div>
             ))}
           </div>

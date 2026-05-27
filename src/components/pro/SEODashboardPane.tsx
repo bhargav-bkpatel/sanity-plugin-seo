@@ -164,17 +164,42 @@ function StatCard({
   return (
     <div
       style={{
-        background: "#0a0f1e",
-        border: `1px solid ${accent}30`,
-        borderLeft: `3px solid ${accent}`,
-        borderRadius: 10,
-        padding: "16px 20px",
+        background: "#0f172a",
+        border: `1px solid ${accent}40`,
+        borderTop: `3px solid ${accent}`,
+        borderRadius: 12,
+        padding: "20px 24px",
         flex: 1,
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      <div style={{ fontSize: 36, fontWeight: 900, color: accent, lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 12, fontWeight: 700, color: "#cbd5e1", marginTop: 8 }}>{label}</div>
-      <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>{sub}</div>
+      {/* Glow behind number */}
+      <div
+        style={{
+          position: "absolute",
+          top: -20,
+          right: -20,
+          width: 80,
+          height: 80,
+          borderRadius: "50%",
+          background: `${accent}18`,
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          fontSize: 40,
+          fontWeight: 900,
+          color: accent,
+          lineHeight: 1,
+          letterSpacing: -1,
+        }}
+      >
+        {value}
+      </div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: "#f1f5f9", marginTop: 10 }}>{label}</div>
+      <div style={{ fontSize: 11, color: "#475569", marginTop: 3 }}>{sub}</div>
     </div>
   );
 }
@@ -419,6 +444,9 @@ export default function SEODashboardPane() {
   const poorCount = docs.filter((d) => d.color === "red").length;
   const avgScore =
     totalDocs > 0 ? Math.round(docs.reduce((s, d) => s + d.score, 0) / totalDocs) : 0;
+  // Health-specific: coverage metrics across ALL pages (not just problem pages)
+  const duplicateTitles = docs.filter((d) => d.issues.includes("Duplicate meta title")).length;
+  const noOpenGraph = docs.filter((d) => d.issues.includes("Open Graph not configured")).length;
 
   if (!isPro) {
     return (
@@ -527,14 +555,30 @@ export default function SEODashboardPane() {
           {/* Stat cards */}
           <div style={{ display: "flex", gap: 12 }}>
             <StatCard
+              value={totalDocs}
+              label="Pages Monitored"
+              sub="total pages scanned"
+              accent="#38bdf8"
+            />
+            <StatCard
               value={avgScore}
               label="Avg SEO Score"
-              sub="across all pages"
+              sub="overall health score"
               accent={scoreColorHex(avgScore)}
             />
-            <StatCard value={goodCount} label="Good" sub="score ≥ 80" accent="#22c55e" />
-            <StatCard value={okCount} label="Needs Work" sub="score 50–79" accent="#f59e0b" />
-            <StatCard value={poorCount} label="Poor" sub="score < 50" accent="#ef4444" />
+            <StatCard value={poorCount} label="Poor Health" sub="score below 50" accent="#ef4444" />
+            <StatCard
+              value={noOpenGraph}
+              label="No Open Graph"
+              sub="social sharing not set up"
+              accent="#f97316"
+            />
+            <StatCard
+              value={duplicateTitles}
+              label="Duplicate Titles"
+              sub="SEO penalty risk"
+              accent="#a78bfa"
+            />
           </div>
 
           {/* Filters — uniform 36px height for tabs and dropdown */}

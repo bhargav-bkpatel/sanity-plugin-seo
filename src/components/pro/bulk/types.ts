@@ -24,7 +24,7 @@ export interface RowEdit {
   saved: boolean;
 }
 
-export type BulkTab = "canonical" | "keyword" | "status" | "csv";
+export type BulkTab = "canonical" | "keyword" | "csv";
 
 export const SEO_STATUSES = [
   { value: "draft", label: "Draft" },

@@ -101,7 +101,6 @@ interface CsvRow {
   focusKeyword: string;
   ogTitle: string;
   ogDescription: string;
-  seoStatus: string;
   found: boolean;
 }
 
@@ -123,7 +122,6 @@ export default function BulkSEOPanel() {
   const [bulkProcessing, setBulkProcessing] = useState(false);
   const [bulkCanonicalBase, setBulkCanonicalBase] = useState("https://yoursite.com");
   const [bulkKeyword, setBulkKeyword] = useState("");
-  const [bulkStatus, setBulkStatus] = useState("review");
 
   // CSV state
   const [csvPreview, setCsvPreview] = useState<CsvRow[]>([]);
@@ -245,9 +243,7 @@ export default function BulkSEOPanel() {
     const selected = docs.filter((d) => d.selected);
     if (!selected.length) return;
 
-    let actionLabel = "SEO status";
-    if (bulkTab === "canonical") actionLabel = "canonical URL";
-    else if (bulkTab === "keyword") actionLabel = "focus keyword";
+    const actionLabel = bulkTab === "canonical" ? "canonical URL" : "focus keyword";
 
     setBulkProcessing(true);
     setLog([{ msg: `Applying ${actionLabel} to ${selected.length} page(s)…`, ok: true }]);
@@ -263,12 +259,8 @@ export default function BulkSEOPanel() {
           await client.patch(doc._id).set({ "seo.canonicalUrl": canonical }).commit();
           return { docTitle: doc.docTitle, detail: canonical };
         }
-        if (bulkTab === "keyword") {
-          await client.patch(doc._id).set({ "seo.focusKeyword": bulkKeyword.trim() }).commit();
-          return { docTitle: doc.docTitle, detail: bulkKeyword.trim() };
-        }
-        await client.patch(doc._id).set({ "seo.seoStatus": bulkStatus }).commit();
-        return { docTitle: doc.docTitle, detail: bulkStatus };
+        await client.patch(doc._id).set({ "seo.focusKeyword": bulkKeyword.trim() }).commit();
+        return { docTitle: doc.docTitle, detail: bulkKeyword.trim() };
       }),
     );
 
@@ -285,13 +277,13 @@ export default function BulkSEOPanel() {
     setLog(newLog);
     setBulkProcessing(false);
     fetchDocs();
-  }, [docs, client, bulkTab, bulkCanonicalBase, bulkKeyword, bulkStatus, fetchDocs]);
+  }, [docs, client, bulkTab, bulkCanonicalBase, bulkKeyword, fetchDocs]);
 
   // ─── CSV export ──────────────────────────────────────────────────────────────
 
   const exportCSV = useCallback(() => {
     const header =
-      "_id,title,type,metaTitle,metaDescription,canonicalUrl,focusKeyword,ogTitle,ogDescription,seoStatus";
+      "_id,title,type,metaTitle,metaDescription,canonicalUrl,focusKeyword,ogTitle,ogDescription";
     const q = (v: string) => `"${(v || "").replace(/"/g, '""')}"`;
     const rows = docs.map((d) =>
       [
@@ -304,7 +296,6 @@ export default function BulkSEOPanel() {
         q(d.seo?.focusKeyword || ""),
         q(d.seo?.openGraph?.title || ""),
         q(d.seo?.openGraph?.description || ""),
-        d.seo?.seoStatus || "draft",
       ].join(","),
     );
     const csv = [header, ...rows].join("\n");
@@ -365,7 +356,6 @@ export default function BulkSEOPanel() {
         const kwIdx = headers.indexOf("focuskeyword");
         const ogTIdx = headers.indexOf("ogtitle");
         const ogDIdx = headers.indexOf("ogdescription");
-        const stIdx = headers.indexOf("seostatus");
         if (idIdx === -1) {
           setCsvError('CSV must include an "_id" column.');
           return;
@@ -384,7 +374,6 @@ export default function BulkSEOPanel() {
             focusKeyword: col(cols, kwIdx),
             ogTitle: col(cols, ogTIdx),
             ogDescription: col(cols, ogDIdx),
-            seoStatus: col(cols, stIdx),
             found: Boolean(docMap[id]),
           };
         });
@@ -411,7 +400,6 @@ export default function BulkSEOPanel() {
         if (row.focusKeyword) patch["seo.focusKeyword"] = row.focusKeyword;
         if (row.ogTitle) patch["seo.openGraph.title"] = row.ogTitle;
         if (row.ogDescription) patch["seo.openGraph.description"] = row.ogDescription;
-        if (row.seoStatus) patch["seo.seoStatus"] = row.seoStatus;
         await client.patch(row._id).set(patch).commit();
         return { title: row.title };
       }),
@@ -436,9 +424,9 @@ export default function BulkSEOPanel() {
   // ─── Derived stats ───────────────────────────────────────────────────────────
 
   const selectedCount = docs.filter((d) => d.selected).length;
-  const titleIssues = docs.filter((d) => d.issues.some((i) => i.includes("title"))).length;
-  const descIssues = docs.filter((d) => d.issues.some((i) => i.includes("description"))).length;
-  const noCanonical = docs.filter((d) => d.issues.includes("No canonical URL")).length;
+  const totalIssues = docs.reduce((sum, d) => sum + d.issues.length, 0);
+  const missingKeywords = docs.filter((d) => d.issues.includes("No focus keyword")).length;
+  const noMetaImage = docs.filter((d) => d.issues.includes("No meta image")).length;
   const avgScore =
     docs.length > 0 ? Math.round(docs.reduce((s, d) => s + d.score, 0) / docs.length) : 0;
 
@@ -492,18 +480,35 @@ export default function BulkSEOPanel() {
                       : "Scan your content to find SEO issues and fix them inline or in bulk"}
                   </Text>
                   {loaded && cacheAge && (
-                    <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}>
-                      <div
+                    <div style={{ marginTop: 10 }}>
+                      <span
                         style={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: "50%",
-                          background: "#4ade80",
-                          flexShrink: 0,
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 6,
+                          padding: "4px 10px",
+                          background: "#052e16",
+                          border: "1px solid #166534",
+                          borderRadius: 99,
                         }}
-                      />
-                      <span style={{ fontSize: 11, color: "#374151" }}>
-                        Last scanned {cacheAge} · cached
+                      >
+                        <div
+                          style={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: "50%",
+                            background: "#4ade80",
+                            flexShrink: 0,
+                            boxShadow: "0 0 6px #4ade80",
+                          }}
+                        />
+                        <span style={{ fontSize: 11, fontWeight: 600, color: "#4ade80" }}>
+                          Cached
+                        </span>
+                        <span style={{ fontSize: 11, color: "#166534" }}>·</span>
+                        <span style={{ fontSize: 11, color: "#16a34a" }}>
+                          Last scanned {cacheAge}
+                        </span>
                       </span>
                     </div>
                   )}
@@ -543,9 +548,10 @@ export default function BulkSEOPanel() {
             {/* Stat cards — always visible, dims when not yet scanned */}
             <BulkStatCards
               avgScore={avgScore}
-              titleIssues={titleIssues}
-              descIssues={descIssues}
-              noCanonical={noCanonical}
+              pagesWithIssues={docs.length}
+              totalIssues={totalIssues}
+              missingKeywords={missingKeywords}
+              noMetaImage={noMetaImage}
               loaded={loaded}
             />
 
@@ -681,8 +687,6 @@ export default function BulkSEOPanel() {
                 onCanonicalBaseChange={setBulkCanonicalBase}
                 bulkKeyword={bulkKeyword}
                 onKeywordChange={setBulkKeyword}
-                bulkStatus={bulkStatus}
-                onStatusChange={setBulkStatus}
                 bulkProcessing={bulkProcessing}
                 onApply={runBulk}
                 csvPreview={csvPreview}

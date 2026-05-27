@@ -72,18 +72,20 @@ function StatCard({
 }
 
 interface Props {
+  pagesWithIssues: number;
+  totalIssues: number;
+  missingKeywords: number;
+  noMetaImage: number;
   avgScore: number;
-  titleIssues: number;
-  descIssues: number;
-  noCanonical: number;
   loaded: boolean;
 }
 
 export default function BulkStatCards({
+  pagesWithIssues,
+  totalIssues,
+  missingKeywords,
+  noMetaImage,
   avgScore,
-  titleIssues,
-  descIssues,
-  noCanonical,
   loaded,
 }: Props) {
   return (
@@ -96,23 +98,30 @@ export default function BulkStatCards({
         loaded={loaded}
       />
       <StatCard
-        value={titleIssues}
-        label="Title Issues"
-        sub="missing or out of range"
+        value={pagesWithIssues}
+        label="Pages with Issues"
+        sub="need attention"
         accent="#ef4444"
         loaded={loaded}
       />
       <StatCard
-        value={descIssues}
-        label="Description Issues"
-        sub="missing or out of range"
+        value={totalIssues}
+        label="Total Issues"
+        sub="across all pages"
         accent="#f59e0b"
         loaded={loaded}
       />
       <StatCard
-        value={noCanonical}
-        label="No Canonical URL"
-        sub="pages need canonical"
+        value={missingKeywords}
+        label="Missing Keywords"
+        sub="no focus keyword set"
+        accent="#f97316"
+        loaded={loaded}
+      />
+      <StatCard
+        value={noMetaImage}
+        label="No Meta Image"
+        sub="missing OG / social image"
         accent="#a78bfa"
         loaded={loaded}
       />
