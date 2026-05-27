@@ -1,15 +1,14 @@
 import React, { useMemo, useCallback } from "react";
 import { ObjectInputProps, PatchEvent, set } from "sanity";
 import { Stack, Box } from "@sanity/ui";
+import AIKeywordsSection from "./AIKeywordsSection";
 import { computeSEOScore } from "../utils/seoScore";
 import SEOScoreDisplay from "./SEOScoreDisplay";
 import GEOChecklist from "./GEOChecklist";
 import MetaTagsPreview from "./MetaTagsPreview";
-import AIKeywordsSection from "./AIKeywordsSection";
 import SERPPreview from "./pro/SERPPreview";
 import AdvancedValidation from "./pro/AdvancedValidation";
 import AutomationPanel from "./pro/AutomationPanel";
-import TeamWorkflowPanel from "./pro/TeamWorkflowPanel";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -68,14 +67,6 @@ const SEOMetaFieldsWrapper = ({
           <AdvancedValidation value={value} onChange={onChange} />
           <HR />
           <AutomationPanel value={value} onChange={onChange} />
-        </>
-      )}
-
-      {/* Team Workflow Panel — Workflow tab */}
-      {activeGroup === "workflow" && (
-        <>
-          <HR />
-          <TeamWorkflowPanel value={value} onChange={onChange} />
         </>
       )}
 

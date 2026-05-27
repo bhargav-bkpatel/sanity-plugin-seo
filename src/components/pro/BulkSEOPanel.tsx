@@ -12,6 +12,86 @@ import { BulkDoc, RowEdit, BulkTab, getIssues } from "./bulk/types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// ---------------------------------------------------------------------------
+// Two-layer cache:
+//   1. Module-level variable  — zero-cost on navigation (no JSON parse)
+//   2. localStorage           — survives full page reloads
+// ---------------------------------------------------------------------------
+interface BulkScanCache {
+  docs: BulkDoc[];
+  rowEdits: Record<string, RowEdit>;
+  timestamp: number;
+}
+const BULK_CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+const BULK_LS_KEY = "seo-plugin__bulk-scan";
+let bulkScanCache: BulkScanCache | null = null;
+
+function readBulkLS(): BulkScanCache | null {
+  try {
+    const raw = localStorage.getItem(BULK_LS_KEY);
+    if (!raw) return null;
+    const parsed: BulkScanCache = JSON.parse(raw);
+    if (Date.now() - parsed.timestamp > BULK_CACHE_TTL_MS) {
+      localStorage.removeItem(BULK_LS_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function getBulkCached(): Pick<BulkScanCache, "docs" | "rowEdits"> | null {
+  // Hot layer first, then warm localStorage layer
+  const hit = bulkScanCache ?? readBulkLS();
+  if (!hit) return null;
+  if (Date.now() - hit.timestamp > BULK_CACHE_TTL_MS) {
+    bulkScanCache = null;
+    localStorage.removeItem(BULK_LS_KEY);
+    return null;
+  }
+  // Populate in-memory layer from localStorage if it was empty
+  if (!bulkScanCache) bulkScanCache = hit;
+  // Reset transient UI flags so rows don't appear mid-save after reload
+  const docs = hit.docs.map((d) => ({ ...d, selected: false }));
+  const rowEdits = Object.fromEntries(
+    Object.entries(hit.rowEdits).map(([id, edit]) => [
+      id,
+      { ...edit, saving: false, saved: false },
+    ]),
+  );
+  return { docs, rowEdits };
+}
+
+function setBulkCache(docs: BulkDoc[], rowEdits: Record<string, RowEdit>): void {
+  const data: BulkScanCache = { docs, rowEdits, timestamp: Date.now() };
+  bulkScanCache = data;
+  try {
+    localStorage.setItem(BULK_LS_KEY, JSON.stringify(data));
+  } catch {
+    // localStorage full or unavailable — in-memory layer still works
+  }
+}
+
+function clearBulkCache(): void {
+  bulkScanCache = null;
+  try {
+    localStorage.removeItem(BULK_LS_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+function getBulkCacheAge(): string | null {
+  const hit = bulkScanCache ?? readBulkLS();
+  if (!hit) return null;
+  const secs = Math.floor((Date.now() - hit.timestamp) / 1000);
+  if (secs < 60) return "just now";
+  const mins = Math.floor(secs / 60);
+  return `${mins} minute${mins !== 1 ? "s" : ""} ago`;
+}
+// ---------------------------------------------------------------------------
+
 interface CsvRow {
   _id: string;
   title: string;
@@ -28,12 +108,15 @@ interface CsvRow {
 export default function BulkSEOPanel() {
   const client = useClient({ apiVersion: "2024-01-01" });
 
-  // Document list + per-row state
-  const [docs, setDocs] = useState<BulkDoc[]>([]);
+  // Document list + per-row state — initialised from module-level cache on mount
+  const [docs, setDocs] = useState<BulkDoc[]>(() => getBulkCached()?.docs ?? []);
   const [loading, setLoading] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(() => getBulkCached() !== null);
+  const [cacheAge, setCacheAge] = useState<string | null>(() => getBulkCacheAge());
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [rowEdits, setRowEdits] = useState<Record<string, RowEdit>>({});
+  const [rowEdits, setRowEdits] = useState<Record<string, RowEdit>>(
+    () => getBulkCached()?.rowEdits ?? {},
+  );
 
   // Bulk action state
   const [bulkTab, setBulkTab] = useState<BulkTab>("canonical");
@@ -52,15 +135,16 @@ export default function BulkSEOPanel() {
 
   // ─── Scan ────────────────────────────────────────────────────────────────────
 
-  const fetchDocs = useCallback(async () => {
-    setLoading(true);
-    setLog([]);
-    setExpandedId(null);
-    setRowEdits({});
-    setCsvPreview([]);
-    setCsvError(null);
-    try {
-      const results: any[] = await client.fetch(`
+  const fetchDocs = useCallback(
+    async (bust = false) => {
+      if (bust) clearBulkCache();
+      setLoading(true);
+      setLog([]);
+      setExpandedId(null);
+      setCsvPreview([]);
+      setCsvError(null);
+      try {
+        const results: any[] = await client.fetch(`
         *[!(_id in path("drafts.**")) && (defined(seo) || defined(slug))]
           | order(_updatedAt desc) [0...200] {
           _id, _type,
@@ -68,35 +152,39 @@ export default function BulkSEOPanel() {
           "seo": seo
         }
       `);
-      const scored = results.map((d) => ({
-        ...d,
-        score: computeSEOScore(d.seo || undefined).score,
-        issues: getIssues(d.seo),
-        selected: false,
-      }));
-      const withIssues = scored.filter((d) => d.issues.length > 0);
-      setDocs(withIssues);
+        const scored = results.map((d) => ({
+          ...d,
+          score: computeSEOScore(d.seo || undefined).score,
+          issues: getIssues(d.seo),
+          selected: false,
+        }));
+        const withIssues = scored.filter((d) => d.issues.length > 0);
+        setDocs(withIssues);
 
-      const edits: Record<string, RowEdit> = {};
-      withIssues.forEach((d) => {
-        edits[d._id] = {
-          metaTitle: d.seo?.metaTitle || "",
-          metaDescription: d.seo?.metaDescription || "",
-          canonicalUrl: d.seo?.canonicalUrl || "",
-          focusKeyword: d.seo?.focusKeyword || "",
-          ogTitle: d.seo?.openGraph?.title || "",
-          ogDescription: d.seo?.openGraph?.description || "",
-          seoStatus: d.seo?.seoStatus || "draft",
-          saving: false,
-          saved: false,
-        };
-      });
-      setRowEdits(edits);
-      setLoaded(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [client]);
+        const edits: Record<string, RowEdit> = {};
+        withIssues.forEach((d) => {
+          edits[d._id] = {
+            metaTitle: d.seo?.metaTitle || "",
+            metaDescription: d.seo?.metaDescription || "",
+            canonicalUrl: d.seo?.canonicalUrl || "",
+            focusKeyword: d.seo?.focusKeyword || "",
+            ogTitle: d.seo?.openGraph?.title || "",
+            ogDescription: d.seo?.openGraph?.description || "",
+            seoStatus: d.seo?.seoStatus || "draft",
+            saving: false,
+            saved: false,
+          };
+        });
+        setRowEdits(edits);
+        setBulkCache(withIssues, edits);
+        setCacheAge(getBulkCacheAge());
+        setLoaded(true);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [client],
+  );
 
   // ─── Row selection ───────────────────────────────────────────────────────────
 
@@ -130,9 +218,7 @@ export default function BulkSEOPanel() {
       if (!edit) return;
       setRowEdits((prev) => ({ ...prev, [doc._id]: { ...prev[doc._id], saving: true } }));
       try {
-        const patch: Record<string, any> = {
-          "seo.seoStatus": edit.seoStatus,
-        };
+        const patch: Record<string, any> = {};
         if (edit.metaTitle) patch["seo.metaTitle"] = edit.metaTitle;
         if (edit.metaDescription) patch["seo.metaDescription"] = edit.metaDescription;
         if (edit.canonicalUrl) patch["seo.canonicalUrl"] = edit.canonicalUrl;
@@ -405,11 +491,27 @@ export default function BulkSEOPanel() {
                         } with issues — click a row to edit, select multiple for bulk fixes`
                       : "Scan your content to find SEO issues and fix them inline or in bulk"}
                   </Text>
+                  {loaded && cacheAge && (
+                    <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                      <div
+                        style={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          background: "#4ade80",
+                          flexShrink: 0,
+                        }}
+                      />
+                      <span style={{ fontSize: 11, color: "#374151" }}>
+                        Last scanned {cacheAge} · cached
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
               <button
                 type="button"
-                onClick={fetchDocs}
+                onClick={() => fetchDocs(true)}
                 disabled={loading}
                 style={{
                   display: "flex",
@@ -655,7 +757,7 @@ export default function BulkSEOPanel() {
                 </div>
                 <button
                   type="button"
-                  onClick={fetchDocs}
+                  onClick={() => fetchDocs(true)}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",

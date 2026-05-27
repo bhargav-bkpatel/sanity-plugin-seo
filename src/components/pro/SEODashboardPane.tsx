@@ -23,6 +23,75 @@ interface ScoredDoc extends DocSEO {
   issues: string[];
 }
 
+// ---------------------------------------------------------------------------
+// Two-layer cache:
+//   1. Module-level variable  — zero-cost on navigation (no JSON parse)
+//   2. localStorage           — survives full page reloads
+// ---------------------------------------------------------------------------
+interface ScanCache {
+  docs: ScoredDoc[];
+  timestamp: number;
+}
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const DASHBOARD_LS_KEY = "seo-plugin__dashboard-scan";
+let scanCache: ScanCache | null = null;
+
+function readDashboardLS(): ScanCache | null {
+  try {
+    const raw = localStorage.getItem(DASHBOARD_LS_KEY);
+    if (!raw) return null;
+    const parsed: ScanCache = JSON.parse(raw);
+    if (Date.now() - parsed.timestamp > CACHE_TTL_MS) {
+      localStorage.removeItem(DASHBOARD_LS_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function getCached(): ScoredDoc[] | null {
+  const hit = scanCache ?? readDashboardLS();
+  if (!hit) return null;
+  if (Date.now() - hit.timestamp > CACHE_TTL_MS) {
+    scanCache = null;
+    localStorage.removeItem(DASHBOARD_LS_KEY);
+    return null;
+  }
+  if (!scanCache) scanCache = hit;
+  return hit.docs;
+}
+
+function setCache(docs: ScoredDoc[]): void {
+  const data: ScanCache = { docs, timestamp: Date.now() };
+  scanCache = data;
+  try {
+    localStorage.setItem(DASHBOARD_LS_KEY, JSON.stringify(data));
+  } catch {
+    // localStorage full or unavailable — in-memory layer still works
+  }
+}
+
+function clearDashboardCache(): void {
+  scanCache = null;
+  try {
+    localStorage.removeItem(DASHBOARD_LS_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+function getCacheAge(): string | null {
+  const hit = scanCache ?? readDashboardLS();
+  if (!hit) return null;
+  const secs = Math.floor((Date.now() - hit.timestamp) / 1000);
+  if (secs < 60) return "just now";
+  const mins = Math.floor(secs / 60);
+  return `${mins} minute${mins !== 1 ? "s" : ""} ago`;
+}
+// ---------------------------------------------------------------------------
+
 function getIssues(seo: Record<string, any> | null): string[] {
   if (!seo) return ["No SEO data — open this document and fill in SEO fields"];
   const issues: string[] = [];
@@ -268,20 +337,32 @@ const FILTER_TABS = [
 
 export default function SEODashboardPane() {
   const client = useClient({ apiVersion: "2024-01-01" });
-  const [docs, setDocs] = useState<ScoredDoc[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Initialise directly from cache — no loading flash when navigating back
+  const [docs, setDocs] = useState<ScoredDoc[]>(() => getCached() ?? []);
+  const [loading, setLoading] = useState(() => getCached() === null);
+  const [cacheAge, setCacheAge] = useState<string | null>(() => getCacheAge());
   const [filter, setFilter] = useState<"all" | "poor" | "ok" | "good">("all");
   const [issueFilter, setIssueFilter] = useState<string>("all");
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 5;
   const { isPro } = useProEnabled();
 
-  const fetchDocs = useCallback(async () => {
-    setLoading(true);
-    try {
-      // Include ANY published document that has a slug or seo field — catches
-      // content pages that haven't had their SEO tab touched yet (score = 0).
-      const results: DocSEO[] = await client.fetch(`
+  const fetchDocs = useCallback(
+    async (bust = false) => {
+      if (bust) clearDashboardCache();
+      // If valid cache exists and this is not a forced refresh, skip the network call
+      const cached = getCached();
+      if (cached) {
+        setDocs(cached);
+        setCacheAge(getCacheAge());
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        // Include ANY published document that has a slug or seo field — catches
+        // content pages that haven't had their SEO tab touched yet (score = 0).
+        const results: DocSEO[] = await client.fetch(`
         *[!(_id in path("drafts.**")) && (defined(seo) || defined(slug))]
           | order(_updatedAt desc) [0...200] {
           _id, _type, _updatedAt,
@@ -290,29 +371,33 @@ export default function SEODashboardPane() {
         }
       `);
 
-      const initial = results.map((doc) => {
-        const result = computeSEOScore(doc.seo || undefined);
-        return { ...doc, score: result.score, color: result.color, issues: getIssues(doc.seo) };
-      });
+        const initial = results.map((doc) => {
+          const result = computeSEOScore(doc.seo || undefined);
+          return { ...doc, score: result.score, color: result.color, issues: getIssues(doc.seo) };
+        });
 
-      // Flag duplicate meta titles
-      const titleCounts: Record<string, number> = {};
-      results.forEach((doc) => {
-        if (doc.seo?.metaTitle) {
-          titleCounts[doc.seo.metaTitle] = (titleCounts[doc.seo.metaTitle] || 0) + 1;
-        }
-      });
-      const withDupes = initial.map((doc) =>
-        doc.seo?.metaTitle && titleCounts[doc.seo.metaTitle] > 1
-          ? { ...doc, issues: [...doc.issues, "Duplicate meta title"] }
-          : doc,
-      );
+        // Flag duplicate meta titles
+        const titleCounts: Record<string, number> = {};
+        results.forEach((doc) => {
+          if (doc.seo?.metaTitle) {
+            titleCounts[doc.seo.metaTitle] = (titleCounts[doc.seo.metaTitle] || 0) + 1;
+          }
+        });
+        const withDupes = initial.map((doc) =>
+          doc.seo?.metaTitle && titleCounts[doc.seo.metaTitle] > 1
+            ? { ...doc, issues: [...doc.issues, "Duplicate meta title"] }
+            : doc,
+        );
 
-      setDocs(withDupes);
-    } finally {
-      setLoading(false);
-    }
-  }, [client]);
+        setCache(withDupes);
+        setDocs(withDupes);
+        setCacheAge(getCacheAge());
+      } finally {
+        setLoading(false);
+      }
+    },
+    [client],
+  );
 
   useEffect(() => {
     fetchDocs();
@@ -386,6 +471,22 @@ export default function SEODashboardPane() {
                         totalDocs !== 1 ? "s" : ""
                       } across your content`}
                 </Text>
+                {!loading && cacheAge && (
+                  <div style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 6 }}>
+                    <div
+                      style={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        background: "#22c55e",
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span style={{ fontSize: 11, color: "#475569" }}>
+                      Last scanned {cacheAge} · cached
+                    </span>
+                  </div>
+                )}
               </div>
               {!loading && totalDocs > 0 && (
                 <DistributionStrip
@@ -398,7 +499,7 @@ export default function SEODashboardPane() {
             </div>
             <button
               type="button"
-              onClick={fetchDocs}
+              onClick={() => fetchDocs(true)}
               disabled={loading}
               style={{
                 display: "flex",

@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronDownIcon, CheckmarkCircleIcon, EditIcon } from "@sanity/icons";
-import { BulkDoc, RowEdit, SEO_STATUSES } from "./types";
+import { BulkDoc, RowEdit } from "./types";
 import ScoreBar from "./ScoreBar";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -115,9 +115,6 @@ export default function BulkDocRow({
     (field: keyof Omit<RowEdit, "saving" | "saved">) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       onFieldChange(doc._id, field, e.target.value);
-      if (field !== "seoStatus") {
-        onFieldChange(doc._id, "seoStatus", "draft");
-      }
     };
 
   return (
@@ -384,62 +381,6 @@ export default function BulkDocRow({
                 style={{ ...FIELD_INPUT, resize: "vertical" }}
               />
             </FieldBlock>
-          </div>
-
-          {/* ── Workflow ── */}
-          <div style={{ ...SECTION_HEADER, marginTop: 20 }}>
-            <div
-              style={{
-                width: 3,
-                height: 12,
-                borderRadius: 2,
-                background: "#22c55e",
-                flexShrink: 0,
-              }}
-            />
-            Workflow
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div>
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "#94a3b8",
-                  marginBottom: 5,
-                }}
-              >
-                SEO Status
-              </div>
-              <select
-                value={edit.seoStatus}
-                onChange={handleChange("seoStatus")}
-                style={{ ...FIELD_INPUT, width: 200, cursor: "pointer" }}
-              >
-                {SEO_STATUSES.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {edit.seoStatus === "draft" && (
-              <div
-                style={{
-                  marginTop: 18,
-                  fontSize: 11,
-                  color: "#475569",
-                  background: "#0f172a",
-                  border: "1px solid #1e293b",
-                  borderRadius: 6,
-                  padding: "6px 10px",
-                }}
-              >
-                Auto-resets to <strong style={{ color: "#64748b" }}>Draft</strong> when content
-                fields are edited
-              </div>
-            )}
           </div>
 
           {/* Footer */}
