@@ -6,6 +6,7 @@ export interface BulkDoc {
   _id: string;
   _type: string;
   docTitle: string;
+  docSlug: string | null;
   seo: Record<string, any> | null;
   score: number;
   issues: string[];
@@ -24,7 +25,7 @@ export interface RowEdit {
   saved: boolean;
 }
 
-export type BulkTab = "canonical" | "keyword" | "csv";
+export type BulkTab = "canonical" | "og" | "csv";
 
 export const SEO_STATUSES = [
   { value: "draft", label: "Draft" },

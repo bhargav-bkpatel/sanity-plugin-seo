@@ -12,6 +12,11 @@ interface CsvRow {
   found: boolean;
 }
 
+interface LogEntry {
+  msg: string;
+  ok: boolean;
+}
+
 interface Props {
   selectedCount: number;
   bulkTab: BulkTab;
@@ -19,9 +24,6 @@ interface Props {
 
   bulkCanonicalBase: string;
   onCanonicalBaseChange: (v: string) => void;
-
-  bulkKeyword: string;
-  onKeywordChange: (v: string) => void;
 
   bulkProcessing: boolean;
   onApply: () => void;
@@ -31,11 +33,16 @@ interface Props {
   csvApplying: boolean;
   onCSVFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onApplyCSV: () => void;
+
+  /** Log entries from the last bulk operation — rendered inside the panel */
+  log: LogEntry[];
+  /** How many selected pages have no meta title (OG sync will skip them) */
+  selectedMissingTitle: number;
 }
 
 const TAB_LABELS: Record<BulkTab, string> = {
   canonical: "Canonical URLs",
-  keyword: "Focus Keyword",
+  og: "Sync Open Graph",
   csv: "Import CSV",
 };
 
@@ -45,8 +52,6 @@ export default function BulkActions({
   onTabChange,
   bulkCanonicalBase,
   onCanonicalBaseChange,
-  bulkKeyword,
-  onKeywordChange,
   bulkProcessing,
   onApply,
   csvPreview,
@@ -54,14 +59,15 @@ export default function BulkActions({
   csvApplying,
   onCSVFile,
   onApplyCSV,
+  log,
+  selectedMissingTitle,
 }: Props) {
   const csvFileRef = useRef<HTMLInputElement>(null);
 
   const canApply =
     !bulkProcessing &&
     selectedCount > 0 &&
-    (bulkTab !== "canonical" || bulkCanonicalBase.trim() !== "") &&
-    (bulkTab !== "keyword" || bulkKeyword.trim() !== "");
+    (bulkTab !== "canonical" || bulkCanonicalBase.trim() !== "");
 
   return (
     <div
@@ -147,36 +153,139 @@ export default function BulkActions({
                 type="text"
                 value={bulkCanonicalBase}
                 onChange={(e) => onCanonicalBaseChange(e.target.value)}
-                placeholder="https://yoursite.com"
+                placeholder="https://yoursite.com/blog"
                 style={INPUT_STYLE}
               />
             </div>
             <div style={{ marginTop: 8, fontSize: 11, color: "#475569" }}>
               Generates:{" "}
               <code style={{ color: "#94a3b8" }}>
-                {bulkCanonicalBase.replace(/\/$/, "")}/[type]/[title-slug]
+                {`${bulkCanonicalBase.replace(/\/$/, "") || "https://yoursite.com"}/[slug]`}
               </code>
+              <span style={{ marginLeft: 8, color: "#334155" }}>
+                — uses the document&apos;s slug field
+              </span>
             </div>
           </>
         )}
 
-        {/* Focus Keyword */}
-        {bulkTab === "keyword" && (
-          <>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={FIELD_LABEL}>Keyword</span>
-              <input
-                type="text"
-                value={bulkKeyword}
-                onChange={(e) => onKeywordChange(e.target.value)}
-                placeholder="e.g. sanity cms tutorial"
-                style={INPUT_STYLE}
-              />
+        {/* Sync Open Graph */}
+        {bulkTab === "og" && (
+          <div>
+            {/* Pre-warning: selected pages with no meta title will be skipped */}
+            {selectedMissingTitle > 0 && (
+              <div
+                style={{
+                  marginBottom: 12,
+                  padding: "9px 12px",
+                  background: "#431407",
+                  border: "1px solid #9a3412",
+                  borderRadius: 8,
+                  fontSize: 12,
+                  color: "#fdba74",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <span style={{ fontSize: 14 }}>⚠️</span>
+                <span>
+                  <strong>{selectedMissingTitle}</strong> of your selected page
+                  {selectedMissingTitle !== 1 ? "s have" : " has"} no Meta Title — those will be
+                  skipped. Set a Meta Title first by expanding the row below.
+                </span>
+              </div>
+            )}
+            {/* Why this matters */}
+            <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 12, lineHeight: 1.6 }}>
+              When someone shares your page on{" "}
+              <span style={{ color: "#e2e8f0" }}>Twitter, LinkedIn, WhatsApp</span> or any social
+              platform, they see the <span style={{ color: "#e2e8f0" }}>Open Graph title</span> —
+              not the meta title. If OG is empty, social platforms guess a title which often looks
+              broken.
             </div>
-            <div style={{ marginTop: 8, fontSize: 11, color: "#475569" }}>
-              Sets the same focus keyword on all selected pages. Useful for topic clusters.
+
+            {/* Visual: what this does */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 32px 1fr",
+                gap: 8,
+                alignItems: "center",
+                marginBottom: 12,
+              }}
+            >
+              {/* Before */}
+              <div
+                style={{
+                  padding: "10px 12px",
+                  background: "#0a111f",
+                  border: "1px solid #1e293b",
+                  borderRadius: 8,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 700,
+                    color: "#334155",
+                    letterSpacing: 1,
+                    textTransform: "uppercase",
+                    marginBottom: 6,
+                  }}
+                >
+                  Each page has
+                </div>
+                <div style={{ fontSize: 11, color: "#60a5fa", marginBottom: 3 }}>✓ Meta Title</div>
+                <div style={{ fontSize: 11, color: "#60a5fa", marginBottom: 3 }}>
+                  ✓ Meta Description
+                </div>
+                <div style={{ fontSize: 11, color: "#ef4444" }}>✗ OG Title (empty)</div>
+                <div style={{ fontSize: 11, color: "#ef4444" }}>✗ OG Description (empty)</div>
+              </div>
+
+              {/* Arrow */}
+              <div style={{ textAlign: "center", fontSize: 18, color: "#1e3a5f", fontWeight: 700 }}>
+                →
+              </div>
+
+              {/* After */}
+              <div
+                style={{
+                  padding: "10px 12px",
+                  background: "#052e16",
+                  border: "1px solid #166534",
+                  borderRadius: 8,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 700,
+                    color: "#166534",
+                    letterSpacing: 1,
+                    textTransform: "uppercase",
+                    marginBottom: 6,
+                  }}
+                >
+                  After applying
+                </div>
+                <div style={{ fontSize: 11, color: "#60a5fa", marginBottom: 3 }}>✓ Meta Title</div>
+                <div style={{ fontSize: 11, color: "#60a5fa", marginBottom: 3 }}>
+                  ✓ Meta Description
+                </div>
+                <div style={{ fontSize: 11, color: "#4ade80", marginBottom: 3 }}>
+                  ✓ OG Title (synced)
+                </div>
+                <div style={{ fontSize: 11, color: "#4ade80" }}>✓ OG Description (synced)</div>
+              </div>
             </div>
-          </>
+
+            {/* Footer note */}
+            <div style={{ fontSize: 11, color: "#475569", fontStyle: "italic" }}>
+              Each page gets its own values — pages without a meta title are skipped.
+            </div>
+          </div>
         )}
 
         {/* CSV Import */}
@@ -213,6 +322,50 @@ export default function BulkActions({
             >
               {bulkProcessing ? "Applying…" : `Apply to ${selectedCount} pages`}
             </button>
+          </div>
+        )}
+
+        {/* Inline operation log */}
+        {log.length > 0 && (
+          <div
+            style={{
+              marginTop: 14,
+              background: "#020408",
+              border: "1px solid #1e293b",
+              borderRadius: 8,
+              padding: "10px 14px",
+              fontFamily: "monospace",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                color: "#475569",
+                letterSpacing: 1.5,
+                textTransform: "uppercase",
+                marginBottom: 8,
+              }}
+            >
+              Result
+            </div>
+            <div style={{ maxHeight: 180, overflow: "auto" }}>
+              {log.map((entry, i) => (
+                <div
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={i}
+                  style={{
+                    fontSize: 12,
+                    color: entry.ok ? "#4ade80" : "#f87171",
+                    lineHeight: 1.7,
+                    borderBottom: i < log.length - 1 ? "1px solid #0f172a" : "none",
+                    paddingBottom: 2,
+                  }}
+                >
+                  {entry.msg}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

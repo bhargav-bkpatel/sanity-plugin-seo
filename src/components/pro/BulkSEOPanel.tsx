@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Stack, Text, Box } from "@sanity/ui";
 import { RefreshIcon, SearchIcon, DownloadIcon } from "@sanity/icons";
 import { useClient } from "sanity";
@@ -121,7 +121,6 @@ export default function BulkSEOPanel() {
   const [bulkTab, setBulkTab] = useState<BulkTab>("canonical");
   const [bulkProcessing, setBulkProcessing] = useState(false);
   const [bulkCanonicalBase, setBulkCanonicalBase] = useState("https://yoursite.com");
-  const [bulkKeyword, setBulkKeyword] = useState("");
 
   // CSV state
   const [csvPreview, setCsvPreview] = useState<CsvRow[]>([]);
@@ -147,6 +146,7 @@ export default function BulkSEOPanel() {
           | order(_updatedAt desc) [0...200] {
           _id, _type,
           "docTitle": coalesce(title, name, slug.current, "Untitled"),
+          "docSlug": slug.current,
           "seo": seo
         }
       `);
@@ -187,8 +187,11 @@ export default function BulkSEOPanel() {
   // ─── Row selection ───────────────────────────────────────────────────────────
 
   const toggleAll = () => {
-    const allSelected = docs.every((d) => d.selected);
-    setDocs((prev) => prev.map((d) => ({ ...d, selected: !allSelected })));
+    const visibleIds = new Set(visibleDocs.map((d) => d._id));
+    const allSelected = visibleDocs.every((d) => d.selected);
+    setDocs((prev) =>
+      prev.map((d) => (visibleIds.has(d._id) ? { ...d, selected: !allSelected } : d)),
+    );
   };
 
   const toggleSelect = (id: string, e: React.MouseEvent | React.KeyboardEvent) => {
@@ -243,7 +246,7 @@ export default function BulkSEOPanel() {
     const selected = docs.filter((d) => d.selected);
     if (!selected.length) return;
 
-    const actionLabel = bulkTab === "canonical" ? "canonical URL" : "focus keyword";
+    const actionLabel = bulkTab === "canonical" ? "canonical URL" : "Open Graph";
 
     setBulkProcessing(true);
     setLog([{ msg: `Applying ${actionLabel} to ${selected.length} page(s)…`, ok: true }]);
@@ -251,16 +254,26 @@ export default function BulkSEOPanel() {
     const results = await Promise.allSettled(
       selected.map(async (doc) => {
         if (bulkTab === "canonical") {
-          const slug = doc.docTitle
-            .toLowerCase()
-            .replace(/\s+/g, "-")
-            .replace(/[^a-z0-9-]/g, "");
-          const canonical = `${bulkCanonicalBase.replace(/\/$/, "")}/${doc._type}/${slug}`;
+          if (!doc.docSlug) {
+            return { docTitle: doc.docTitle, detail: "skipped — no slug on this document" };
+          }
+          const base = bulkCanonicalBase.replace(/\/$/, "");
+          const canonical = `${base}/${doc.docSlug}`;
           await client.patch(doc._id).set({ "seo.canonicalUrl": canonical }).commit();
           return { docTitle: doc.docTitle, detail: canonical };
         }
-        await client.patch(doc._id).set({ "seo.focusKeyword": bulkKeyword.trim() }).commit();
-        return { docTitle: doc.docTitle, detail: bulkKeyword.trim() };
+        // OG sync — set the whole openGraph object (can't dot-patch into a null object)
+        const metaTitle = doc.seo?.metaTitle;
+        const metaDesc = doc.seo?.metaDescription;
+        if (!metaTitle) {
+          return { docTitle: doc.docTitle, detail: "skipped — no meta title set" };
+        }
+        const ogValue: Record<string, string> = { _type: "openGraph", title: metaTitle };
+        if (metaDesc) ogValue.description = metaDesc;
+        // Preserve existing OG image if already set
+        if (doc.seo?.openGraph?.image) ogValue.image = doc.seo.openGraph.image;
+        await client.patch(doc._id).set({ "seo.openGraph": ogValue }).commit();
+        return { docTitle: doc.docTitle, detail: `OG title → "${metaTitle}"` };
       }),
     );
 
@@ -277,7 +290,7 @@ export default function BulkSEOPanel() {
     setLog(newLog);
     setBulkProcessing(false);
     fetchDocs();
-  }, [docs, client, bulkTab, bulkCanonicalBase, bulkKeyword, fetchDocs]);
+  }, [docs, client, bulkTab, bulkCanonicalBase, fetchDocs]);
 
   // ─── CSV export ──────────────────────────────────────────────────────────────
 
@@ -420,6 +433,17 @@ export default function BulkSEOPanel() {
     setCsvPreview([]);
     fetchDocs();
   }, [csvPreview, client, fetchDocs]);
+
+  // ─── Type filter ─────────────────────────────────────────────────────────────
+
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+
+  const docTypes = useMemo(() => Array.from(new Set(docs.map((d) => d._type))).sort(), [docs]);
+
+  const visibleDocs = useMemo(
+    () => (typeFilter === "all" ? docs : docs.filter((d) => d._type === typeFilter)),
+    [docs, typeFilter],
+  );
 
   // ─── Derived stats ───────────────────────────────────────────────────────────
 
@@ -579,32 +603,70 @@ export default function BulkSEOPanel() {
             {/* Document table */}
             {docs.length > 0 && (
               <div>
+                {/* Type filter dropdown */}
+                {docTypes.length > 1 && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }}>
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 700,
+                        color: "#475569",
+                        letterSpacing: 1,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Filter by type:
+                    </span>
+                    <select
+                      value={typeFilter}
+                      onChange={(e) => setTypeFilter(e.target.value)}
+                      style={{
+                        height: 32,
+                        fontSize: 12,
+                        padding: "0 10px",
+                        background: "#0a1020",
+                        border: "1px solid #1a2a40",
+                        borderRadius: 8,
+                        color: "#7dd3fc",
+                        cursor: "pointer",
+                        outline: "none",
+                      }}
+                    >
+                      <option value="all">All types ({docs.length})</option>
+                      {docTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type} ({docs.filter((d) => d._type === type).length})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 {/* Column headers */}
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "36px 90px 1fr 80px 200px 28px",
-                    gap: 12,
-                    padding: "6px 16px",
-                    marginBottom: 4,
+                    gridTemplateColumns: "36px 100px 1fr auto auto 32px",
+                    gap: 16,
+                    padding: "4px 16px 10px",
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <input
                       type="checkbox"
-                      checked={docs.length > 0 && docs.every((d) => d.selected)}
+                      checked={visibleDocs.length > 0 && visibleDocs.every((d) => d.selected)}
                       onChange={toggleAll}
                       style={{ cursor: "pointer", accentColor: "#60a5fa" }}
                     />
                   </div>
-                  {["Score", "Page", "Type", "Issues"].map((h) => (
+                  {["Score", "Page"].map((h) => (
                     <div
                       key={h}
                       style={{
                         fontSize: 10,
                         fontWeight: 700,
                         letterSpacing: 1.5,
-                        color: "#475569",
+                        color: "#334155",
                         textTransform: "uppercase",
                       }}
                     >
@@ -612,10 +674,12 @@ export default function BulkSEOPanel() {
                     </div>
                   ))}
                   <div />
+                  <div />
+                  <div />
                 </div>
 
-                <Stack space={2}>
-                  {docs.map((doc) => (
+                <Stack space={3}>
+                  {visibleDocs.map((doc) => (
                     <BulkDocRow
                       key={doc._id}
                       doc={doc}
@@ -651,7 +715,10 @@ export default function BulkSEOPanel() {
                   }}
                 >
                   <span style={{ fontSize: 12, color: "#475569" }}>
-                    {docs.length} pages with SEO issues · click a row to edit
+                    {visibleDocs.length === docs.length
+                      ? `${docs.length} pages with SEO issues`
+                      : `${visibleDocs.length} of ${docs.length} pages`}{" "}
+                    · click a row to edit
                   </span>
                   <button
                     type="button"
@@ -685,8 +752,6 @@ export default function BulkSEOPanel() {
                 onTabChange={setBulkTab}
                 bulkCanonicalBase={bulkCanonicalBase}
                 onCanonicalBaseChange={setBulkCanonicalBase}
-                bulkKeyword={bulkKeyword}
-                onKeywordChange={setBulkKeyword}
                 bulkProcessing={bulkProcessing}
                 onApply={runBulk}
                 csvPreview={csvPreview}
@@ -694,50 +759,11 @@ export default function BulkSEOPanel() {
                 csvApplying={csvApplying}
                 onCSVFile={handleCSVFile}
                 onApplyCSV={applyCSV}
+                log={log}
+                selectedMissingTitle={
+                  docs.filter((d) => d.selected).filter((d) => !d.seo?.metaTitle).length
+                }
               />
-            )}
-
-            {/* Operation log */}
-            {log.length > 0 && (
-              <div
-                style={{
-                  background: "#020408",
-                  border: "1px solid #1e293b",
-                  borderRadius: 12,
-                  padding: 16,
-                  fontFamily: "monospace",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: "#475569",
-                    letterSpacing: 1.5,
-                    textTransform: "uppercase",
-                    marginBottom: 10,
-                  }}
-                >
-                  Operation Log
-                </div>
-                <div style={{ maxHeight: 200, overflow: "auto" }}>
-                  {log.map((entry, i) => (
-                    <div
-                      // eslint-disable-next-line react/no-array-index-key
-                      key={i}
-                      style={{
-                        fontSize: 12,
-                        color: entry.ok ? "#4ade80" : "#f87171",
-                        lineHeight: 1.7,
-                        borderBottom: i < log.length - 1 ? "1px solid #0f172a" : "none",
-                        paddingBottom: 2,
-                      }}
-                    >
-                      {entry.msg}
-                    </div>
-                  ))}
-                </div>
-              </div>
             )}
 
             {/* Initial empty state */}
