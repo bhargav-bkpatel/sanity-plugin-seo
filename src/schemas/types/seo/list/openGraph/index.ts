@@ -29,11 +29,6 @@ export default {
       description: "Recommended: 1200×630px",
     },
     {
-      name: "url",
-      title: "OG URL",
-      type: "string",
-    },
-    {
       name: "siteName",
       title: "Site Name",
       type: "string",

@@ -16,7 +16,6 @@ export interface BulkDoc {
 export interface RowEdit {
   metaTitle: string;
   metaDescription: string;
-  canonicalUrl: string;
   focusKeyword: string;
   ogTitle: string;
   ogDescription: string;
@@ -25,7 +24,7 @@ export interface RowEdit {
   saved: boolean;
 }
 
-export type BulkTab = "canonical" | "og" | "csv";
+export type BulkTab = "og" | "csv";
 
 export const SEO_STATUSES = [
   { value: "draft", label: "Draft" },
@@ -42,7 +41,6 @@ export function getIssues(seo: Record<string, any> | null): string[] {
   if (!seo.metaDescription) issues.push("Missing description");
   else if (seo.metaDescription.length < 100 || seo.metaDescription.length > 160)
     issues.push("Description length out of range");
-  if (!seo.canonicalUrl) issues.push("No canonical URL");
   if (!seo.metaImage?.asset) issues.push("No meta image");
   if (!seo.focusKeyword) issues.push("No focus keyword");
   return issues;

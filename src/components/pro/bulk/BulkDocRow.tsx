@@ -354,36 +354,28 @@ export default function BulkDocRow({
                 />
               </FieldBlock>
 
-              <FieldBlock label="Meta Description" required>
-                <textarea
-                  value={edit.metaDescription}
-                  onChange={handleChange("metaDescription")}
-                  placeholder="Short description shown under the title in search results"
-                  rows={3}
-                  style={{ ...FIELD_INPUT, resize: "vertical" }}
-                />
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginTop: 4,
-                  }}
-                >
-                  <span style={{ fontSize: 10, color: "#475569" }}>Ideal: 100–160 characters</span>
-                  <CharBadge length={edit.metaDescription.length} min={100} max={160} />
-                </div>
-              </FieldBlock>
-
-              <FieldBlock label="Canonical URL" hint="Preferred URL for this page">
-                <input
-                  type="url"
-                  value={edit.canonicalUrl}
-                  onChange={handleChange("canonicalUrl")}
-                  placeholder="https://yoursite.com/blog/page-slug"
-                  style={FIELD_INPUT}
-                />
-              </FieldBlock>
+              <div style={{ gridColumn: "1 / -1" }}>
+                <FieldBlock label="Meta Description" required>
+                  <textarea
+                    value={edit.metaDescription}
+                    onChange={handleChange("metaDescription")}
+                    placeholder="Short description shown under the title in search results"
+                    rows={3}
+                    style={{ ...FIELD_INPUT, resize: "vertical" }}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginTop: 4,
+                    }}
+                  >
+                    <span style={{ fontSize: 10, color: "#475569" }}>Ideal: 100–160 characters</span>
+                    <CharBadge length={edit.metaDescription.length} min={100} max={160} />
+                  </div>
+                </FieldBlock>
+              </div>
             </div>
 
             {/* Social Preview */}
@@ -400,7 +392,7 @@ export default function BulkDocRow({
               Social Preview (Open Graph)
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <FieldBlock label="OG Title" hint="Title shown when shared on social">
                 <input
                   type="text"

@@ -5,11 +5,9 @@ const seo = {
   metaTitle: "string",
   metaDescription: "string",
   focusKeyword: "string",
-  canonicalUrl: "string",
   seoKeywords: [{ "@type": "string" }],
   hreflang: [{ "@type": "hreflang", locale: "string", url: "string" }],
   openGraph: {
-    url: "string",
     image: "image",
     title: "string",
     description: "string",

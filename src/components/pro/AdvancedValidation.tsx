@@ -143,20 +143,7 @@ export default function AdvancedValidation({ value, onChange }: Props) {
         });
       }
 
-      // 2. Canonical conflict (nofollow + canonical)
-      const hasNofollow: boolean = Boolean(value?.nofollowAttributes);
-      const hasCanonical: boolean = Boolean(value?.canonicalUrl);
-      const canonicalConflict = hasNofollow && hasCanonical;
-      results.push({
-        key: "canonicalConflict",
-        label: "No noindex/canonical conflict",
-        pass: !canonicalConflict,
-        description: canonicalConflict
-          ? "noindex is set alongside a canonical URL — this contradicts itself and wastes the canonical signal."
-          : undefined,
-      });
-
-      // 3. Missing OG image
+      // 2. Missing OG image
       const hasOgImage: boolean = Boolean(value?.openGraph?.image?.asset);
       results.push({
         key: "ogImage",
@@ -184,17 +171,7 @@ export default function AdvancedValidation({ value, onChange }: Props) {
         fixLabel: hasOgTitle ? undefined : "Copy from meta title",
       });
 
-      // 5. Canonical URL present
-      results.push({
-        key: "canonicalUrl",
-        label: "Canonical URL set",
-        pass: hasCanonical,
-        description: hasCanonical
-          ? undefined
-          : "No canonical URL — use SEO Automation below to build one from your slug.",
-      });
-
-      // 6. Focus keyword in meta title
+      // 5. Focus keyword in meta title
       const focusKeyword: string = (value?.focusKeyword || "").trim().toLowerCase();
       const titleLower: string = metaTitle.toLowerCase();
       const keywordInTitle =

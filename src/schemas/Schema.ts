@@ -58,24 +58,14 @@ const schema = defineType({
       of: [{ type: "string" }],
       options: { layout: "tags" },
     },
-    {
-      name: "canonicalUrl",
-      title: "Canonical URL",
-      type: "url",
-      group: "advanced",
-      description: "The preferred URL for this page (prevents duplicate content issues)",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      validation: (Rule: any) =>
-        Rule.uri({ scheme: ["http", "https"] }).warning("Should start with https://"),
-    },
     // ── Robots ────────────────────────────────────────────
     {
       name: "nofollowAttributes",
-      title: "Noindex (legacy)",
+      title: "Noindex",
       type: "boolean",
-      group: "advanced",
+      group: "basic",
       initialValue: false,
-      description: "Legacy noindex toggle. Use Robots Meta Tags below for full control.",
+      description: "Hide this page from search engines.",
     },
     {
       name: "robotsMeta",

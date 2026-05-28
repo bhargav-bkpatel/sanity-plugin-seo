@@ -19,11 +19,6 @@ export function buildGEOChecklist(value: Record<string, any> | undefined): GEOIt
       description: "Plugin generates JSON-LD automatically",
     },
     {
-      label: "Canonical URL set",
-      pass: Boolean(v.canonicalUrl?.trim()),
-      description: "Required to avoid duplicate content penalties",
-    },
-    {
       label: "Description is answer-ready",
       pass: (v.metaDescription || "").length >= 100 && (v.metaDescription || "").length <= 160,
       description: "Optimal length for AI snippet extraction (100–160 chars)",

@@ -64,8 +64,7 @@ function ImageSlot({ url }: { url: string | null }) {
 function TwitterCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
   const siteName = og?.siteName ? `${og.siteName.toLowerCase().replace(/\s/g, "")}.com` : null;
   let domain = "yoursite.com";
-  if (og?.url) domain = new URL(og.url).hostname.replace("www.", "");
-  else if (siteName) domain = siteName;
+  if (siteName) domain = siteName;
 
   return (
     <div

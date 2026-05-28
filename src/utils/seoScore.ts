@@ -114,25 +114,6 @@ export function computeSEOScore(value: Record<string, any> | undefined): SEOScor
     });
   }
 
-  // Canonical URL — 10 pts
-  if ((v.canonicalUrl || "").trim()) {
-    checks.push({
-      name: "Canonical URL",
-      pass: true,
-      points: 10,
-      maxPoints: 10,
-      hint: "Canonical URL is set",
-    });
-  } else {
-    checks.push({
-      name: "Canonical URL",
-      pass: false,
-      points: 0,
-      maxPoints: 10,
-      hint: "No canonical URL",
-    });
-  }
-
   // Meta image — 10 pts
   if (v.metaImage?.asset) {
     checks.push({

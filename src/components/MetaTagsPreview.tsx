@@ -9,7 +9,6 @@ function buildMetaTags(value: Record<string, any> | undefined): string {
 
   if (v.metaTitle) lines.push(`<title>${v.metaTitle}</title>`);
   if (v.metaDescription) lines.push(`<meta name="description" content="${v.metaDescription}" />`);
-  if (v.canonicalUrl) lines.push(`<link rel="canonical" href="${v.canonicalUrl}" />`);
 
   // Robots
   const robotsParts: string[] = [];
@@ -30,7 +29,6 @@ function buildMetaTags(value: Record<string, any> | undefined): string {
   const og = v.openGraph || {};
   if (og.title) lines.push(`<meta property="og:title" content="${og.title}" />`);
   if (og.description) lines.push(`<meta property="og:description" content="${og.description}" />`);
-  if (og.url) lines.push(`<meta property="og:url" content="${og.url}" />`);
   if (og.siteName) lines.push(`<meta property="og:site_name" content="${og.siteName}" />`);
   if (og.image?.asset) lines.push(`<meta property="og:image" content="[image url]" />`);
 
@@ -116,19 +114,17 @@ export default function MetaTagsPreview({ value }: { value: Record<string, any> 
                 fontSize={1}
                 tone={copied ? "positive" : "default"}
               />
-              {value?.canonicalUrl && (
-                <Button
-                  mode="ghost"
-                  padding={2}
-                  icon={LaunchIcon}
-                  text="Rich Results Test"
-                  as="a"
-                  href="https://search.google.com/test/rich-results"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  fontSize={1}
-                />
-              )}
+              <Button
+                mode="ghost"
+                padding={2}
+                icon={LaunchIcon}
+                text="Rich Results Test"
+                as="a"
+                href="https://search.google.com/test/rich-results"
+                target="_blank"
+                rel="noopener noreferrer"
+                fontSize={1}
+              />
             </Flex>
           </Stack>
         )}

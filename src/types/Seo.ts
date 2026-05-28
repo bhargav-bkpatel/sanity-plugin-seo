@@ -34,12 +34,10 @@ export type Seo = {
   metaDescription?: string;
   metaImage?: Image;
   focusKeyword?: string;
-  canonicalUrl?: string;
   seoKeywords?: Array<{ type?: string }>;
   hreflang?: HreflangEntry[];
   schemaOrg?: SchemaOrgData;
   openGraph?: {
-    url?: string;
     image?: Image;
     title?: string;
     description?: string;
@@ -70,7 +68,6 @@ export type Seo = {
 export interface SeoData {
   metaTitle?: string;
   metaDescription?: string;
-  canonicalUrl?: string;
   nofollowAttributes?: boolean;
   robotsMeta?: string[];
   focusKeyword?: string;
@@ -79,7 +76,6 @@ export interface SeoData {
   openGraph?: {
     title?: string;
     description?: string;
-    url?: string;
     siteName?: string;
     image?: { asset?: { url?: string } };
   };

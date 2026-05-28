@@ -1,13 +1,12 @@
 import React, { useRef } from "react";
 import { DownloadIcon, UploadIcon } from "@sanity/icons";
-import { BulkTab, INPUT_STYLE, FIELD_LABEL } from "./types";
+import { BulkTab, FIELD_LABEL } from "./types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 interface CsvRow {
   _id: string;
   title: string;
-  canonicalUrl: string;
   focusKeyword: string;
   found: boolean;
 }
@@ -21,9 +20,6 @@ interface Props {
   selectedCount: number;
   bulkTab: BulkTab;
   onTabChange: (tab: BulkTab) => void;
-
-  bulkCanonicalBase: string;
-  onCanonicalBaseChange: (v: string) => void;
 
   bulkProcessing: boolean;
   onApply: () => void;
@@ -41,7 +37,6 @@ interface Props {
 }
 
 const TAB_LABELS: Record<BulkTab, string> = {
-  canonical: "Canonical URLs",
   og: "Sync Open Graph",
   csv: "Import CSV",
 };
@@ -50,8 +45,6 @@ export default function BulkActions({
   selectedCount,
   bulkTab,
   onTabChange,
-  bulkCanonicalBase,
-  onCanonicalBaseChange,
   bulkProcessing,
   onApply,
   csvPreview,
@@ -64,10 +57,7 @@ export default function BulkActions({
 }: Props) {
   const csvFileRef = useRef<HTMLInputElement>(null);
 
-  const canApply =
-    !bulkProcessing &&
-    selectedCount > 0 &&
-    (bulkTab !== "canonical" || bulkCanonicalBase.trim() !== "");
+  const canApply = !bulkProcessing && selectedCount > 0;
 
   return (
     <div
@@ -144,31 +134,6 @@ export default function BulkActions({
 
       {/* Tab body */}
       <div style={{ padding: "16px 20px" }}>
-        {/* Canonical URL */}
-        {bulkTab === "canonical" && (
-          <>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={FIELD_LABEL}>Base URL</span>
-              <input
-                type="text"
-                value={bulkCanonicalBase}
-                onChange={(e) => onCanonicalBaseChange(e.target.value)}
-                placeholder="https://yoursite.com/blog"
-                style={INPUT_STYLE}
-              />
-            </div>
-            <div style={{ marginTop: 8, fontSize: 11, color: "#475569" }}>
-              Generates:{" "}
-              <code style={{ color: "#94a3b8" }}>
-                {`${bulkCanonicalBase.replace(/\/$/, "") || "https://yoursite.com"}/[slug]`}
-              </code>
-              <span style={{ marginLeft: 8, color: "#334155" }}>
-                — uses the document&apos;s slug field
-              </span>
-            </div>
-          </>
-        )}
-
         {/* Sync Open Graph */}
         {bulkTab === "og" && (
           <div>
@@ -410,7 +375,7 @@ function CsvImportTab({
           Expected CSV headers (first row):
         </div>
         <code style={{ color: "#60a5fa", fontSize: 11 }}>
-          _id, metaTitle, metaDescription, canonicalUrl, focusKeyword, ogTitle, ogDescription
+          _id, metaTitle, metaDescription, focusKeyword, ogTitle, ogDescription
         </code>
         <div style={{ marginTop: 6 }}>
           Use{" "}
@@ -504,7 +469,7 @@ function CsvImportTab({
                 key={i}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "16px 1fr 1fr 1fr",
+                  gridTemplateColumns: "16px 1fr 1fr",
                   gap: 8,
                   padding: "8px 12px",
                   borderBottom: i < csvPreview.length - 1 ? "1px solid #1e293b" : "none",
@@ -532,18 +497,6 @@ function CsvImportTab({
                   title={row.title}
                 >
                   {row.title}
-                </span>
-                <span
-                  style={{
-                    fontSize: 11,
-                    color: "#64748b",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                  title={row.canonicalUrl}
-                >
-                  {row.canonicalUrl || "—"}
                 </span>
                 <span style={{ fontSize: 11, color: "#64748b" }}>{row.focusKeyword || "—"}</span>
               </div>

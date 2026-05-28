@@ -102,7 +102,6 @@ function getIssues(seo: Record<string, any> | null): string[] {
   else if (seo.metaDescription.length < 100 || seo.metaDescription.length > 160)
     issues.push("Description length out of range");
   if (!seo.metaImage?.asset) issues.push("Missing meta image");
-  if (!seo.canonicalUrl) issues.push("No canonical URL");
   if (!seo.focusKeyword) issues.push("No focus keyword");
   if (!seo.openGraph?.title) issues.push("Open Graph not configured");
   return issues;

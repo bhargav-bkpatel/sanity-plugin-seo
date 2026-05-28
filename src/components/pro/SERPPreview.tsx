@@ -161,7 +161,7 @@ export default function SERPPreview({ value }: Props) {
   const { isPro } = useProEnabled();
   const title = value?.metaTitle || "";
   const description = value?.metaDescription || "";
-  const url = value?.canonicalUrl || value?.openGraph?.url || "";
+  const url = "";
 
   return (
     <ProGate feature="Advanced SERP Preview" isPro={isPro}>

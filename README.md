@@ -27,7 +27,6 @@ The most complete SEO plugin for Sanity Studio — live SEO score, GEO checklist
 | Meta Tags Preview + HTML snippet | ✅ | ✅ | — |
 | Social Preview Cards (X, Facebook, LinkedIn, WhatsApp) | ✅ | ✅ | — |
 | Focus Keyword tracking | ✅ | ✅ | — |
-| Canonical URL field | ✅ | ✅ | — |
 | Robots Meta (noindex, nofollow, noarchive…) | ✅ | ✅ | — |
 | hreflang / multi-language targeting | ✅ | ✅ | — |
 | Open Graph & Twitter/X card fields | ✅ | ✅ | — |
@@ -41,7 +40,6 @@ The most complete SEO plugin for Sanity Studio — live SEO score, GEO checklist
 | Live JSON-LD preview | — | — | 🔜 |
 | SEO Health Dashboard (site-wide scores) | — | — | 🔜 |
 | SEO Optimizer — inline bulk edit, type filter, CSV import/export | — | — | 🔜 |
-| Bulk Canonical URL generation (base URL + slug) | — | — | 🔜 |
 | Bulk Open Graph sync (copy meta → OG per page) | — | — | 🔜 |
 | Advanced Validation (7 checks + auto-fix) | — | — | 🔜 |
 | Team Workflow (Draft → Review → Approved) | — | — | 🔜 |
@@ -225,7 +223,7 @@ The plugin automatically renders a tabbed SEO panel with **Basic SEO**, **Social
 | `aiFeature.apiKey` | `string` | — | API key for the chosen provider |
 | `aiFeature.model` | `string` | provider default | Model name (e.g. `gpt-4o-mini`, `claude-haiku-4-5-20251001`, `llama-3.3-70b-versatile`) |
 | `bodyField` | `string` | `'body'` | Portable Text field name for AI content analysis |
-| `slugField` | `string` | `'slug'` | Slug field name for canonical URL auto-generation |
+| `slugField` | `string` | `'slug'` | Slug field name for AI content analysis |
 | `dashboard` | `boolean` | `true` | Show SEO Health and Bulk Optimizer in the Studio toolbar |
 
 ---
@@ -254,10 +252,10 @@ export const client = createClient({
 // Full SEO GROQ fragment — paste this into any query that needs SEO fields
 export const SEO_GROQ = `seo {
   metaTitle, metaDescription, focusKeyword,
-  canonicalUrl, nofollowAttributes, robotsMeta, seoKeywords,
+  nofollowAttributes, robotsMeta, seoKeywords,
   seoStatus, seoReviewNotes,
   metaImage { asset->{ url } },
-  openGraph { title, description, url, siteName, image { asset->{ url } } },
+  openGraph { title, description, siteName, image { asset->{ url } } },
   twitter { cardType, site, creator, handle },
   hreflang[] { locale, url },
   schemaOrg {
@@ -287,14 +285,13 @@ import type { Metadata } from 'next'
 export type SeoField = {
   metaTitle?: string
   metaDescription?: string
-  canonicalUrl?: string
   nofollowAttributes?: boolean
   robotsMeta?: string[]
   seoKeywords?: string[]
   seoStatus?: 'draft' | 'review' | 'approved'
   seoReviewNotes?: string
   metaImage?: { asset?: { url?: string } }
-  openGraph?: { title?: string; description?: string; url?: string; siteName?: string; image?: { asset?: { url?: string } } }
+  openGraph?: { title?: string; description?: string; siteName?: string; image?: { asset?: { url?: string } } }
   twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
   hreflang?: { locale: string; url: string }[]
   schemaOrg?: {
@@ -307,7 +304,7 @@ export type SeoField = {
 
 export function buildMetadata(seo: SeoField | undefined, fallbackTitle: string | undefined, slug: string): Metadata {
   const s = seo ?? {}
-  const canonical = s.canonicalUrl ?? `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/${slug}`
+  const canonical = `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/${slug}`
   const ogImage = s.openGraph?.image?.asset?.url ?? s.metaImage?.asset?.url
 
   const robots: string[] = []
@@ -330,7 +327,7 @@ export function buildMetadata(seo: SeoField | undefined, fallbackTitle: string |
     openGraph: {
       title: s.openGraph?.title ?? s.metaTitle ?? fallbackTitle,
       description: s.openGraph?.description ?? s.metaDescription,
-      url: s.openGraph?.url ?? canonical,
+      url: canonical,
       siteName: s.openGraph?.siteName,
       ...(ogImage && { images: [{ url: ogImage }] }),
     },
@@ -423,7 +420,7 @@ type Props = { page: { title: string; slug: string; seo?: SeoField } }
 export default function Page({ page }: Props) {
   const seo = page?.seo ?? {}
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
-  const canonical = seo.canonicalUrl ?? `${siteUrl}/${page.slug}`
+  const canonical = `${siteUrl}/${page.slug}`
   const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
 
   const noindex = !!(seo.nofollowAttributes || seo.robotsMeta?.includes('noindex'))
@@ -462,7 +459,7 @@ export default function Page({ page }: Props) {
         openGraph={{
           title: seo.openGraph?.title ?? seo.metaTitle,
           description: seo.openGraph?.description ?? seo.metaDescription,
-          url: seo.openGraph?.url ?? canonical,
+          url: canonical,
           siteName: seo.openGraph?.siteName,
           images: ogImage ? [{ url: ogImage }] : [],
         }}
@@ -538,10 +535,10 @@ export const client = createClient({
 // Full SEO GROQ fragment — paste into any query
 export const SEO_GROQ = `seo {
   metaTitle, metaDescription, focusKeyword,
-  canonicalUrl, nofollowAttributes, robotsMeta, seoKeywords,
+  nofollowAttributes, robotsMeta, seoKeywords,
   seoStatus, seoReviewNotes,
   metaImage { asset->{ url } },
-  openGraph { title, description, url, siteName, image { asset->{ url } } },
+  openGraph { title, description, siteName, image { asset->{ url } } },
   twitter { cardType, site, creator, handle },
   hreflang[] { locale, url },
   schemaOrg {
@@ -555,11 +552,11 @@ export const SEO_GROQ = `seo {
 }`
 
 export type SeoField = {
-  metaTitle?: string; metaDescription?: string; canonicalUrl?: string
+  metaTitle?: string; metaDescription?: string
   nofollowAttributes?: boolean; robotsMeta?: string[]; seoKeywords?: string[]
   seoStatus?: string; seoReviewNotes?: string
   metaImage?: { asset?: { url?: string } }
-  openGraph?: { title?: string; description?: string; url?: string; siteName?: string; image?: { asset?: { url?: string } } }
+  openGraph?: { title?: string; description?: string; siteName?: string; image?: { asset?: { url?: string } } }
   twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
   hreflang?: { locale: string; url: string }[]
   schemaOrg?: { schemaType?: string; faqItems?: { question: string; answer: string }[]; [key: string]: unknown }
@@ -618,7 +615,7 @@ const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
     <SEO
       title={title}
       description={description}
-      canonical={seo.canonicalUrl ?? pageUrl}
+      canonical={pageUrl}
       noindex={seo.robotsMeta?.includes('noindex') ?? false}
       nofollow={seo.nofollowAttributes ?? false}
       openGraph={{
@@ -626,7 +623,7 @@ const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
           title: seo.openGraph?.title ?? title,
           type: 'website',
           image: ogImage ?? '',
-          url: seo.openGraph?.url ?? pageUrl,
+          url: pageUrl,
         },
         optional: {
           description: seo.openGraph?.description ?? description,
@@ -692,12 +689,12 @@ const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={seo.canonicalUrl ?? pageUrl} />
+    <link rel="canonical" href={pageUrl} />
     <meta name="robots" content={robots} />
     {seo.seoKeywords?.length && <meta name="keywords" content={seo.seoKeywords.join(', ')} />}
     <meta property="og:title" content={seo.openGraph?.title ?? title} />
     <meta property="og:description" content={seo.openGraph?.description ?? description} />
-    <meta property="og:url" content={seo.openGraph?.url ?? pageUrl} />
+    <meta property="og:url" content={pageUrl} />
     <meta property="og:type" content="website" />
     {ogImage && <meta property="og:image" content={ogImage} />}
     {seo.openGraph?.siteName && <meta property="og:site_name" content={seo.openGraph.siteName} />}
@@ -794,14 +791,13 @@ export function useSanityFetch<T>(query: string, params?: Record<string, unknown
 export type SeoField = {
   metaTitle?: string
   metaDescription?: string
-  canonicalUrl?: string
   nofollowAttributes?: boolean
   robotsMeta?: string[]
   seoKeywords?: string[]
   seoStatus?: string
   seoReviewNotes?: string
   metaImage?: { asset?: { url?: string } }
-  openGraph?: { title?: string; description?: string; url?: string; siteName?: string; image?: { asset?: { url?: string } } }
+  openGraph?: { title?: string; description?: string; siteName?: string; image?: { asset?: { url?: string } } }
   twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
   hreflang?: { locale: string; url: string }[]
   schemaOrg?: {
@@ -814,10 +810,10 @@ export type SeoField = {
 
 export const SEO_GROQ = `seo {
   metaTitle, metaDescription, focusKeyword,
-  canonicalUrl, nofollowAttributes, robotsMeta, seoKeywords,
+  nofollowAttributes, robotsMeta, seoKeywords,
   seoStatus, seoReviewNotes,
   metaImage { asset->{ url } },
-  openGraph { title, description, url, siteName, image { asset->{ url } } },
+  openGraph { title, description, siteName, image { asset->{ url } } },
   twitter { cardType, site, creator, handle },
   hreflang[] { locale, url },
   schemaOrg {
@@ -890,7 +886,7 @@ useHead({
     { property: 'og:title', content: seo.value?.openGraph?.title ?? title.value },
     { property: 'og:description', content: seo.value?.openGraph?.description ?? description.value },
     { property: 'og:type', content: 'article' },
-    { property: 'og:url', content: seo.value?.openGraph?.url ?? pageUrl },
+    { property: 'og:url', content: pageUrl },
     ...(ogImage.value ? [{ property: 'og:image', content: ogImage.value }] : []),
     ...(seo.value?.openGraph?.siteName ? [{ property: 'og:site_name', content: seo.value.openGraph.siteName }] : []),
     { name: 'twitter:card', content: seo.value?.twitter?.cardType ?? 'summary_large_image' },
@@ -900,7 +896,7 @@ useHead({
       : []),
   ],
   link: [
-    { rel: 'canonical', href: seo.value?.canonicalUrl ?? pageUrl },
+    { rel: 'canonical', href: pageUrl },
     ...(seo.value?.hreflang?.map(({ locale, url }) => ({ rel: 'alternate', hreflang: locale, href: url })) ?? []),
   ],
   script: jsonLd.value ? [{ type: 'application/ld+json', innerHTML: jsonLd.value }] : [],
@@ -938,10 +934,10 @@ const client = createClient({
 })
 
 type SeoField = {
-  metaTitle?: string; metaDescription?: string; canonicalUrl?: string
+  metaTitle?: string; metaDescription?: string
   nofollowAttributes?: boolean; robotsMeta?: string[]; seoKeywords?: string[]
   metaImage?: { asset?: { url?: string } }
-  openGraph?: { title?: string; description?: string; url?: string; siteName?: string; image?: { asset?: { url?: string } } }
+  openGraph?: { title?: string; description?: string; siteName?: string; image?: { asset?: { url?: string } } }
   twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
   hreflang?: { locale: string; url: string }[]
   schemaOrg?: { schemaType?: string; faqItems?: { question: string; answer: string }[]; [key: string]: unknown }
@@ -952,9 +948,9 @@ export async function useSanityPage(slug: string) {
     `*[_type == "page" && slug.current == $slug][0]{
       title,
       seo {
-        metaTitle, metaDescription, canonicalUrl, nofollowAttributes, robotsMeta, seoKeywords,
+        metaTitle, metaDescription, nofollowAttributes, robotsMeta, seoKeywords,
         metaImage { asset->{ url } },
-        openGraph { title, description, url, siteName, image { asset->{ url } } },
+        openGraph { title, description, siteName, image { asset->{ url } } },
         twitter { cardType, site, creator, handle },
         hreflang[] { locale, url },
         schemaOrg { schemaType, name, description, url, faqItems[] { question, answer } }
@@ -965,7 +961,7 @@ export async function useSanityPage(slug: string) {
 
   const seo = page?.seo ?? {}
   const siteUrl = import.meta.env.VITE_SITE_URL ?? ''
-  const canonical = seo.canonicalUrl ?? `${siteUrl}/${slug}`
+  const canonical = `${siteUrl}/${slug}`
   const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
 
   // JSON-LD — FAQPage, generic schemaType, or null
@@ -992,7 +988,7 @@ export async function useSanityPage(slug: string) {
       ...(seo.seoKeywords?.length ? [{ name: 'keywords', content: seo.seoKeywords.join(', ') }] : []),
       { property: 'og:title', content: seo.openGraph?.title ?? seo.metaTitle },
       { property: 'og:description', content: seo.openGraph?.description ?? seo.metaDescription },
-      { property: 'og:url', content: seo.openGraph?.url ?? canonical },
+      { property: 'og:url', content: canonical },
       ...(seo.openGraph?.siteName ? [{ property: 'og:site_name', content: seo.openGraph.siteName }] : []),
       ...(ogImage ? [{ property: 'og:image', content: ogImage }] : []),
       { name: 'twitter:card', content: seo.twitter?.cardType ?? 'summary_large_image' },
@@ -1042,14 +1038,12 @@ const pageQuery = groq`*[_type == "page" && slug.current == $slug][0]{
     metaDescription,
     focusKeyword,
     seoKeywords,
-    canonicalUrl,
     nofollowAttributes,
     robotsMeta,
     metaImage { asset->{ url } },
     openGraph {
       title,
       description,
-      url,
       siteName,
       image { asset->{ url } }
     },
@@ -1092,13 +1086,11 @@ All available fields and their types:
 | `metaDescription` | `string` | Page description for search engines |
 | `focusKeyword` | `string` | Primary keyword |
 | `seoKeywords` | `string[]` | Additional keywords |
-| `canonicalUrl` | `string` | Canonical URL |
 | `nofollowAttributes` | `boolean` | Legacy noindex toggle |
 | `robotsMeta` | `string[]` | e.g. `['noindex', 'nofollow']` |
 | `metaImage.asset.url` | `string` | Fallback OG/Twitter image URL |
 | `openGraph.title` | `string` | OG title |
 | `openGraph.description` | `string` | OG description |
-| `openGraph.url` | `string` | OG URL |
 | `openGraph.siteName` | `string` | OG site name |
 | `openGraph.image.asset.url` | `string` | OG image URL |
 | `twitter.cardType` | `string` | e.g. `summary_large_image` |
@@ -1152,15 +1144,13 @@ Each type shows only the fields relevant to it. The output is a live **JSON-LD p
 
 ### Advanced Validation
 
-Runs 7 checks on the current document and surfaces one-click fix buttons for the issues that can be auto-resolved:
+Runs 5 checks on the current document and surfaces one-click fix buttons for the issues that can be auto-resolved:
 
 | Check | Auto-fixable |
 |---|:---:|
 | Unique meta title (cross-document GROQ query) | — |
-| No noindex + canonical conflict | — |
 | Open Graph image present | — |
 | Open Graph title set | ✅ Copy from meta title |
-| Canonical URL set | ✅ Auto-fill from slug |
 | Focus keyword in meta title | — |
 | Meta description length (100–160 chars) | — |
 
@@ -1192,7 +1182,7 @@ A top-level Studio tool showing site-wide SEO scores across all documents at a g
 
 Scans all documents for SEO issues and presents them as a fix queue. Stat cards show average score, total issues, missing keywords, and missing OG images across the entire site.
 
-**Per-document inline editing** — expand any row to edit all SEO fields (meta title, description, canonical URL, focus keyword, OG title, OG description) without leaving the Optimizer. Character counters flag title and description lengths in real time. Each collapsed row shows an issue count badge so you can prioritise at a glance.
+**Per-document inline editing** — expand any row to edit all SEO fields (meta title, description, focus keyword, OG title, OG description) without leaving the Optimizer. Character counters flag title and description lengths in real time. Each collapsed row shows an issue count badge so you can prioritise at a glance.
 
 **Type filter** — a dropdown filters the table by document type so you can select-all and bulk-apply to one content type (e.g. all `post` documents) without touching others.
 
@@ -1200,7 +1190,6 @@ Scans all documents for SEO issues and presents them as a fix queue. Stat cards 
 
 | Action | What it does |
 |---|---|
-| **Canonical URLs** | Generates `{base-url}/{slug}` for every selected page — you set the base URL once |
 | **Sync Open Graph** | Copies each page's own meta title and description into its OG fields — pages missing a meta title show a warning before you apply |
 | **Import CSV** | Upload a CSV exported from the Optimizer; matched rows are previewed before applying |
 
@@ -1332,7 +1321,6 @@ The following fields were added to the `seoMetaFields` schema type. They are sto
 |---|---|---|
 | `focusKeyword` | Basic SEO | Primary keyword for rank tracking |
 | `robotsMeta` | Advanced | Checkbox grid (noindex, nofollow, noarchive, nosnippet…) |
-| `canonicalUrl` | Advanced | Validated canonical URL |
 | `hreflang` | Advanced | Array of locale + URL pairs |
 | `additionalMetaTags` | Advanced | Freeform name/content meta tag pairs |
 | `schemaOrg` | Schema.org | Schema.org wizard (30+ types) |
@@ -1360,14 +1348,12 @@ interface SeoData {
   metaDescription?: string
   focusKeyword?: string
   seoKeywords?: string[]
-  canonicalUrl?: string
   nofollowAttributes?: boolean
   robotsMeta?: string[]
   metaImage?: { asset: { url: string } }
   openGraph?: {
     title?: string
     description?: string
-    url?: string
     siteName?: string
     image?: { asset: { url: string } }
   }

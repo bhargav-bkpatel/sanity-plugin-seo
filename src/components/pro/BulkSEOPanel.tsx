@@ -42,7 +42,6 @@ function readBulkLS(): BulkScanCache | null {
 }
 
 function getBulkCached(): Pick<BulkScanCache, "docs" | "rowEdits"> | null {
-  // Hot layer first, then warm localStorage layer
   const hit = bulkScanCache ?? readBulkLS();
   if (!hit) return null;
   if (Date.now() - hit.timestamp > BULK_CACHE_TTL_MS) {
@@ -50,9 +49,7 @@ function getBulkCached(): Pick<BulkScanCache, "docs" | "rowEdits"> | null {
     localStorage.removeItem(BULK_LS_KEY);
     return null;
   }
-  // Populate in-memory layer from localStorage if it was empty
   if (!bulkScanCache) bulkScanCache = hit;
-  // Reset transient UI flags so rows don't appear mid-save after reload
   const docs = hit.docs.map((d) => ({ ...d, selected: false }));
   const rowEdits = Object.fromEntries(
     Object.entries(hit.rowEdits).map(([id, edit]) => [
@@ -97,7 +94,6 @@ interface CsvRow {
   title: string;
   metaTitle: string;
   metaDescription: string;
-  canonicalUrl: string;
   focusKeyword: string;
   ogTitle: string;
   ogDescription: string;
@@ -107,7 +103,6 @@ interface CsvRow {
 export default function BulkSEOPanel() {
   const client = useClient({ apiVersion: "2024-01-01" });
 
-  // Document list + per-row state — initialised from module-level cache on mount
   const [docs, setDocs] = useState<BulkDoc[]>(() => getBulkCached()?.docs ?? []);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(() => getBulkCached() !== null);
@@ -118,9 +113,8 @@ export default function BulkSEOPanel() {
   );
 
   // Bulk action state
-  const [bulkTab, setBulkTab] = useState<BulkTab>("canonical");
+  const [bulkTab, setBulkTab] = useState<BulkTab>("og");
   const [bulkProcessing, setBulkProcessing] = useState(false);
-  const [bulkCanonicalBase, setBulkCanonicalBase] = useState("https://yoursite.com");
 
   // CSV state
   const [csvPreview, setCsvPreview] = useState<CsvRow[]>([]);
@@ -164,7 +158,6 @@ export default function BulkSEOPanel() {
           edits[d._id] = {
             metaTitle: d.seo?.metaTitle || "",
             metaDescription: d.seo?.metaDescription || "",
-            canonicalUrl: d.seo?.canonicalUrl || "",
             focusKeyword: d.seo?.focusKeyword || "",
             ogTitle: d.seo?.openGraph?.title || "",
             ogDescription: d.seo?.openGraph?.description || "",
@@ -222,7 +215,6 @@ export default function BulkSEOPanel() {
         const patch: Record<string, any> = {};
         if (edit.metaTitle) patch["seo.metaTitle"] = edit.metaTitle;
         if (edit.metaDescription) patch["seo.metaDescription"] = edit.metaDescription;
-        if (edit.canonicalUrl) patch["seo.canonicalUrl"] = edit.canonicalUrl;
         if (edit.focusKeyword) patch["seo.focusKeyword"] = edit.focusKeyword;
         if (edit.ogTitle) patch["seo.openGraph.title"] = edit.ogTitle;
         if (edit.ogDescription) patch["seo.openGraph.description"] = edit.ogDescription;
@@ -246,23 +238,11 @@ export default function BulkSEOPanel() {
     const selected = docs.filter((d) => d.selected);
     if (!selected.length) return;
 
-    const actionLabel = bulkTab === "canonical" ? "canonical URL" : "Open Graph";
-
     setBulkProcessing(true);
-    setLog([{ msg: `Applying ${actionLabel} to ${selected.length} page(s)…`, ok: true }]);
+    setLog([{ msg: `Applying Open Graph sync to ${selected.length} page(s)…`, ok: true }]);
 
     const results = await Promise.allSettled(
       selected.map(async (doc) => {
-        if (bulkTab === "canonical") {
-          if (!doc.docSlug) {
-            return { docTitle: doc.docTitle, detail: "skipped — no slug on this document" };
-          }
-          const base = bulkCanonicalBase.replace(/\/$/, "");
-          const canonical = `${base}/${doc.docSlug}`;
-          await client.patch(doc._id).set({ "seo.canonicalUrl": canonical }).commit();
-          return { docTitle: doc.docTitle, detail: canonical };
-        }
-        // OG sync — set the whole openGraph object (can't dot-patch into a null object)
         const metaTitle = doc.seo?.metaTitle;
         const metaDesc = doc.seo?.metaDescription;
         if (!metaTitle) {
@@ -270,7 +250,6 @@ export default function BulkSEOPanel() {
         }
         const ogValue: Record<string, string> = { _type: "openGraph", title: metaTitle };
         if (metaDesc) ogValue.description = metaDesc;
-        // Preserve existing OG image if already set
         if (doc.seo?.openGraph?.image) ogValue.image = doc.seo.openGraph.image;
         await client.patch(doc._id).set({ "seo.openGraph": ogValue }).commit();
         return { docTitle: doc.docTitle, detail: `OG title → "${metaTitle}"` };
@@ -290,13 +269,12 @@ export default function BulkSEOPanel() {
     setLog(newLog);
     setBulkProcessing(false);
     fetchDocs();
-  }, [docs, client, bulkTab, bulkCanonicalBase, fetchDocs]);
+  }, [docs, client, fetchDocs]);
 
   // ─── CSV export ──────────────────────────────────────────────────────────────
 
   const exportCSV = useCallback(() => {
-    const header =
-      "_id,title,type,metaTitle,metaDescription,canonicalUrl,focusKeyword,ogTitle,ogDescription";
+    const header = "_id,title,type,metaTitle,metaDescription,focusKeyword,ogTitle,ogDescription";
     const q = (v: string) => `"${(v || "").replace(/"/g, '""')}"`;
     const rows = docs.map((d) =>
       [
@@ -305,7 +283,6 @@ export default function BulkSEOPanel() {
         d._type,
         q(d.seo?.metaTitle || ""),
         q(d.seo?.metaDescription || ""),
-        q(d.seo?.canonicalUrl || ""),
         q(d.seo?.focusKeyword || ""),
         q(d.seo?.openGraph?.title || ""),
         q(d.seo?.openGraph?.description || ""),
@@ -365,7 +342,6 @@ export default function BulkSEOPanel() {
         const idIdx = headers.indexOf("_id");
         const mtIdx = headers.indexOf("metatitle");
         const mdIdx = headers.indexOf("metadescription");
-        const canonIdx = headers.indexOf("canonicalurl");
         const kwIdx = headers.indexOf("focuskeyword");
         const ogTIdx = headers.indexOf("ogtitle");
         const ogDIdx = headers.indexOf("ogdescription");
@@ -383,7 +359,6 @@ export default function BulkSEOPanel() {
             title: docMap[id]?.docTitle ?? id,
             metaTitle: col(cols, mtIdx),
             metaDescription: col(cols, mdIdx),
-            canonicalUrl: col(cols, canonIdx),
             focusKeyword: col(cols, kwIdx),
             ogTitle: col(cols, ogTIdx),
             ogDescription: col(cols, ogDIdx),
@@ -409,7 +384,6 @@ export default function BulkSEOPanel() {
         const patch: Record<string, string> = {};
         if (row.metaTitle) patch["seo.metaTitle"] = row.metaTitle;
         if (row.metaDescription) patch["seo.metaDescription"] = row.metaDescription;
-        if (row.canonicalUrl) patch["seo.canonicalUrl"] = row.canonicalUrl;
         if (row.focusKeyword) patch["seo.focusKeyword"] = row.focusKeyword;
         if (row.ogTitle) patch["seo.openGraph.title"] = row.ogTitle;
         if (row.ogDescription) patch["seo.openGraph.description"] = row.ogDescription;
@@ -464,7 +438,7 @@ export default function BulkSEOPanel() {
       <Box style={{ minHeight: "100vh", background: "#070d1a", padding: "32px 40px" }}>
         <div style={{ maxWidth: 1040, margin: "0 auto" }}>
           <Stack space={5}>
-            {/* Header — fix-queue / action identity (green accent) */}
+            {/* Header */}
             <div
               style={{
                 background: "linear-gradient(135deg, #051a0f 0%, #071f12 60%, #04160b 100%)",
@@ -569,7 +543,7 @@ export default function BulkSEOPanel() {
               </button>
             </div>
 
-            {/* Stat cards — always visible, dims when not yet scanned */}
+            {/* Stat cards */}
             <BulkStatCards
               avgScore={avgScore}
               pagesWithIssues={docs.length}
@@ -603,7 +577,6 @@ export default function BulkSEOPanel() {
             {/* Document table */}
             {docs.length > 0 && (
               <div>
-                {/* Type filter dropdown */}
                 {docTypes.length > 1 && (
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }}>
                     <span
@@ -687,7 +660,6 @@ export default function BulkSEOPanel() {
                         rowEdits[doc._id] || {
                           metaTitle: "",
                           metaDescription: "",
-                          canonicalUrl: "",
                           focusKeyword: "",
                           ogTitle: "",
                           ogDescription: "",
@@ -744,14 +716,12 @@ export default function BulkSEOPanel() {
               </div>
             )}
 
-            {/* Bulk actions — only shown when rows are selected */}
+            {/* Bulk actions */}
             {selectedCount > 0 && (
               <BulkActions
                 selectedCount={selectedCount}
                 bulkTab={bulkTab}
                 onTabChange={setBulkTab}
-                bulkCanonicalBase={bulkCanonicalBase}
-                onCanonicalBaseChange={setBulkCanonicalBase}
                 bulkProcessing={bulkProcessing}
                 onApply={runBulk}
                 csvPreview={csvPreview}
