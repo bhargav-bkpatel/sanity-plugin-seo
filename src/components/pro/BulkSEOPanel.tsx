@@ -441,8 +441,8 @@ export default function BulkSEOPanel() {
             {/* Header */}
             <div
               style={{
-                background: "linear-gradient(135deg, #051a0f 0%, #071f12 60%, #04160b 100%)",
-                border: "1px solid #14532d",
+                background: "#000000ff",
+                border: "1px solid #1e3a5f",
                 borderRadius: 16,
                 padding: "28px 32px",
                 display: "flex",
@@ -453,12 +453,12 @@ export default function BulkSEOPanel() {
             >
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                  <SearchIcon style={{ fontSize: 14, color: "#4ade80" }} />
+                  <SearchIcon style={{ fontSize: 14, color: "#60a5fa" }} />
                   <span
                     style={{
                       fontSize: 10,
                       fontWeight: 700,
-                      color: "#4ade80",
+                      color: "#60a5fa",
                       letterSpacing: 2,
                       textTransform: "uppercase",
                     }}
@@ -469,8 +469,8 @@ export default function BulkSEOPanel() {
                 <Text size={4} weight="bold" style={{ color: "#f0fdf4" }}>
                   SEO Optimizer
                 </Text>
-                <div style={{ marginTop: 6 }}>
-                  <Text size={1} style={{ color: "#4b5563" }}>
+                <div style={{ marginTop: 12 }}>
+                  <Text size={1} style={{ color: "#8f8f90ff" }}>
                     {loaded
                       ? `${docs.length} page${
                           docs.length !== 1 ? "s" : ""
@@ -485,8 +485,8 @@ export default function BulkSEOPanel() {
                           alignItems: "center",
                           gap: 6,
                           padding: "4px 10px",
-                          background: "#052e16",
-                          border: "1px solid #166534",
+                          background: "#1e3a5f",
+                          border: "1px solid #2d4a7a",
                           borderRadius: 99,
                         }}
                       >
@@ -495,16 +495,15 @@ export default function BulkSEOPanel() {
                             width: 6,
                             height: 6,
                             borderRadius: "50%",
-                            background: "#4ade80",
+                            background: "#4e85dcff",
                             flexShrink: 0,
-                            boxShadow: "0 0 6px #4ade80",
                           }}
                         />
-                        <span style={{ fontSize: 11, fontWeight: 600, color: "#4ade80" }}>
+                        <span style={{ fontSize: 11, fontWeight: 600, color: "#93c5fd" }}>
                           Cached
                         </span>
-                        <span style={{ fontSize: 11, color: "#166534" }}>·</span>
-                        <span style={{ fontSize: 11, color: "#16a34a" }}>
+                        <span style={{ fontSize: 11, color: "#7193bbff" }}>·</span>
+                        <span style={{ fontSize: 11, color: "#7193bbff" }}>
                           Last scanned {cacheAge}
                         </span>
                       </span>
@@ -521,15 +520,15 @@ export default function BulkSEOPanel() {
                   alignItems: "center",
                   gap: 8,
                   padding: "12px 24px",
-                  background: loading ? "#052e16" : "#166534",
-                  border: `1px solid ${loading ? "#14532d" : "#16a34a"}`,
+                  background: loading ? "#0d1a2e" : "#1e3a5f",
+                  border: `1px solid ${loading ? "#1e3a5f" : "#2d4a7a"}`,
                   borderRadius: 10,
-                  color: loading ? "#374151" : "#bbf7d0",
+                  color: loading ? "#4b5563" : "#93c5fd",
                   fontSize: 14,
                   fontWeight: 700,
                   cursor: loading ? "not-allowed" : "pointer",
                   whiteSpace: "nowrap",
-                  boxShadow: loading ? "none" : "0 0 20px #16a34a30",
+                  boxShadow: loading ? "none" : "0 0 20px #2d4a7a50",
                   transition: "all 0.2s",
                   flexShrink: 0,
                 }}
@@ -590,9 +589,7 @@ export default function BulkSEOPanel() {
                     >
                       Filter by type:
                     </span>
-                    <select
-                      value={typeFilter}
-                      onChange={(e) => setTypeFilter(e.target.value)}
+                    <div
                       style={{
                         height: 32,
                         fontSize: 12,
@@ -605,13 +602,28 @@ export default function BulkSEOPanel() {
                         outline: "none",
                       }}
                     >
-                      <option value="all">All types ({docs.length})</option>
-                      {docTypes.map((type) => (
-                        <option key={type} value={type}>
-                          {type} ({docs.filter((d) => d._type === type).length})
-                        </option>
-                      ))}
-                    </select>
+                      <select
+                        value={typeFilter}
+                        onChange={(e) => setTypeFilter(e.target.value)}
+                        style={{
+                          height: 32,
+                          fontSize: 12,
+                          background: "transparent",
+                          border: "transparent",
+                          borderRadius: 8,
+                          color: "#7dd3fc",
+                          cursor: "pointer",
+                          outline: "none",
+                        }}
+                      >
+                        <option value="all">All types ({docs.length})</option>
+                        {docTypes.map((type) => (
+                          <option key={type} value={type}>
+                            {type} ({docs.filter((d) => d._type === type).length})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 )}
 

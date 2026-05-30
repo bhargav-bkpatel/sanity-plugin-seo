@@ -274,12 +274,13 @@ function Pagination({
     width: 36,
     height: 36,
     borderRadius: 10,
-    border: `1px solid ${disabled ? "#111827" : "#1e3a5f"}`,
-    background: disabled ? "transparent" : "#0d2040",
-    color: disabled ? "#1e293b" : "#7dd3fc",
+    border: `1px solid #1e3a5f`,
+    background: "#0d2040",
+    color: "#7dd3fc",
     cursor: disabled ? "not-allowed" : "pointer",
     transition: "all 0.15s",
     flexShrink: 0,
+    opacity: disabled ? "0.5" : "",
   });
 
   return (
@@ -302,7 +303,7 @@ function Pagination({
         of <span style={{ color: "#94a3b8" }}>{total}</span> pages
       </span>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
         <button
           type="button"
           onClick={() => onPage(Math.max(0, page - 1))}
@@ -311,33 +312,34 @@ function Pagination({
         >
           <ChevronLeftIcon style={{ fontSize: 18 }} />
         </button>
-
-        {Array.from({ length: totalPages }).map((_, i) => (
-          <button
-            // eslint-disable-next-line react/no-array-index-key
-            key={i}
-            type="button"
-            onClick={() => onPage(i)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 36,
-              height: 36,
-              borderRadius: 10,
-              border: "none",
-              background: page === i ? "linear-gradient(135deg, #1d4ed8, #2563eb)" : "transparent",
-              color: page === i ? "#fff" : "#475569",
-              fontSize: 13,
-              fontWeight: page === i ? 700 : 400,
-              cursor: "pointer",
-              boxShadow: page === i ? "0 0 12px #2563eb50" : "none",
-              transition: "all 0.15s",
-            }}
-          >
-            {i + 1}
-          </button>
-        ))}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              // eslint-disable-next-line react/no-array-index-key
+              key={i}
+              type="button"
+              onClick={() => onPage(i)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                border: "none",
+                background: page === i ? "linear-gradient(135deg, #1d4ed8, #2563eb)" : "#0d2040",
+                color: page === i ? "#fff" : "#475569",
+                fontSize: 13,
+                fontWeight: page === i ? 700 : 400,
+                cursor: "pointer",
+                boxShadow: page === i ? "0 0 12px #2563eb50" : "none",
+                transition: "all 0.15s",
+              }}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
 
         <button
           type="button"
@@ -462,7 +464,7 @@ export default function SEODashboardPane() {
           {/* Header — analytics / monitoring identity */}
           <div
             style={{
-              background: "linear-gradient(135deg, #0a1628 0%, #0f1f3d 60%, #091428 100%)",
+              background: "#000",
               border: "1px solid #1a3a6b",
               borderRadius: 16,
               padding: "28px 32px",
@@ -490,7 +492,7 @@ export default function SEODashboardPane() {
               <Text size={4} weight="bold" style={{ color: "#f0f9ff" }}>
                 SEO Health Dashboard
               </Text>
-              <div style={{ marginTop: 6, marginBottom: loading ? 0 : 20 }}>
+              <div style={{ marginTop: 14, marginBottom: loading ? 0 : 20 }}>
                 <Text size={1} style={{ color: "#64748b" }}>
                   {loading
                     ? "Loading SEO health data…"
@@ -499,7 +501,7 @@ export default function SEODashboardPane() {
                       } across your content`}
                 </Text>
                 {!loading && cacheAge && (
-                  <div style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 6 }}>
                     <div
                       style={{
                         width: 6,
@@ -590,7 +592,7 @@ export default function SEODashboardPane() {
                 gap: 2,
                 padding: "3px",
                 height: 36,
-                background: "#0a1020",
+                background: "#000000ff",
                 borderRadius: 8,
                 border: "1px solid #1a2a40",
                 boxSizing: "border-box",
@@ -624,12 +626,7 @@ export default function SEODashboardPane() {
             </div>
 
             {/* Issue dropdown — same 36px height */}
-            <select
-              value={issueFilter}
-              onChange={(e) => {
-                setIssueFilter(e.target.value);
-                setPage(0);
-              }}
+            <div
               style={{
                 height: 36,
                 fontSize: 12,
@@ -643,13 +640,33 @@ export default function SEODashboardPane() {
                 boxSizing: "border-box",
               }}
             >
-              <option value="all">All issues</option>
-              {allIssueTypes.map((issue) => (
-                <option key={issue} value={issue}>
-                  {issue}
-                </option>
-              ))}
-            </select>
+              <select
+                value={issueFilter}
+                onChange={(e) => {
+                  setIssueFilter(e.target.value);
+                  setPage(0);
+                }}
+                style={{
+                  height: 36,
+                  fontSize: 12,
+                  padding: "0",
+                  background: "transparent",
+                  border: "transparent",
+                  borderRadius: 8,
+                  color: "#7dd3fc",
+                  cursor: "pointer",
+                  outline: "none",
+                  boxSizing: "border-box",
+                }}
+              >
+                <option value="all">All issues</option>
+                {allIssueTypes.map((issue) => (
+                  <option key={issue} value={issue}>
+                    {issue}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* Table */}
@@ -711,8 +728,8 @@ export default function SEODashboardPane() {
                       gap: 16,
                       alignItems: "center",
                       padding: "14px 16px",
-                      background: "#0a1020",
-                      border: "1px solid #1a2a40",
+                      background: "#040404ff",
+                      border: "1px solid #797979",
                       borderRadius: 10,
                     }}
                   >

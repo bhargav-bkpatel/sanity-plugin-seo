@@ -60,9 +60,9 @@ export default function GEOChecklist({ value }: { value: Record<string, any> | u
         <Flex align="center" justify="space-between">
           <Stack space={1}>
             <Text size={2} weight="semibold">
-              GEO Score — AI Search Visibility
+              GEO Score AI Search Visibility
             </Text>
-            <Text size={1} muted>
+            <Text size={1} muted style={{ marginTop: "10px" }}>
               How well this page is optimised for ChatGPT, Perplexity, and Google AI Overviews
             </Text>
           </Stack>
@@ -71,7 +71,7 @@ export default function GEOChecklist({ value }: { value: Record<string, any> | u
           </Badge>
         </Flex>
 
-        <Stack space={2}>
+        <Stack space={4} style={{ marginTop: "15px" }}>
           {items.map((item) => (
             <Flex key={item.label} align="flex-start" gap={2}>
               <div style={{ paddingTop: 2, flexShrink: 0 }}>
@@ -99,7 +99,7 @@ export default function GEOChecklist({ value }: { value: Record<string, any> | u
                   )}
                 </div>
               </div>
-              <Stack space={1}>
+              <Stack space={2}>
                 <Text size={1} weight={item.pass ? "semibold" : "regular"}>
                   {item.label}
                 </Text>

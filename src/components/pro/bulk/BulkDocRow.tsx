@@ -109,8 +109,8 @@ export default function BulkDocRow({
   return (
     <div
       style={{
-        background: doc.selected ? "#0d1f3c" : "#0f172a",
-        border: `1px solid ${doc.selected ? "#2d4a7a" : "#1e293b"}`,
+        background: "#000000ff",
+        border: `1px solid #797979`,
         borderRadius: 10,
         overflow: "hidden",
         transition: "background 0.1s, border-color 0.1s",
@@ -245,7 +245,7 @@ export default function BulkDocRow({
         <div
           style={{
             borderTop: "1px solid #1e293b",
-            background: "#070d1a",
+            background: "#000000ff",
           }}
         >
           {/* Issue list */}
@@ -371,7 +371,9 @@ export default function BulkDocRow({
                       marginTop: 4,
                     }}
                   >
-                    <span style={{ fontSize: 10, color: "#64748b" }}>Ideal: 100–160 characters</span>
+                    <span style={{ fontSize: 10, color: "#64748b" }}>
+                      Ideal: 100–160 characters
+                    </span>
                     <CharBadge length={edit.metaDescription.length} min={100} max={160} />
                   </div>
                 </FieldBlock>

@@ -227,7 +227,7 @@ function Header({
   return (
     <div
       style={{
-        background: "linear-gradient(135deg, #0d1a2e 0%, #111f38 60%, #0a1628 100%)",
+        background: "#000000ff",
         border: "1px solid #1e3a5f",
         borderRadius: 16,
         padding: "28px 32px",
@@ -255,7 +255,7 @@ function Header({
         <Text size={4} weight="bold" style={{ color: "#f0f9ff" }}>
           Workflow Dashboard
         </Text>
-        <div style={{ marginTop: 6 }}>
+        <div style={{ marginTop: 14 }}>
           <Text size={1} style={{ color: "#94a3b8" }}>
             {loaded
               ? `${docCount} document${
@@ -354,8 +354,8 @@ function FilterBar({
                 style={{
                   fontSize: 10,
                   fontWeight: 700,
-                  padding: "1px 5px",
-                  borderRadius: 99,
+                  padding: "2px 5px",
+                  borderRadius: 100,
                   background: isActive ? "rgba(255,255,255,0.15)" : "#1e293b",
                   color: isActive ? cfg?.color ?? "#60a5fa" : "#94a3b8",
                 }}
@@ -381,9 +381,7 @@ function FilterBar({
           >
             Type:
           </span>
-          <select
-            value={typeFilter}
-            onChange={(e) => onTypeFilterChange(e.target.value)}
+          <div
             style={{
               height: 32,
               fontSize: 12,
@@ -396,13 +394,28 @@ function FilterBar({
               outline: "none",
             }}
           >
-            <option value="all">All types ({docs.length})</option>
-            {docTypes.map((t) => (
-              <option key={t} value={t}>
-                {t} ({docs.filter((d) => d._type === t).length})
-              </option>
-            ))}
-          </select>
+            <select
+              value={typeFilter}
+              onChange={(e) => onTypeFilterChange(e.target.value)}
+              style={{
+                height: 32,
+                fontSize: 12,
+                background: "transparent",
+                border: "transparent",
+                borderRadius: 8,
+                color: "#7dd3fc",
+                cursor: "pointer",
+                outline: "none",
+              }}
+            >
+              <option value="all">All types ({docs.length})</option>
+              {docTypes.map((t) => (
+                <option key={t} value={t}>
+                  {t} ({docs.filter((d) => d._type === t).length})
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       )}
     </div>

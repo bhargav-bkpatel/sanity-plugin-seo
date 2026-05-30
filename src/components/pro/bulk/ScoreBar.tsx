@@ -21,7 +21,17 @@ export default function ScoreBar({ score }: { score: number }) {
         </div>
         <span style={{ fontSize: 12, fontWeight: 700, color, minWidth: 24 }}>{score}</span>
       </div>
-      <div style={{ fontSize: 10, color: "#475569", marginTop: 3 }}>{scoreLabel(score)}</div>
+      <div
+        style={{
+          fontSize: 11,
+          fontFamily: "sans-serif",
+          fontWeight: "400",
+          color: "#b6bdc8ff",
+          marginTop: 3,
+        }}
+      >
+        {scoreLabel(score)}
+      </div>
     </div>
   );
 }

@@ -49,8 +49,8 @@ export default function WorkflowRow({
   return (
     <div
       style={{
-        background: "#0f172a",
-        border: `1px solid ${isOpen ? "#2d4a7a" : "#1e293b"}`,
+        background: "#000000ff",
+        border: `1px solid #797979ff`,
         borderRadius: 10,
         overflow: "hidden",
         transition: "border-color 0.15s",
@@ -64,7 +64,7 @@ export default function WorkflowRow({
         onKeyDown={(e) => e.key === "Enter" && onToggle()}
         style={{
           display: "grid",
-          gridTemplateColumns: "90px 1fr 100px 160px auto",
+          gridTemplateColumns: "90px 1fr 60px 160px auto",
           gap: 14,
           alignItems: "center",
           padding: "13px 16px",
@@ -94,7 +94,7 @@ export default function WorkflowRow({
             </div>
             <span style={{ fontSize: 12, fontWeight: 700, color: scoreCol }}>{doc.score}</span>
           </div>
-          <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: "#d4d4d4ff", marginTop: 2 }}>
             {scoreLabel(doc.score)}
           </div>
         </div>
@@ -114,7 +114,15 @@ export default function WorkflowRow({
           >
             {doc.docTitle}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              flexWrap: "wrap",
+              marginTop: "10px",
+            }}
+          >
             <span style={{ fontSize: 10, color: "#64748b" }}>
               {new Date(doc._updatedAt).toLocaleDateString(undefined, {
                 month: "short",
@@ -158,14 +166,16 @@ export default function WorkflowRow({
         {/* Type badge */}
         <span
           style={{
-            padding: "3px 10px",
+            padding: "4px 15px",
             background: "#111d35",
             border: "1px solid #1e3a5f",
             borderRadius: 99,
-            fontSize: 11,
+            fontSize: 12,
+            lineHeight: "120%",
             color: "#60a5fa",
             fontWeight: 500,
             whiteSpace: "nowrap",
+            width: "fit-content",
           }}
         >
           {doc._type}
@@ -257,7 +267,7 @@ function SectionHeader({
       <Icon style={{ fontSize: 14, flexShrink: 0 }} />
       {title}
       {sub && (
-        <span style={{ fontSize: 10, color: "#64748b", fontWeight: 400, letterSpacing: 0 }}>
+        <span style={{ fontSize: 10, color: "#c0c0c3ff", fontWeight: 500, letterSpacing: 0 }}>
           {sub}
         </span>
       )}
@@ -267,7 +277,7 @@ function SectionHeader({
 
 function IssuesSection({ issues }: { issues: string[] }) {
   return (
-    <div style={{ padding: "14px 18px", borderBottom: "1px solid #1e293b" }}>
+    <div style={{ padding: "14px 18px", background: "#000", borderBottom: "1px solid #1e293b" }}>
       <SectionHeader icon={WarningOutlineIcon} title="SEO Issues to Review" />
       {issues.length === 0 ? (
         <div
@@ -318,7 +328,7 @@ function NotesSection({
 }) {
   const isDisabled = savingNotes || notes === savedNotes;
   return (
-    <div style={{ padding: "14px 18px", borderBottom: "1px solid #1e293b" }}>
+    <div style={{ padding: "14px 18px", borderBottom: "1px solid #1e293b", background: "#000" }}>
       <SectionHeader
         icon={EditIcon}
         title="Review Notes"
@@ -336,7 +346,7 @@ function NotesSection({
         style={{
           width: "100%",
           padding: "10px 12px",
-          background: "#0a111f",
+          background: "#161616ff",
           border: "1px solid #2d3f55",
           borderRadius: 8,
           color: "#e2e8f0",
@@ -411,6 +421,7 @@ function ActionsSection({
         alignItems: "center",
         justifyContent: "space-between",
         gap: 12,
+        background: "#000",
       }}
     >
       {/* Context hint */}

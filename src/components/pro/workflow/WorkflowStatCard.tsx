@@ -26,7 +26,7 @@ export default function WorkflowStatCard({
       type="button"
       onClick={onClick}
       style={{
-        background: active ? `${accent}18` : "#0f172a",
+        background: active ? `${accent}18` : "#0b0b0bff",
         border: `1px solid ${active ? `${accent}60` : `${accent}30`}`,
         borderTop: `3px solid ${active ? accent : `${accent}60`}`,
         borderRadius: 12,

@@ -66,12 +66,12 @@ export default function SEOScoreDisplay({ result }: Props) {
             <Box
               style={{
                 background: "#e2e8f0",
-                borderRadius: 4,
-                padding: "2px 8px",
+                borderRadius: 100,
+                padding: "6px 8px",
                 backgroundColor: `${barColor}22`,
               }}
             >
-              <Text size={1} weight="semibold" style={{ color: barColor }}>
+              <Text weight="semibold" style={{ color: barColor }}>
                 {label}
               </Text>
             </Box>
@@ -98,7 +98,7 @@ export default function SEOScoreDisplay({ result }: Props) {
           />
         </div>
 
-        <Stack space={2}>
+        <Stack space={4}>
           {checks.map((c) => (
             <CheckRow key={c.name} check={c} />
           ))}
