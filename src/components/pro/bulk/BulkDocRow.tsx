@@ -32,7 +32,7 @@ const FIELD_INPUT: React.CSSProperties = {
 const SECTION_HEADER: React.CSSProperties = {
   fontSize: 10,
   fontWeight: 700,
-  color: "#475569",
+  color: "#64748b",
   letterSpacing: 1.5,
   textTransform: "uppercase",
   marginBottom: 10,
@@ -83,7 +83,7 @@ function FieldBlock({
         {required && <span style={{ fontSize: 10, color: "#ef4444", fontWeight: 700 }}>*</span>}
       </div>
       {children}
-      {hint && <div style={{ fontSize: 10, color: "#475569", marginTop: 4 }}>{hint}</div>}
+      {hint && <div style={{ fontSize: 10, color: "#64748b", marginTop: 4 }}>{hint}</div>}
     </div>
   );
 }
@@ -164,7 +164,7 @@ export default function BulkDocRow({
             <div
               style={{
                 fontSize: 11,
-                color: "#475569",
+                color: "#64748b",
                 marginTop: 2,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -228,7 +228,7 @@ export default function BulkDocRow({
         {/* Chevron */}
         <div
           style={{
-            color: "#334155",
+            color: "#64748b",
             transition: "transform 0.2s",
             transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
             display: "flex",
@@ -298,7 +298,7 @@ export default function BulkDocRow({
               <span
                 style={{
                   fontSize: 11,
-                  color: "#334155",
+                  color: "#64748b",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -339,7 +339,7 @@ export default function BulkDocRow({
                     marginTop: 4,
                   }}
                 >
-                  <span style={{ fontSize: 10, color: "#475569" }}>Ideal: 50–60 characters</span>
+                  <span style={{ fontSize: 10, color: "#64748b" }}>Ideal: 50–60 characters</span>
                   <CharBadge length={edit.metaTitle.length} min={50} max={60} />
                 </div>
               </FieldBlock>
@@ -371,7 +371,7 @@ export default function BulkDocRow({
                       marginTop: 4,
                     }}
                   >
-                    <span style={{ fontSize: 10, color: "#475569" }}>Ideal: 100–160 characters</span>
+                    <span style={{ fontSize: 10, color: "#64748b" }}>Ideal: 100–160 characters</span>
                     <CharBadge length={edit.metaDescription.length} min={100} max={160} />
                   </div>
                 </FieldBlock>
@@ -449,7 +449,7 @@ export default function BulkDocRow({
                   background: edit.saving ? "#1e293b" : "#1d4ed8",
                   border: "none",
                   borderRadius: 8,
-                  color: edit.saving ? "#475569" : "#fff",
+                  color: edit.saving ? "#64748b" : "#fff",
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: edit.saving ? "not-allowed" : "pointer",

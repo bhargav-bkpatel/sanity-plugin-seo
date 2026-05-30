@@ -59,14 +59,14 @@ function StatCard({
         style={{
           fontSize: 13,
           fontWeight: 700,
-          color: loaded ? "#f1f5f9" : "#334155",
+          color: loaded ? "#f1f5f9" : "#64748b",
           marginTop: 10,
           transition: "color 0.3s",
         }}
       >
         {label}
       </div>
-      <div style={{ fontSize: 11, color: "#475569", marginTop: 3 }}>{sub}</div>
+      <div style={{ fontSize: 11, color: "#64748b", marginTop: 3 }}>{sub}</div>
     </div>
   );
 }

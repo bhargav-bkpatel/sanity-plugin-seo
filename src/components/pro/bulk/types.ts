@@ -73,7 +73,7 @@ export const INPUT_STYLE: CSSProperties = {
 export const FIELD_LABEL: CSSProperties = {
   fontSize: 10,
   fontWeight: 700,
-  color: "#475569",
+  color: "#64748b",
   letterSpacing: 1,
   textTransform: "uppercase",
   whiteSpace: "nowrap",

@@ -16,7 +16,6 @@ const schema = defineType({
     { name: "social", title: "Social Sharing" },
     { name: "advanced", title: "Advanced" },
     { name: "schema", title: "Schema.org" },
-    { name: "workflow", title: "Workflow" },
   ],
   fields: [
     // ── Basic SEO ──────────────────────────────────────────
@@ -289,13 +288,19 @@ const schema = defineType({
         },
       ],
     },
-    // ── Workflow ──────────────────────────────────────────
+    // ── Workflow status (managed from Workflow Dashboard, hidden in document editor) ──
+    {
+      name: "seoStatus",
+      title: "SEO Status",
+      type: "string",
+      hidden: true,
+      initialValue: "draft",
+    },
     {
       name: "seoReviewNotes",
       title: "Review Notes",
       type: "text",
-      group: "workflow",
-      rows: 3,
+      hidden: true,
     },
   ],
 });

@@ -568,7 +568,7 @@ export default function BulkSEOPanel() {
                 <div style={{ fontSize: 16, fontWeight: 700, color: "#f8fafc", marginBottom: 6 }}>
                   All pages look great!
                 </div>
-                <div style={{ fontSize: 13, color: "#475569" }}>
+                <div style={{ fontSize: 13, color: "#64748b" }}>
                   No SEO issues found across your content.
                 </div>
               </div>
@@ -583,7 +583,7 @@ export default function BulkSEOPanel() {
                       style={{
                         fontSize: 10,
                         fontWeight: 700,
-                        color: "#475569",
+                        color: "#64748b",
                         letterSpacing: 1,
                         textTransform: "uppercase",
                       }}
@@ -639,7 +639,7 @@ export default function BulkSEOPanel() {
                         fontSize: 10,
                         fontWeight: 700,
                         letterSpacing: 1.5,
-                        color: "#334155",
+                        color: "#64748b",
                         textTransform: "uppercase",
                       }}
                     >
@@ -686,7 +686,7 @@ export default function BulkSEOPanel() {
                     marginTop: 16,
                   }}
                 >
-                  <span style={{ fontSize: 12, color: "#475569" }}>
+                  <span style={{ fontSize: 12, color: "#64748b" }}>
                     {visibleDocs.length === docs.length
                       ? `${docs.length} pages with SEO issues`
                       : `${visibleDocs.length} of ${docs.length} pages`}{" "}
@@ -751,7 +751,7 @@ export default function BulkSEOPanel() {
                 <div style={{ fontSize: 15, fontWeight: 700, color: "#f8fafc", marginBottom: 6 }}>
                   Scan your content for SEO issues
                 </div>
-                <div style={{ fontSize: 13, color: "#475569", marginBottom: 20 }}>
+                <div style={{ fontSize: 13, color: "#64748b", marginBottom: 20 }}>
                   Click a page row to expand and edit all its SEO fields individually, or select
                   multiple pages for bulk changes
                 </div>

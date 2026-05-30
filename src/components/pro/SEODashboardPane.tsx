@@ -144,7 +144,7 @@ function ScoreBar({ score }: { score: number }) {
         </div>
         <span style={{ fontSize: 13, fontWeight: 700, color, minWidth: 26 }}>{score}</span>
       </div>
-      <div style={{ fontSize: 10, color: "#475569", marginTop: 3 }}>{scoreLabel(score)}</div>
+      <div style={{ fontSize: 10, color: "#64748b", marginTop: 3 }}>{scoreLabel(score)}</div>
     </div>
   );
 }
@@ -198,7 +198,7 @@ function StatCard({
         {value}
       </div>
       <div style={{ fontSize: 13, fontWeight: 700, color: "#f1f5f9", marginTop: 10 }}>{label}</div>
-      <div style={{ fontSize: 11, color: "#475569", marginTop: 3 }}>{sub}</div>
+      <div style={{ fontSize: 11, color: "#64748b", marginTop: 3 }}>{sub}</div>
     </div>
   );
 }
@@ -295,7 +295,7 @@ function Pagination({
         borderRadius: 12,
       }}
     >
-      <span style={{ fontSize: 12, color: "#475569" }}>
+      <span style={{ fontSize: 12, color: "#64748b" }}>
         <span style={{ color: "#7dd3fc", fontWeight: 600 }}>
           {Math.min(page * pageSize + 1, total)}–{Math.min((page + 1) * pageSize, total)}
         </span>{" "}
@@ -509,7 +509,7 @@ export default function SEODashboardPane() {
                         flexShrink: 0,
                       }}
                     />
-                    <span style={{ fontSize: 11, color: "#475569" }}>
+                    <span style={{ fontSize: 11, color: "#64748b" }}>
                       Last scanned {cacheAge} · cached
                     </span>
                   </div>
@@ -613,7 +613,7 @@ export default function SEODashboardPane() {
                     fontSize: 12,
                     fontWeight: filter === f.key ? 600 : 400,
                     background: filter === f.key ? "#0c2d50" : "transparent",
-                    color: filter === f.key ? "#7dd3fc" : "#475569",
+                    color: filter === f.key ? "#7dd3fc" : "#94a3b8",
                     transition: "all 0.15s",
                     whiteSpace: "nowrap",
                   }}
@@ -676,7 +676,7 @@ export default function SEODashboardPane() {
                       fontSize: 10,
                       fontWeight: 700,
                       letterSpacing: 1.5,
-                      color: "#334155",
+                      color: "#64748b",
                       textTransform: "uppercase",
                     }}
                   >
@@ -691,7 +691,7 @@ export default function SEODashboardPane() {
                     style={{
                       padding: "40px 0",
                       textAlign: "center",
-                      color: "#334155",
+                      color: "#64748b",
                       fontSize: 14,
                       background: "#0a1020",
                       borderRadius: 10,
@@ -730,7 +730,7 @@ export default function SEODashboardPane() {
                       >
                         {doc.docTitle}
                       </div>
-                      <div style={{ fontSize: 11, color: "#334155" }}>
+                      <div style={{ fontSize: 11, color: "#94a3b8" }}>
                         Updated {new Date(doc._updatedAt).toLocaleDateString()}
                       </div>
                     </div>
@@ -739,12 +739,12 @@ export default function SEODashboardPane() {
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
-                        padding: "2px 8px",
-                        background: "#0f1d33",
-                        border: "1px solid #1a2a40",
+                        padding: "3px 10px",
+                        background: "#111d35",
+                        border: "1px solid #1e3a5f",
                         borderRadius: 99,
                         fontSize: 11,
-                        color: "#64748b",
+                        color: "#60a5fa",
                         fontWeight: 500,
                         width: "fit-content",
                       }}
@@ -752,7 +752,7 @@ export default function SEODashboardPane() {
                       {doc._type}
                     </div>
 
-                    <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                       {doc.issues.length === 0 ? (
                         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                           <div
@@ -764,7 +764,9 @@ export default function SEODashboardPane() {
                               flexShrink: 0,
                             }}
                           />
-                          <span style={{ fontSize: 12, color: "#22c55e" }}>All checks passed</span>
+                          <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>
+                            All checks passed
+                          </span>
                         </div>
                       ) : (
                         doc.issues.map((issue) => (
@@ -774,15 +776,15 @@ export default function SEODashboardPane() {
                           >
                             <div
                               style={{
-                                width: 5,
-                                height: 5,
+                                width: 6,
+                                height: 6,
                                 borderRadius: "50%",
-                                background: doc.score === 0 ? "#64748b" : "#ef4444",
+                                background: doc.score === 0 ? "#94a3b8" : "#f87171",
                                 flexShrink: 0,
-                                marginTop: 4,
+                                marginTop: 3,
                               }}
                             />
-                            <span style={{ fontSize: 11, color: "#64748b", lineHeight: 1.4 }}>
+                            <span style={{ fontSize: 11, color: "#cbd5e1", lineHeight: 1.5 }}>
                               {issue}
                             </span>
                           </div>

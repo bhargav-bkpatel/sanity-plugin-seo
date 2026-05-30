@@ -84,7 +84,7 @@ export default function BulkActions({
           style={{
             fontSize: 10,
             fontWeight: 700,
-            color: "#475569",
+            color: "#64748b",
             letterSpacing: 1.5,
             textTransform: "uppercase",
           }}
@@ -193,7 +193,7 @@ export default function BulkActions({
                   style={{
                     fontSize: 9,
                     fontWeight: 700,
-                    color: "#334155",
+                    color: "#64748b",
                     letterSpacing: 1,
                     textTransform: "uppercase",
                     marginBottom: 6,
@@ -247,7 +247,7 @@ export default function BulkActions({
             </div>
 
             {/* Footer note */}
-            <div style={{ fontSize: 11, color: "#475569", fontStyle: "italic" }}>
+            <div style={{ fontSize: 11, color: "#64748b", fontStyle: "italic" }}>
               Each page gets its own values — pages without a meta title are skipped.
             </div>
           </div>
@@ -306,7 +306,7 @@ export default function BulkActions({
               style={{
                 fontSize: 10,
                 fontWeight: 700,
-                color: "#475569",
+                color: "#64748b",
                 letterSpacing: 1.5,
                 textTransform: "uppercase",
                 marginBottom: 8,
@@ -418,7 +418,7 @@ function CsvImportTab({
           style={{ display: "none" }}
           aria-hidden="true"
         />
-        <span style={{ fontSize: 11, color: "#475569" }}>
+        <span style={{ fontSize: 11, color: "#64748b" }}>
           {csvPreview.length > 0 ? `${csvPreview.length} rows parsed` : "No file selected"}
         </span>
       </div>
@@ -447,7 +447,7 @@ function CsvImportTab({
             style={{
               fontSize: 10,
               fontWeight: 700,
-              color: "#475569",
+              color: "#64748b",
               letterSpacing: 1.2,
               textTransform: "uppercase",
               marginBottom: 8,

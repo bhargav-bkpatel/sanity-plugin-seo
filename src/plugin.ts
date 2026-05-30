@@ -1,11 +1,12 @@
 import { definePlugin } from "sanity";
-import { SparklesIcon, DocumentsIcon } from "@sanity/icons";
+import { SparklesIcon, DocumentsIcon, ActivityIcon } from "@sanity/icons";
 import types from "./schemas/types";
 import { PluginConfig } from "./types/PluginConfig";
 import { setPluginConfig, setProEnabled, setLicenseValidating } from "./config";
 import validateLicense from "./utils/validateLicense";
 import SEODashboardPane from "./components/pro/SEODashboardPane";
 import BulkSEOPanel from "./components/pro/BulkSEOPanel";
+import WorkflowDashboard from "./components/pro/WorkflowDashboard";
 
 const seoMetaFields = definePlugin((config: PluginConfig = {}) => {
   setPluginConfig(config);
@@ -44,6 +45,12 @@ const seoMetaFields = definePlugin((config: PluginConfig = {}) => {
       title: "SEO Optimizer",
       icon: DocumentsIcon,
       component: BulkSEOPanel,
+    });
+    tools.push({
+      name: "seo-workflow",
+      title: "SEO Workflow",
+      icon: ActivityIcon,
+      component: WorkflowDashboard,
     });
   }
 

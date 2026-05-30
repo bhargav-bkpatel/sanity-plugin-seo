@@ -10,15 +10,15 @@
 [![Sanity V4](https://img.shields.io/badge/Sanity%20V4%20Plugin-4e5452)](https://www.sanity.io/)
 [![Sanity V5](https://img.shields.io/badge/Sanity%20V5%20Plugin-4e5452)](https://www.sanity.io/)
 
-The most complete SEO plugin for Sanity Studio — live SEO score, GEO checklist, AI-powered suggestions, SERP preview, Schema.org wizard (30+ types), social previews, advanced validation, team workflow, and integration guides for **Next.js**, **Astro**, and **Vue / Nuxt**.
+SEO plugin for Sanity Studio. Adds a live SEO score, GEO checklist, AI suggestions, social previews, Schema.org wizard, and ready-to-use integration code for Next.js, Astro, and Vue/Nuxt.
 
-**Free** and **AI** features are available now. **Pro features are coming soon.**
+**Free** and **AI** tiers are live. **Pro is coming soon.**
 
 ![Demo](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/demo-1.gif)
 
 ---
 
-## Feature Comparison
+## What's included
 
 | Feature | Free | AI | 🔜 Pro |
 |---|:---:|:---:|:---:|
@@ -40,20 +40,21 @@ The most complete SEO plugin for Sanity Studio — live SEO score, GEO checklist
 | Live JSON-LD preview | — | — | 🔜 |
 | SEO Health Dashboard (site-wide scores) | — | — | 🔜 |
 | SEO Optimizer — inline bulk edit, type filter, CSV import/export | — | — | 🔜 |
-| Bulk Open Graph sync (copy meta → OG per page) | — | — | 🔜 |
-| Advanced Validation (7 checks + auto-fix) | — | — | 🔜 |
+| Bulk Open Graph sync | — | — | 🔜 |
+| Advanced Validation (5 checks + auto-fix) | — | — | 🔜 |
 | Team Workflow (Draft → Review → Approved) | — | — | 🔜 |
-| Duplicate meta title detection (GROQ) | — | — | 🔜 |
-| AI Bulk SEO Generation (title + description for all pages) | — | — | 🔜 |
+| Workflow Dashboard (site-wide status tracking) | — | — | 🔜 |
+| Duplicate meta title detection | — | — | 🔜 |
+| AI Bulk SEO Generation | — | — | 🔜 |
 
 ---
 
 ## Table of Contents
 
 - [Installation](#installation)
-- [Sanity Studio Setup](#sanity-studio-setup)
+- [Studio Setup](#studio-setup)
 - [Add SEO to a Document](#add-seo-to-a-document)
-- [Configuration Reference](#configuration-reference)
+- [Config Options](#config-options)
 - [Next.js Integration](#nextjs-integration)
 - [Astro Integration](#astro-integration)
 - [Vue 3 / Nuxt Integration](#vue-3--nuxt-integration)
@@ -61,13 +62,11 @@ The most complete SEO plugin for Sanity Studio — live SEO score, GEO checklist
 - [Pro Features — Coming Soon](#pro-features--coming-soon)
 - [Pro License Setup — Coming Soon](#pro-license-setup--coming-soon)
 - [AI Setup](#ai-setup)
-- [Upgrading from Earlier Versions](#upgrading-from-earlier-versions)
+- [Upgrading from v1.3](#upgrading-from-v13)
 
 ---
 
 ## Installation
-
-Install in your **Sanity Studio** project:
 
 ```bash
 npm install sanity-plugin-seo
@@ -77,15 +76,13 @@ yarn add sanity-plugin-seo
 pnpm add sanity-plugin-seo
 ```
 
-Works with **Sanity Studio v3, v4, and v5**.
-
-Your frontend (Next.js, Astro, Vue, Nuxt, etc.) fetches SEO data from Sanity via a GROQ query and renders it using the framework's own head/metadata tools — see the integration examples below.
+Works with Sanity Studio v3, v4, and v5.
 
 ---
 
-## Sanity Studio Setup
+## Studio Setup
 
-### Minimal setup (free features only)
+### Free features only
 
 ```ts
 // sanity.config.ts
@@ -93,80 +90,48 @@ import { defineConfig } from 'sanity'
 import { seoMetaFields } from 'sanity-plugin-seo'
 
 export default defineConfig({
-  plugins: [
-    seoMetaFields(),
-  ],
+  plugins: [seoMetaFields()],
 })
 ```
 
-### With AI suggestions (OpenAI, Anthropic, or Groq)
+### With AI (OpenAI, Anthropic, or Groq)
 
 ```ts
-import { defineConfig } from 'sanity'
 import { seoMetaFields } from 'sanity-plugin-seo'
 
-export default defineConfig({
-  plugins: [
-    seoMetaFields({
-      aiFeature: {
-        provider: 'openai',                          // 'openai' | 'anthropic' | 'groq'
-        apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
-        model: 'gpt-4o-mini',                        // optional, provider default used if omitted
-      },
-      bodyField: 'body',   // your Portable Text field name
-      slugField: 'slug',   // your slug field name
-    }),
-  ],
+seoMetaFields({
+  aiFeature: {
+    provider: 'openai',                         // 'openai' | 'anthropic' | 'groq'
+    apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
+    model: 'gpt-4o-mini',                       // optional
+  },
+  bodyField: 'body',
+  slugField: 'slug',
 })
 ```
 
 ### With Pro license (Coming Soon)
 
-> **Pro features are coming soon.** The `proFeature` config key is reserved for the upcoming license system.
-
 ```ts
-import { defineConfig } from 'sanity'
-import { seoMetaFields } from 'sanity-plugin-seo'
-
-export default defineConfig({
-  plugins: [
-    seoMetaFields({
-      proFeature: process.env.SANITY_STUDIO_SEO_LICENSE, // reserved — Pro coming soon
-      bodyField: 'body',
-      slugField: 'slug',
-    }),
-  ],
+seoMetaFields({
+  proFeature: process.env.SANITY_STUDIO_SEO_LICENSE, // reserved — Pro not yet available
+  bodyField: 'body',
+  slugField: 'slug',
 })
 ```
 
-### Full setup (AI + Pro — Coming Soon)
+### Full config
 
 ```ts
-import { defineConfig } from 'sanity'
-import { seoMetaFields } from 'sanity-plugin-seo'
-
-export default defineConfig({
-  // Pro license key — coming soon, reserve the env var now
-  // proFeature: process.env.SANITY_STUDIO_SEO_LICENSE,
-
-  plugins: [
-    seoMetaFields({
-      // AI-powered title, description, and keyword generation
-      aiFeature: {
-        provider: 'openai',                          // 'openai' | 'anthropic' | 'groq'
-        apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
-        model: 'gpt-4o-mini',                        // optional
-      },
-
-      // Source fields for AI and automation
-      bodyField: 'body',   // Portable Text field for content analysis
-      slugField: 'slug',   // Slug field for canonical URL auto-generation
-
-      // SEO Health Dashboard and Bulk Optimizer top-level tools
-      dashboard: true,     // default: true
-
-    }),
-  ],
+seoMetaFields({
+  aiFeature: {
+    provider: 'openai',
+    apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
+    model: 'gpt-4o-mini',
+  },
+  bodyField: 'body',
+  slugField: 'slug',
+  dashboard: true, // default: true — shows SEO Health + Optimizer in the toolbar
 })
 ```
 
@@ -174,65 +139,44 @@ export default defineConfig({
 
 ## Add SEO to a Document
 
-Add the `seoMetaFields` type to any document schema:
+Add `seoMetaFields` as a field type in any document schema:
 
 ```ts
 // schemas/page.ts
 export default {
   name: 'page',
-  title: 'Page',
   type: 'document',
   fields: [
-    {
-      name: 'title',
-      title: 'Title',
-      type: 'string',
-    },
-    {
-      name: 'slug',
-      title: 'Slug',
-      type: 'slug',
-      options: { source: 'title' },
-    },
-    {
-      name: 'body',
-      title: 'Body',
-      type: 'array',
-      of: [{ type: 'block' }],
-    },
-    {
-      name: 'seo',
-      title: 'SEO',
-      type: 'seoMetaFields',
-    },
+    { name: 'title', type: 'string' },
+    { name: 'slug', type: 'slug', options: { source: 'title' } },
+    { name: 'body', type: 'array', of: [{ type: 'block' }] },
+    { name: 'seo', type: 'seoMetaFields' },
   ],
 }
 ```
 
-The plugin automatically renders a tabbed SEO panel with **Basic SEO**, **Social Sharing**, **Advanced**, **Schema.org**, and **Workflow** tabs.
+This adds a tabbed SEO panel with **Basic SEO**, **Social Sharing**, **Advanced**, and **Schema.org** tabs.
 
 ---
 
-## Configuration Reference
+## Config Options
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `proFeature` | `string` | — | Pro license key — **coming soon**, reserve the env var now |
-| `aiFeature` | `AIConfig` | — | AI provider config for keyword/title/description generation |
-| `aiFeature.provider` | `'openai' \| 'anthropic' \| 'groq'` | — | AI provider |
-| `aiFeature.apiKey` | `string` | — | API key for the chosen provider |
-| `aiFeature.model` | `string` | provider default | Model name (e.g. `gpt-4o-mini`, `claude-haiku-4-5-20251001`, `llama-3.3-70b-versatile`) |
-| `bodyField` | `string` | `'body'` | Portable Text field name for AI content analysis |
-| `slugField` | `string` | `'slug'` | Slug field name for AI content analysis |
-| `dashboard` | `boolean` | `true` | Show SEO Health and Bulk Optimizer in the Studio toolbar |
+| `proFeature` | `string` | — | Pro license key — coming soon |
+| `aiFeature` | `AIConfig` | — | AI provider config |
+| `aiFeature.provider` | `'openai' \| 'anthropic' \| 'groq'` | — | Which AI provider to use |
+| `aiFeature.apiKey` | `string` | — | API key for the provider |
+| `aiFeature.model` | `string` | provider default | e.g. `gpt-4o-mini`, `claude-haiku-4-5-20251001` |
+| `bodyField` | `string` | `'body'` | Portable Text field name for AI analysis |
+| `slugField` | `string` | `'slug'` | Slug field name |
+| `dashboard` | `boolean` | `true` | Show SEO Health and Optimizer in Studio toolbar |
 
 ---
 
 ## Next.js Integration
 
-Fetch SEO data from Sanity and pipe it into the Next.js `Metadata` API (App Router) or `next-seo` (Pages Router). All examples below are copy-paste ready.
-
-### 1. Install and configure the Sanity client
+### 1. Sanity client + GROQ fragment
 
 ```bash
 npm install @sanity/client
@@ -249,7 +193,6 @@ export const client = createClient({
   apiVersion: '2024-01-01',
 })
 
-// Full SEO GROQ fragment — paste this into any query that needs SEO fields
 export const SEO_GROQ = `seo {
   metaTitle, metaDescription, focusKeyword,
   nofollowAttributes, robotsMeta, seoKeywords,
@@ -276,7 +219,7 @@ NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SITE_URL=https://your-site.com
 ```
 
-### 2. Create shared SEO helpers
+### 2. SEO helpers
 
 ```ts
 // app/_seo.ts
@@ -306,12 +249,9 @@ export function buildMetadata(seo: SeoField | undefined, fallbackTitle: string |
   const s = seo ?? {}
   const canonical = `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/${slug}`
   const ogImage = s.openGraph?.image?.asset?.url ?? s.metaImage?.asset?.url
-
   const robots: string[] = []
   if (s.nofollowAttributes) robots.push('noindex', 'nofollow')
   s.robotsMeta?.forEach((r) => { if (!robots.includes(r)) robots.push(r) })
-
-  // Build hreflang map for alternates
   const languages: Record<string, string> = {}
   s.hreflang?.forEach(({ locale, url }) => { languages[locale] = url })
 
@@ -339,7 +279,6 @@ export function buildMetadata(seo: SeoField | undefined, fallbackTitle: string |
   }
 }
 
-// Builds JSON-LD — handles FAQPage, any generic schemaType, and WebPage fallback
 export function buildJsonLd(seo: SeoField | undefined, fallbackTitle?: string): string {
   const schema = seo?.schemaOrg
   if (!schema?.schemaType) {
@@ -361,9 +300,9 @@ export function buildJsonLd(seo: SeoField | undefined, fallbackTitle?: string): 
 }
 ```
 
-### 3. App Router — `[slug]/page.tsx`
+### 3. App Router
 
-> **Next.js 15 note:** `params` is a `Promise` — always `await` it before reading.
+> Next.js 15: `params` is a Promise — `await` it first.
 
 ```tsx
 // app/[slug]/page.tsx
@@ -372,7 +311,6 @@ import { client, SEO_GROQ } from '@/lib/sanity'
 import { buildMetadata, buildJsonLd } from '@/app/_seo'
 
 const query = `*[_type == "page" && slug.current == $slug][0]{ title, ${SEO_GROQ} }`
-
 type Props = { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -384,25 +322,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { slug } = await params
   const page = await client.fetch(query, { slug })
-
   if (!page) return <main><p>Page not found.</p></main>
-
-  const jsonLd = buildJsonLd(page.seo, page.title)
-
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
-      <main>
-        <h1>{page.title}</h1>
-      </main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: buildJsonLd(page.seo, page.title) }} />
+      <main><h1>{page.title}</h1></main>
     </>
   )
 }
 ```
 
----
-
-### Pages Router — `pages/[slug].tsx` with `next-seo`
+### Pages Router
 
 ```bash
 npm install next-seo
@@ -419,14 +349,9 @@ type Props = { page: { title: string; slug: string; seo?: SeoField } }
 
 export default function Page({ page }: Props) {
   const seo = page?.seo ?? {}
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
-  const canonical = `${siteUrl}/${page.slug}`
+  const canonical = `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/${page.slug}`
   const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
 
-  const noindex = !!(seo.nofollowAttributes || seo.robotsMeta?.includes('noindex'))
-  const nofollow = !!(seo.nofollowAttributes || seo.robotsMeta?.includes('nofollow'))
-
-  // JSON-LD — FAQPage, generic schemaType, or WebPage fallback
   const schema = seo.schemaOrg
   let jsonLd: string | null = null
   if (schema?.schemaType === 'FAQPage' && schema.faqItems?.length) {
@@ -448,14 +373,10 @@ export default function Page({ page }: Props) {
         title={seo.metaTitle}
         description={seo.metaDescription}
         canonical={canonical}
-        noindex={noindex}
-        nofollow={nofollow}
-        additionalMetaTags={[
-          ...(seo.seoKeywords?.length ? [{ name: 'keywords', content: seo.seoKeywords.join(', ') }] : []),
-        ]}
-        additionalLinkTags={
-          seo.hreflang?.map(({ locale, url }) => ({ rel: 'alternate', hrefLang: locale, href: url })) ?? []
-        }
+        noindex={!!(seo.nofollowAttributes || seo.robotsMeta?.includes('noindex'))}
+        nofollow={!!(seo.nofollowAttributes || seo.robotsMeta?.includes('nofollow'))}
+        additionalMetaTags={seo.seoKeywords?.length ? [{ name: 'keywords', content: seo.seoKeywords.join(', ') }] : []}
+        additionalLinkTags={seo.hreflang?.map(({ locale, url }) => ({ rel: 'alternate', hrefLang: locale, href: url })) ?? []}
         openGraph={{
           title: seo.openGraph?.title ?? seo.metaTitle,
           description: seo.openGraph?.description ?? seo.metaDescription,
@@ -493,11 +414,7 @@ export async function getStaticPaths() {
 
 ## Astro Integration
 
-Fetch SEO data server-side in each `.astro` page and render it into `<head>`. Works with native Astro head tags or the `astro-seo` component.
-
-### 1. Configure Astro for SSR and install dependencies
-
-Dynamic routes need server-side rendering so each page can fetch its own slug at request time.
+### 1. Install + configure
 
 ```bash
 npm install @sanity/client astro-seo
@@ -506,10 +423,7 @@ npm install @sanity/client astro-seo
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config'
-
-export default defineConfig({
-  output: 'server', // required for dynamic routes
-})
+export default defineConfig({ output: 'server' })
 ```
 
 ```bash
@@ -519,7 +433,7 @@ PUBLIC_SANITY_DATASET=production
 PUBLIC_SITE_URL=https://your-site.com
 ```
 
-### 2. Create a Sanity client and shared helpers
+### 2. Sanity client
 
 ```ts
 // src/lib/sanity.ts
@@ -532,7 +446,6 @@ export const client = createClient({
   apiVersion: '2024-01-01',
 })
 
-// Full SEO GROQ fragment — paste into any query
 export const SEO_GROQ = `seo {
   metaTitle, metaDescription, focusKeyword,
   nofollowAttributes, robotsMeta, seoKeywords,
@@ -562,7 +475,6 @@ export type SeoField = {
   schemaOrg?: { schemaType?: string; faqItems?: { question: string; answer: string }[]; [key: string]: unknown }
 }
 
-// Builds JSON-LD string — handles FAQPage, generic schemaType, and WebPage fallback
 export function buildJsonLd(schema: SeoField['schemaOrg'], fallbackTitle?: string, fallbackDesc?: string): string | null {
   if (!schema?.schemaType) {
     return JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebPage', name: fallbackTitle, description: fallbackDesc })
@@ -581,87 +493,12 @@ export function buildJsonLd(schema: SeoField['schemaOrg'], fallbackTitle?: strin
 }
 ```
 
-### 3. Dynamic route — `src/pages/[slug].astro`
+### 3. Page route
 
 ```astro
 ---
 // src/pages/[slug].astro
 import { SEO } from 'astro-seo'
-import { client, SEO_GROQ, buildJsonLd } from '../lib/sanity'
-
-export const prerender = false // required for every dynamic SSR route in Astro
-
-const { slug } = Astro.params
-const page = await client.fetch(
-  `*[_type == "page" && slug.current == $slug][0]{ title, description, ${SEO_GROQ} }`,
-  { slug },
-)
-if (!page) return Astro.redirect('/404')
-
-const seo = page.seo ?? {}
-const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? ''
-const pageUrl = `${siteUrl}/${slug}`
-const title = seo.metaTitle ?? page.title
-const description = seo.metaDescription ?? page.description ?? ''
-const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
-const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
----
-
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <SEO
-      title={title}
-      description={description}
-      canonical={pageUrl}
-      noindex={seo.robotsMeta?.includes('noindex') ?? false}
-      nofollow={seo.nofollowAttributes ?? false}
-      openGraph={{
-        basic: {
-          title: seo.openGraph?.title ?? title,
-          type: 'website',
-          image: ogImage ?? '',
-          url: pageUrl,
-        },
-        optional: {
-          description: seo.openGraph?.description ?? description,
-          siteName: seo.openGraph?.siteName,
-        },
-      }}
-      twitter={{
-        card: (seo.twitter?.cardType ?? 'summary_large_image') as any,
-        site: seo.twitter?.site,
-        creator: seo.twitter?.creator ?? seo.twitter?.handle,
-      }}
-      extend={{
-        meta: [
-          { name: 'robots', content: seo.robotsMeta?.join(', ') ?? 'index,follow' },
-          ...(seo.seoKeywords?.length ? [{ name: 'keywords', content: seo.seoKeywords.join(', ') }] : []),
-        ],
-        link: seo.hreflang?.map((h: { locale: string; url: string }) => ({
-          rel: 'alternate', hreflang: h.locale, href: h.url,
-        })) ?? [],
-      }}
-    />
-
-    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
-  </head>
-  <body>
-    <main>
-      <h1>{page.title}</h1>
-    </main>
-  </body>
-</html>
-```
-
-<details>
-<summary>Option B — native Astro head tags (no astro-seo)</summary>
-
-```astro
----
-// src/pages/[slug].astro
 import { client, SEO_GROQ, buildJsonLd } from '../lib/sanity'
 
 export const prerender = false
@@ -674,12 +511,10 @@ const page = await client.fetch(
 if (!page) return Astro.redirect('/404')
 
 const seo = page.seo ?? {}
-const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? ''
-const pageUrl = `${siteUrl}/${slug}`
+const pageUrl = `${import.meta.env.PUBLIC_SITE_URL ?? ''}/${slug}`
 const title = seo.metaTitle ?? page.title
 const description = seo.metaDescription ?? page.description ?? ''
 const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
-const robots = seo.robotsMeta?.join(', ') ?? 'index,follow'
 const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
 ---
 
@@ -687,10 +522,67 @@ const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <SEO
+      title={title}
+      description={description}
+      canonical={pageUrl}
+      noindex={seo.robotsMeta?.includes('noindex') ?? false}
+      nofollow={seo.nofollowAttributes ?? false}
+      openGraph={{
+        basic: { title: seo.openGraph?.title ?? title, type: 'website', image: ogImage ?? '', url: pageUrl },
+        optional: { description: seo.openGraph?.description ?? description, siteName: seo.openGraph?.siteName },
+      }}
+      twitter={{
+        card: (seo.twitter?.cardType ?? 'summary_large_image') as any,
+        site: seo.twitter?.site,
+        creator: seo.twitter?.creator ?? seo.twitter?.handle,
+      }}
+      extend={{
+        meta: [
+          { name: 'robots', content: seo.robotsMeta?.join(', ') ?? 'index,follow' },
+          ...(seo.seoKeywords?.length ? [{ name: 'keywords', content: seo.seoKeywords.join(', ') }] : []),
+        ],
+        link: seo.hreflang?.map((h: { locale: string; url: string }) => ({ rel: 'alternate', hreflang: h.locale, href: h.url })) ?? [],
+      }}
+    />
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+  </head>
+  <body>
+    <main><h1>{page.title}</h1></main>
+  </body>
+</html>
+```
+
+<details>
+<summary>Without astro-seo (native head tags)</summary>
+
+```astro
+---
+import { client, SEO_GROQ, buildJsonLd } from '../lib/sanity'
+export const prerender = false
+
+const { slug } = Astro.params
+const page = await client.fetch(
+  `*[_type == "page" && slug.current == $slug][0]{ title, description, ${SEO_GROQ} }`,
+  { slug },
+)
+if (!page) return Astro.redirect('/404')
+
+const seo = page.seo ?? {}
+const pageUrl = `${import.meta.env.PUBLIC_SITE_URL ?? ''}/${slug}`
+const title = seo.metaTitle ?? page.title
+const description = seo.metaDescription ?? page.description ?? ''
+const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
+const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={pageUrl} />
-    <meta name="robots" content={robots} />
+    <meta name="robots" content={seo.robotsMeta?.join(', ') ?? 'index,follow'} />
     {seo.seoKeywords?.length && <meta name="keywords" content={seo.seoKeywords.join(', ')} />}
     <meta property="og:title" content={seo.openGraph?.title ?? title} />
     <meta property="og:description" content={seo.openGraph?.description ?? description} />
@@ -720,19 +612,13 @@ const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
 
 ## Vue 3 / Nuxt Integration
 
-Fetch SEO data from Sanity using a custom `useSanityFetch` composable and apply it with Nuxt's built-in `useHead`.
-
-> **Do not use `@nuxtjs/sanity`** — it pulls in React-based Sanity packages that conflict with Vite's module graph and cause a `react-compiler-runtime` 500 error on page hydration. Use `@sanity/client` directly instead.
+> Don't use `@nuxtjs/sanity` — it pulls in React packages and breaks hydration. Use `@sanity/client` directly.
 
 ### Nuxt 3
-
-#### 1. Install dependencies
 
 ```bash
 npm install @sanity/client
 ```
-
-#### 2. Configure Nuxt and environment
 
 ```ts
 // nuxt.config.ts
@@ -754,14 +640,11 @@ NUXT_PUBLIC_SANITY_DATASET=production
 NUXT_PUBLIC_SITE_URL=https://your-site.com
 ```
 
-> **CORS:** If you get a 500 or network error after client-side navigation, add your dev origin to the Sanity project's [CORS settings](https://sanity.io/manage) (e.g. `http://localhost:3000`). Server-side rendering doesn't need it, but browser fetches during SPA navigation do.
+> If you get CORS errors after client-side navigation, add `http://localhost:3000` to your project's CORS settings at [sanity.io/manage](https://sanity.io/manage).
 
-#### 3. Create composables (Nuxt auto-imports `composables/`)
-
-**`composables/useSanityFetch.ts`** — wraps `@sanity/client` with `useAsyncData` so SSR-fetched data is reused on the client instead of re-fetched (prevents the hydration-time CORS 500):
+**`composables/useSanityFetch.ts`**
 
 ```ts
-// composables/useSanityFetch.ts
 import { createClient } from '@sanity/client'
 
 let _client: ReturnType<typeof createClient> | null = null
@@ -784,10 +667,9 @@ export function useSanityFetch<T>(query: string, params?: Record<string, unknown
 }
 ```
 
-**`composables/useSeo.ts`** — shared SEO types, the full GROQ fragment, and a JSON-LD builder:
+**`composables/useSeo.ts`**
 
 ```ts
-// composables/useSeo.ts
 export type SeoField = {
   metaTitle?: string
   metaDescription?: string
@@ -826,12 +708,7 @@ export const SEO_GROQ = `seo {
   }
 }`
 
-// Builds JSON-LD — handles FAQPage, generic schemaType, and WebPage fallback
-export function buildJsonLd(
-  schema: SeoField['schemaOrg'],
-  fallbackTitle?: string,
-  fallbackDesc?: string,
-): string | null {
+export function buildJsonLd(schema: SeoField['schemaOrg'], fallbackTitle?: string, fallbackDesc?: string): string | null {
   if (!schema?.schemaType) {
     return JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebPage', name: fallbackTitle, description: fallbackDesc })
   }
@@ -849,17 +726,15 @@ export function buildJsonLd(
 }
 ```
 
-#### 4. Dynamic route — `pages/[slug].vue`
+**`pages/[slug].vue`**
 
 ```vue
-<!-- pages/[slug].vue -->
 <script setup lang="ts">
 import { SEO_GROQ, buildJsonLd, type SeoField } from '~/composables/useSeo'
 
 const route = useRoute()
 const slug = route.params.slug as string
-const config = useRuntimeConfig()
-const siteUrl = config.public.siteUrl
+const siteUrl = useRuntimeConfig().public.siteUrl
 
 type Page = { title: string; slug: string; description?: string; seo?: SeoField }
 
@@ -906,23 +781,18 @@ useHead({
 <template>
   <main>
     <h1>{{ page?.title }}</h1>
-    <p>{{ page?.description }}</p>
   </main>
 </template>
 ```
 
----
-
 ### Vue 3 standalone (Vite + @unhead/vue)
-
-For Vue 3 apps that don't use Nuxt, install `@unhead/vue` for head management and `@sanity/client` for data fetching.
 
 ```bash
 npm install @sanity/client @unhead/vue
 ```
 
 ```ts
-// src/composables/useSeo.ts — same helpers as the Nuxt version above
+// src/composables/useSeo.ts
 import { createClient } from '@sanity/client'
 import { useHead } from '@unhead/vue'
 
@@ -960,11 +830,9 @@ export async function useSanityPage(slug: string) {
   )
 
   const seo = page?.seo ?? {}
-  const siteUrl = import.meta.env.VITE_SITE_URL ?? ''
-  const canonical = `${siteUrl}/${slug}`
+  const canonical = `${import.meta.env.VITE_SITE_URL ?? ''}/${slug}`
   const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
 
-  // JSON-LD — FAQPage, generic schemaType, or null
   let jsonLd: string | null = null
   const schema = seo.schemaOrg
   if (schema?.schemaType === 'FAQPage' && schema.faqItems?.length) {
@@ -1008,98 +876,52 @@ export async function useSanityPage(slug: string) {
 }
 ```
 
-```vue
-<!-- src/views/PageView.vue -->
-<script setup lang="ts">
-import { useSanityPage } from '@/composables/useSeo'
-const props = defineProps<{ slug: string }>()
-const { page } = await useSanityPage(props.slug)
-</script>
-
-<template>
-  <main>
-    <h1>{{ page?.title }}</h1>
-  </main>
-</template>
-```
-
 ---
 
 ## GROQ Fragment
 
-Copy this GROQ projection into your frontend query to fetch all SEO fields at once.
-
 ```ts
-// lib/sanity/queries.ts — copy the seo { } block into your query
 const pageQuery = groq`*[_type == "page" && slug.current == $slug][0]{
   title,
   seo {
-    metaTitle,
-    metaDescription,
-    focusKeyword,
-    seoKeywords,
-    nofollowAttributes,
-    robotsMeta,
+    metaTitle, metaDescription, focusKeyword, seoKeywords,
+    nofollowAttributes, robotsMeta,
     metaImage { asset->{ url } },
-    openGraph {
-      title,
-      description,
-      siteName,
-      image { asset->{ url } }
-    },
-    twitter {
-      cardType,
-      site,
-      creator,
-      handle
-    },
+    openGraph { title, description, siteName, image { asset->{ url } } },
+    twitter { cardType, site, creator, handle },
     hreflang[] { locale, url },
     schemaOrg {
-      schemaType,
-      name,
-      description,
-      url,
-      author,
-      datePublished,
-      dateModified,
-      price,
-      priceCurrency,
-      availability,
-      ratingValue,
-      ratingCount,
-      startDate,
-      endDate,
-      location,
+      schemaType, name, description, url, author,
+      datePublished, dateModified,
+      price, priceCurrency, availability,
+      ratingValue, ratingCount,
+      startDate, endDate, location,
       faqItems[] { question, answer }
     },
-    seoStatus,
-    seoReviewNotes
+    seoStatus, seoReviewNotes
   }
 }`
 ```
 
-All available fields and their types:
-
 | Field | Type | Notes |
 |---|---|---|
 | `metaTitle` | `string` | Page title for search engines |
-| `metaDescription` | `string` | Page description for search engines |
+| `metaDescription` | `string` | Page description |
 | `focusKeyword` | `string` | Primary keyword |
 | `seoKeywords` | `string[]` | Additional keywords |
-| `nofollowAttributes` | `boolean` | Legacy noindex toggle |
+| `nofollowAttributes` | `boolean` | Noindex toggle |
 | `robotsMeta` | `string[]` | e.g. `['noindex', 'nofollow']` |
-| `metaImage.asset.url` | `string` | Fallback OG/Twitter image URL |
+| `metaImage.asset.url` | `string` | Fallback OG/Twitter image |
 | `openGraph.title` | `string` | OG title |
 | `openGraph.description` | `string` | OG description |
 | `openGraph.siteName` | `string` | OG site name |
-| `openGraph.image.asset.url` | `string` | OG image URL |
+| `openGraph.image.asset.url` | `string` | OG image |
 | `twitter.cardType` | `string` | e.g. `summary_large_image` |
 | `twitter.site` | `string` | Twitter @account |
 | `twitter.creator` | `string` | Twitter @author |
 | `hreflang[].locale` | `string` | BCP 47 locale code |
 | `hreflang[].url` | `string` | Alternate URL for that locale |
-| `schemaOrg.schemaType` | `string` | Schema.org type (e.g. `Article`) |
-| `schemaOrg.*` | various | Type-specific fields |
+| `schemaOrg.schemaType` | `string` | Schema.org type |
 | `seoStatus` | `string` | `draft` \| `review` \| `approved` |
 | `seoReviewNotes` | `string` | Reviewer notes |
 
@@ -1109,117 +931,104 @@ All available fields and their types:
 
 ### Readability Score
 
-The plugin calculates a **Flesch-Kincaid Grade Level** score for your content and displays it with color-coded feedback.
+Calculates a Flesch-Kincaid Grade Level for your content and shows it with color-coded feedback directly beneath the body field.
 
-The Flesch-Kincaid formula scores how easy your text is to read based on two things: average sentence length and average number of syllables per word. The result maps to a U.S. school grade level:
+| Grade | Meaning |
+|---|---|
+| 1–6 | Very easy — general public |
+| 7–8 | Easy — ideal for most blog posts |
+| 9–12 | Average — acceptable for technical content |
+| 13+ | Difficult — academic/specialist |
 
-| Grade | Meaning | Target audience |
-|---|---|---|
-| 1–6 | Very easy | General public, children |
-| 7–8 | Easy | Most online readers (ideal for blog posts and landing pages) |
-| 9–12 | Average | High school level — acceptable for technical content |
-| 13+ | Difficult | Academic or specialist audiences |
-
-**Why it matters for SEO:** Google favors content that matches how real people read. Most web visitors read at a Grade 6–8 level. Shorter sentences and simpler words improve dwell time, reduce bounce rate, and increase the chance your content is featured in AI Overviews and featured snippets.
-
-The plugin shows the grade score as a color indicator directly beneath the content field — green (Grade ≤ 8), amber (Grade 9–12), red (Grade 13+) — so writers can adjust tone without leaving the Studio.
+Green = Grade ≤ 8, Amber = 9–12, Red = 13+.
 
 ---
 
 ## Pro Features — Coming Soon
 
-> Pro features are coming soon. Watch the [npm package](https://www.npmjs.com/package/sanity-plugin-seo) or star the repository to get notified when they launch.
+> Not launched yet. Star the repo or watch the [npm package](https://www.npmjs.com/package/sanity-plugin-seo) to get notified.
 
 ### SERP Preview
 
-Shows a live Google search result mockup in both **desktop** and **mobile** view — toggled with a tab switcher. Title and description are pixel-width-truncated to match how Google actually cuts them off, so you see exactly what searchers will see before you publish.
+Desktop and mobile Google search mockup with pixel-accurate title/description truncation.
 
 ### Schema.org Wizard
 
-A guided form for 30 structured data types, all eligible for Google Rich Results:
+Guided form for 30 structured data types. Fills out only the fields relevant to the selected type and shows a live JSON-LD preview as you type.
 
-Article / Blog Post, Product, FAQ Page, Local Business, Event, Organization, Web Page, Video, Recipe, Person / Author, Course, Job Posting, Breadcrumb, Blog Post, News Article, How-To Guide, Review, Software / App, Book, Movie / Film, Service, Professional Service, Medical Condition, Dataset, Podcast, Podcast Episode, Tourist Attraction, Accommodation / Hotel, Sports Team, Collection Page, About Page
-
-Each type shows only the fields relevant to it. The output is a live **JSON-LD preview** — the exact `<script type="application/ld+json">` block that will render on your page — updated in real time as you type.
+Supported types: Article, Blog Post, Product, FAQ Page, Local Business, Event, Organization, Web Page, Video, Recipe, Person, Course, Job Posting, Breadcrumb, News Article, How-To Guide, Review, Software/App, Book, Movie, Service, Professional Service, Medical Condition, Dataset, Podcast, Podcast Episode, Tourist Attraction, Accommodation, Sports Team, Collection Page, About Page.
 
 ### Advanced Validation
 
-Runs 5 checks on the current document and surfaces one-click fix buttons for the issues that can be auto-resolved:
+5 checks with one-click fixes where possible:
 
 | Check | Auto-fixable |
 |---|:---:|
-| Unique meta title (cross-document GROQ query) | — |
+| Unique meta title (GROQ query) | — |
 | Open Graph image present | — |
 | Open Graph title set | ✅ Copy from meta title |
 | Focus keyword in meta title | — |
 | Meta description length (100–160 chars) | — |
 
-A progress bar tracks how many checks pass. An issue count badge (e.g. "3 issues") turns green when all checks clear. A **"Fix all"** button applies every auto-fixable patch in one click — each fix shows a 2.5-second "Fixed!" confirmation inline.
+Progress bar + "Fix all" button. Each auto-fix shows a 2.5-second inline confirmation.
 
 ### Team Workflow
 
-Visual pipeline with three statuses: **Draft → Needs SEO Review → SEO Approved**
+Three-status pipeline: **Draft → Needs SEO Review → SEO Approved**
 
-- Clickable step indicators — click any status to jump directly to it
-- Quick-action buttons that change based on current status:
-  - **Request Review** — moves Draft → Needs SEO Review
-  - **Mark Approved** — moves any status → SEO Approved
-  - **Reset to Draft** — moves Approved → Draft
-- **Review Notes** field — a text area for leaving feedback or instructions for content editors
-- `seoStatus` and `seoReviewNotes` are stored on the document and queryable via GROQ
+- Click any step to jump to it
+- Quick-action buttons (Request Review / Mark Approved / Reset to Draft)
+- Review Notes field for feedback between team members
+- `seoStatus` and `seoReviewNotes` stored on the document, queryable via GROQ
 
 ### SEO Health Dashboard
 
-A top-level Studio tool showing site-wide SEO scores across all documents at a glance.
+Site-wide score overview for all documents.
 
-- **Stat cards**: average score, poor / needs work / good page counts, duplicate title count, pages missing Open Graph
-- **Score filter**: view all pages or filter by Poor (< 50), Needs Work (50–79), or Good (≥ 80)
-- **Issue filter**: dropdown listing every distinct issue type found — filter to show only pages with a specific problem (e.g. "Missing description")
-- Paginated document list with score bar, type badge, issue tags, and last-updated date
-- Click any row to open that document directly in the Studio editor
+- Stat cards with average score, issue counts, pages missing OG
+- Filter by score range (Poor / Needs Work / Good) or issue type
+- Paginated list with score bar, type badge, and last-updated date
+- Click any row to open the document
 
-### SEO Optimizer (Bulk Edit)
+### SEO Optimizer
 
-Scans all documents for SEO issues and presents them as a fix queue. Stat cards show average score, total issues, missing keywords, and missing OG images across the entire site.
+Fix queue for all documents with SEO issues.
 
-**Per-document inline editing** — expand any row to edit all SEO fields (meta title, description, focus keyword, OG title, OG description) without leaving the Optimizer. Character counters flag title and description lengths in real time. Each collapsed row shows an issue count badge so you can prioritise at a glance.
+- Inline editing — expand a row to edit meta title, description, focus keyword, OG title, OG description
+- Type filter dropdown
+- **Sync Open Graph** bulk action — copies meta title/description to OG fields for selected pages
+- **Import/Export CSV** — edit in a spreadsheet and re-import
+- Inline result log after every bulk operation
 
-**Type filter** — a dropdown filters the table by document type so you can select-all and bulk-apply to one content type (e.g. all `post` documents) without touching others.
+### Workflow Dashboard
 
-**Bulk actions** — select one or more documents and apply changes across all of them in one click:
+Top-level tool that shows every document's review status in one place.
 
-| Action | What it does |
-|---|---|
-| **Sync Open Graph** | Copies each page's own meta title and description into its OG fields — pages missing a meta title show a warning before you apply |
-| **Import CSV** | Upload a CSV exported from the Optimizer; matched rows are previewed before applying |
-
-After every bulk operation a **result log appears inline** inside the panel — no scrolling needed. Each page shows whether it was updated or skipped and why. The table re-scans automatically after applying.
-
-**Export CSV** — downloads the current table as a spreadsheet pre-filled with all current SEO values. Edit in Excel or Google Sheets and re-import via the CSV tab.
+- Stat cards (All / Draft / Needs Review / Approved) — click to filter
+- Inline status actions per row — no need to open the document
+- Expand a row to see SEO issues and add review notes
+- Direct link to open any document in the editor
 
 ### AI Bulk SEO Generation — Coming Soon
 
-Generate optimised meta titles and descriptions for every page in one operation — powered by your configured AI provider (OpenAI, Anthropic, or Groq). Select pages in the SEO Optimizer, choose a target field, and the AI writes unique, keyword-aware copy for each document individually.
+Generate meta titles and descriptions for every page using your configured AI provider. Pick a target field in the SEO Optimizer, select pages, and let it run.
 
 ---
 
 ## Pro License Setup — Coming Soon
 
-> **Pro is not yet available.** It is coming soon — star the repository or watch the [npm package](https://www.npmjs.com/package/sanity-plugin-seo) to be notified on launch.
+> Not available yet. Watch the [npm package](https://www.npmjs.com/package/sanity-plugin-seo) for launch.
 
-When Pro launches, setup will be:
+When it launches:
 
-1. Purchase a Pro license (link will be shared on launch)
-2. You will receive a license key by email
-3. Add the key to your environment file:
+1. Purchase a license (link shared on launch)
+2. Add the key to your env file:
 
 ```bash
-# .env.local  (for Next.js)
-# .env        (for Astro, Vue, or Nuxt)
 SANITY_STUDIO_SEO_LICENSE=your-license-key-here
 ```
 
-4. Pass it to the plugin config:
+3. Pass it to the plugin:
 
 ```ts
 seoMetaFields({
@@ -1227,15 +1036,11 @@ seoMetaFields({
 })
 ```
 
-The license will be validated silently on Studio load. Pro features unlock automatically once the key is verified. The validated state is cached in the browser so it does not re-validate on every page load.
-
-> **Note:** Environment variables exposed to Sanity Studio must be prefixed with `SANITY_STUDIO_` to be available in the browser bundle.
+> Sanity Studio env vars must be prefixed with `SANITY_STUDIO_` to be included in the browser bundle.
 
 ---
 
 ## AI Setup
-
-The plugin supports **OpenAI**, **Anthropic**, and **Groq** for AI-powered keyword suggestions, meta title generation, and meta description generation.
 
 ### OpenAI
 
@@ -1244,13 +1049,13 @@ seoMetaFields({
   aiFeature: {
     provider: 'openai',
     apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
-    model: 'gpt-4o-mini', // optional — defaults to gpt-4o-mini
+    model: 'gpt-4o-mini',
   },
   bodyField: 'body',
 })
 ```
 
-Recommended models: `gpt-4o-mini` (fast, cheap), `gpt-4o` (higher quality)
+Recommended: `gpt-4o-mini` (fast), `gpt-4o` (better quality)
 
 ### Anthropic
 
@@ -1259,88 +1064,67 @@ seoMetaFields({
   aiFeature: {
     provider: 'anthropic',
     apiKey: process.env.SANITY_STUDIO_ANTHROPIC_KEY!,
-    model: 'claude-haiku-4-5-20251001', // optional
+    model: 'claude-haiku-4-5-20251001',
   },
   bodyField: 'body',
 })
 ```
 
-Recommended models: `claude-haiku-4-5-20251001` (fast), `claude-sonnet-4-6` (higher quality)
+Recommended: `claude-haiku-4-5-20251001` (fast), `claude-sonnet-4-6` (better quality)
 
-### Groq (free tier available)
+### Groq (free tier)
 
 ```ts
 seoMetaFields({
   aiFeature: {
     provider: 'groq',
     apiKey: process.env.SANITY_STUDIO_GROQ_KEY!,
-    model: 'llama-3.3-70b-versatile', // optional
+    model: 'llama-3.3-70b-versatile',
   },
   bodyField: 'body',
 })
 ```
 
-Groq offers a free API tier at [console.groq.com](https://console.groq.com). Recommended models: `llama-3.3-70b-versatile`, `mixtral-8x7b-32768`
+Free API at [console.groq.com](https://console.groq.com). Recommended: `llama-3.3-70b-versatile`, `mixtral-8x7b-32768`.
 
-> **Note:** AI API keys are exposed to the browser via Sanity Studio. Use a restricted key scoped only to the AI provider API and prefix the env variable with `SANITY_STUDIO_` to ensure it is included in the Studio bundle.
+> API keys go through the browser bundle. Use restricted keys and prefix with `SANITY_STUDIO_`.
 
 ---
 
-## Upgrading from Earlier Versions
+## Upgrading from v1.3
 
-This release is fully backward-compatible. All existing `seoMetaFields` schema fields continue to work with no migration needed.
+No schema migration needed. Existing fields all still work.
 
-### Config key changes (v1.3 → v1.4)
+### Config key renames
 
-The plugin config keys were renamed to make their purpose explicit:
-
-| Old key | New key |
+| Old (v1.3) | New (v1.4) |
 |---|---|
 | `license` | `proFeature` |
 | `ai` | `aiFeature` |
 
 ```ts
-// Before (v1.3 and earlier)
-seoMetaFields({
-  license: process.env.SANITY_STUDIO_SEO_LICENSE_KEY,
-  ai: { provider: 'openai', apiKey: '...' },
-})
+// Before
+seoMetaFields({ license: '...', ai: { provider: 'openai', apiKey: '...' } })
 
-// After (v1.4+)
-seoMetaFields({
-  proFeature: process.env.SANITY_STUDIO_SEO_LICENSE,
-  aiFeature: { provider: 'openai', apiKey: '...' },
-})
+// After
+seoMetaFields({ proFeature: '...', aiFeature: { provider: 'openai', apiKey: '...' } })
 ```
 
-### New fields added in v1.4
+### New fields in v1.4
 
-The following fields were added to the `seoMetaFields` schema type. They are stored alongside existing fields and are fully backward-compatible:
-
-| Field | Group | Description |
-|---|---|---|
-| `focusKeyword` | Basic SEO | Primary keyword for rank tracking |
-| `robotsMeta` | Advanced | Checkbox grid (noindex, nofollow, noarchive, nosnippet…) |
-| `hreflang` | Advanced | Array of locale + URL pairs |
-| `additionalMetaTags` | Advanced | Freeform name/content meta tag pairs |
-| `schemaOrg` | Schema.org | Schema.org wizard (30+ types) |
-| `seoStatus` | Workflow | Draft / Needs Review / Approved |
-| `seoReviewNotes` | Workflow | Reviewer notes textarea |
-
-### Zero-argument call still works
-
-```ts
-// Still works with no configuration
-seoMetaFields()
-```
+| Field | Description |
+|---|---|
+| `focusKeyword` | Primary keyword for rank tracking |
+| `robotsMeta` | noindex, nofollow, noarchive, nosnippet checkboxes |
+| `hreflang` | Locale + URL pairs |
+| `additionalMetaTags` | Freeform name/content meta tags |
+| `schemaOrg` | Schema.org wizard |
+| `seoStatus` | Draft / Needs Review / Approved |
+| `seoReviewNotes` | Reviewer notes |
 
 ---
 
 ## TypeScript Types
-
-Copy the `SeoData` interface below into your frontend project — it describes the shape of the `seo` object returned by your GROQ query.
-
-`SeoData` — full shape of a fetched `seo` object:
 
 ```ts
 interface SeoData {
@@ -1405,4 +1189,4 @@ Built by [Bhargav Patel](https://bkpatel.com/)
 
 ## License
 
-MIT — free tier features are fully open source. Pro features are coming soon — watch the repository for launch announcements.
+MIT — free features are open source. Pro is coming soon.
