@@ -1,15 +1,13 @@
 const seo = {
   "@type": "seoMetaFields",
   nofollowAttributes: "boolean",
+  robotsMeta: ["string"],
   metaTitle: "string",
   metaDescription: "string",
-  seoKeywords: [
-    {
-      "@type": "string",
-    },
-  ],
+  focusKeyword: "string",
+  seoKeywords: [{ "@type": "string" }],
+  hreflang: [{ "@type": "hreflang", locale: "string", url: "string" }],
   openGraph: {
-    url: "string",
     image: "image",
     title: "string",
     description: "string",

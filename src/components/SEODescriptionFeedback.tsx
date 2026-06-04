@@ -1,101 +1,120 @@
+import React, { useEffect, useCallback } from "react";
 import { StringInputProps, useFormValue, useClient, set } from "sanity";
-import { useEffect } from "react";
-import { Stack, Text } from "@sanity/ui";
+import { Stack, Text, Flex } from "@sanity/ui";
+import AIGenerateButton from "./AIGenerateButton";
+import { getReadabilityScore } from "../utils/readability";
 
-const SEODescriptionFeedback = (props: StringInputProps) => {
-  const { value, renderDefault, onChange } = props;
+const DOT = (color: string) => (
+  <div
+    style={{
+      width: 10,
+      height: 10,
+      borderRadius: "50%",
+      backgroundColor: color,
+      flexShrink: 0,
+    }}
+  />
+);
+
+function readabilityColor(c: "green" | "orange" | "red"): string {
+  if (c === "green") return "#43d675";
+  if (c === "orange") return "#f59e0b";
+  return "#ef4444";
+}
+
+const SEODescriptionFeedback = ({
+  value,
+  onChange,
+  renderDefault,
+  path,
+  ...rest
+}: StringInputProps) => {
   const client = useClient({ apiVersion: "2021-06-07" });
 
-  const { path } = props;
   const parentPath = path.slice(0, -1);
-  const parent = useFormValue(parentPath) as {
-    metaDescription?: string;
-  };
+  const parent = useFormValue(parentPath) as { focusKeyword?: string };
+  const focusKeyword = parent?.focusKeyword || "";
 
-  const description = parent?.metaDescription || "";
-
-  // If current value is empty, fetch `metaDescription` from `homePage` and set
   useEffect(() => {
+    if (value) return;
     const fetchData = async () => {
-      await client
-        .fetch("*[_type=='homePage'][0]{'description':seo.metaDescription}")
-        .then((data) => {
-          const descriptionFromHomePage = data?.description;
-          if (descriptionFromHomePage && !value) {
-            onChange(set(descriptionFromHomePage));
-          }
-        });
+      const data = await client.fetch(`*[_type=='homePage'][0]{'description':seo.metaDescription}`);
+      if (data?.description && !value) onChange(set(data.description));
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client, onChange, value]);
 
-  /**
-   * Returns feedback about a page’s meta description based on Yoast SEO-style best practices.
-   *
-   * Typical guidance:
-   * - Write *some* description (don’t leave it empty).
-   * - Aim for roughly 100–160 characters.
-   * - If it’s under ~100, it’s likely too short.
-   * - If it’s over ~160, it might get truncated in search engine results.
-   */
+  const handleAIGenerate = useCallback((generated: string) => onChange(set(generated)), [onChange]);
 
-  const getDescriptionFeedback = (metaDescription: string): { text: string; color: string } => {
-    // 1. Check if the description is empty
-    if (!metaDescription || !metaDescription.trim()) {
-      return {
-        text: "No meta description has been specified. Search engines will display copy from the page instead. Make sure to write one!",
-        color: "red",
-      };
+  const text = value || "";
+  const len = text.length;
+  const items: { text: string; color: string }[] = [];
+
+  if (!text.trim()) {
+    items.push({
+      text: "No description. Search engines will auto-generate one — usually poorly.",
+      color: "#ef4444",
+    });
+  } else if (len < 100) {
+    items.push({
+      text: `Too short (${len}/100–160 chars). Expand it.`,
+      color: "#f59e0b",
+    });
+  } else if (len > 160) {
+    items.push({
+      text: `Too long (${len}/160 chars max). It will be cut off in results.`,
+      color: "#ef4444",
+    });
+  } else {
+    items.push({
+      text: `Description length (${len}) is perfect.`,
+      color: "#43d675",
+    });
+  }
+
+  if (focusKeyword && text) {
+    if (text.toLowerCase().includes(focusKeyword.toLowerCase())) {
+      items.push({
+        text: `Focus keyword "${focusKeyword}" found in description.`,
+        color: "#43d675",
+      });
+    } else {
+      items.push({
+        text: `Focus keyword "${focusKeyword}" not in description.`,
+        color: "#ef4444",
+      });
     }
+  }
 
-    // 2. Measure description length
-    const charCount = metaDescription.trim().length;
-    const minLength = 100;
-    const maxLength = 160;
+  const readability = text.length > 50 ? getReadabilityScore(text) : null;
+  if (readability) {
+    items.push({
+      text: `Readability: ${readability.label}`,
+      color: readabilityColor(readability.color),
+    });
+  }
 
-    // 3. Check if too short
-    if (charCount < minLength) {
-      return {
-        text: `The meta description is too short at ${charCount} characters. You have up to ${maxLength} characters to use — make the most of it!`,
-        color: "orange",
-      };
-    }
-
-    // 4. Check if too long
-    if (charCount > maxLength) {
-      return {
-        text: `The meta description is too long at ${charCount} characters. It may get truncated in search results. Try keeping it under ${maxLength}.`,
-        color: "red",
-      };
-    }
-
-    // 5. If it’s within recommended range, give a thumbs up
-    return {
-      text: "Well done! Your meta description length looks good for SEO.",
-      color: "green",
-    };
-  };
-
-  const { text, color } = getDescriptionFeedback(value || description);
+  const props = { value, onChange, renderDefault, path, ...rest };
 
   return (
     <Stack space={3}>
       {renderDefault(props)}
-      <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
-        <div style={{ minWidth: "15px" }}>
-          <div
-            style={{
-              width: "10px",
-              height: "10px",
-              backgroundColor: color,
-              borderRadius: "50%",
-            }}
-          />
-        </div>
-        <Text weight="bold" muted size={14}>
-          Meta description length: {text}
-        </Text>
-      </div>
+      <AIGenerateButton
+        field="description"
+        focusKeyword={focusKeyword}
+        onGenerate={handleAIGenerate}
+      />
+      <Stack space={2}>
+        {items.map((item) => (
+          <Flex key={item.text} align="center" gap={2}>
+            {DOT(item.color)}
+            <Text size={1} muted>
+              {item.text}
+            </Text>
+          </Flex>
+        ))}
+      </Stack>
     </Stack>
   );
 };

@@ -54,12 +54,7 @@
     "watch": "pkg-utils watch --strict",
     "test": "jest"
   },
-  "dependencies": {
-    "@sanity/incompatible-plugin": "^1.0.5",
-    "react-helmet": "^6.1.0",
-    "react-schemaorg": "^2.0.0",
-    "schema-dts": "^1.1.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@sanity/eslint-config-studio": "^3.0.1",
     "@sanity/pkg-utils": "^3.0.0",
@@ -101,6 +96,7 @@
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
+    "@sanity/icons": "^3.7.4",
     "@sanity/ui": "^3",
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19",
@@ -109,7 +105,8 @@
   },
   "sanityPlugin": {
     "verifyPackage": {
-      "nodeEngine": false
+      "nodeEngine": false,
+      "sanityV2Json": false
     }
   },
   "engines": {
