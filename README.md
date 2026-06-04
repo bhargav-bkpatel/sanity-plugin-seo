@@ -1287,36 +1287,43 @@ seoMetaFields({
 
 ---
 
-## Upgrading from v1.3
+## Upgrading from v1.3 to v1.4
 
-No schema migration needed. Existing fields all still work.
+**Good news:** No schema migrations needed. All existing SEO fields continue to work. Just update your config.
 
-### Config key renames
+### What Changed
 
-| Old (v1.3) | New (v1.4)   |
-| ---------- | ------------ |
-| `license`  | `proFeature` |
-| `ai`       | `aiFeature`  |
+The basic setup works exactly the same:
 
 ```ts
-// Before
-seoMetaFields({ license: "...", ai: { provider: "openai", apiKey: "..." } });
-
-// After
-seoMetaFields({ proFeature: "...", aiFeature: { provider: "openai", apiKey: "..." } });
+// v1.3 and v1.4 — no changes needed
+plugins: [seoMetaFields()]
 ```
 
-### New fields in v1.4
+**New in v1.4:** AI and Pro features are now available with renamed config keys:
 
-| Field                | Description                                        |
-| -------------------- | -------------------------------------------------- |
-| `focusKeyword`       | Primary keyword for rank tracking                  |
-| `robotsMeta`         | noindex, nofollow, noarchive, nosnippet checkboxes |
-| `hreflang`           | Locale + URL pairs                                 |
-| `additionalMetaTags` | Freeform name/content meta tags                    |
-| `schemaOrg`          | Schema.org wizard                                  |
-| `seoStatus`          | Draft / Needs Review / Approved                    |
-| `seoReviewNotes`     | Reviewer notes                                     |
+| Feature | Config Key (v1.4) |
+|---|---|
+| AI suggestions | `aiFeature` |
+| Pro license | `proFeature` |
+
+See [AI Provider Setup](#ai-provider-setup) and [Pro License Setup](#pro-license-setup--coming-soon) for configuration examples.
+
+### New Fields in v1.4
+
+These new schema fields are optional and automatically included:
+
+| Field | Type | Purpose |
+|---|---|---|
+| `focusKeyword` | `string` | Primary target keyword for tracking |
+| `robotsMeta` | `string[]` | Indexing control (noindex, nofollow, noarchive, nosnippet) |
+| `hreflang` | `array` | Alternate language/regional URLs |
+| `additionalMetaTags` | `array` | Custom name/content meta tag pairs |
+| `schemaOrg` | `object` | Schema.org structured data (Pro feature) |
+| `seoStatus` | `string` | Workflow status: draft, review, approved (Pro feature) |
+| `seoReviewNotes` | `string` | Reviewer feedback and notes (Pro feature) |
+
+Existing documents work fine without these new fields — they're completely optional.
 
 ---
 
