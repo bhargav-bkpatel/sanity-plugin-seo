@@ -202,7 +202,7 @@ export default function WorkflowRow({
         {/* Chevron */}
         <div
           style={{
-            color: "#64748b",
+            color: "var(--card-muted-fg-color)",
             transition: "transform 0.2s",
             transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
             display: "flex",

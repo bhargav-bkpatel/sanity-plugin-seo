@@ -532,11 +532,17 @@ function CsvImportTab({
               disabled={csvApplying || matched === 0}
               style={{
                 padding: "8px 20px",
-                background: csvApplying || matched === 0 ? "var(--card-border-color)" : "#14532d",
+                background:
+                  csvApplying || matched === 0
+                    ? "var(--card-border-color)"
+                    : "rgba(34, 197, 94, 0.12)",
                 border: "1px solid",
-                borderColor: csvApplying || matched === 0 ? "var(--card-border-color)" : "#166534",
+                borderColor:
+                  csvApplying || matched === 0
+                    ? "var(--card-border-color)"
+                    : "rgba(34, 197, 94, 0.25)",
                 borderRadius: 8,
-                color: csvApplying || matched === 0 ? "var(--card-muted-fg-color)" : "#4ade80",
+                color: csvApplying || matched === 0 ? "var(--card-muted-fg-color)" : "#22c55e",
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: csvApplying || matched === 0 ? "not-allowed" : "pointer",

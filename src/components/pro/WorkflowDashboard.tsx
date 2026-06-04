@@ -156,7 +156,7 @@ export default function WorkflowDashboard() {
             {loading && !loaded && (
               <div style={{ textAlign: "center", padding: "60px 0" }}>
                 <Spinner muted />
-                <div style={{ fontSize: 13, color: "#64748b", marginTop: 12 }}>
+                <div style={{ fontSize: 13, color: "var(--card-muted-fg-color)", marginTop: 12 }}>
                   Scanning documents…
                 </div>
               </div>
@@ -193,7 +193,7 @@ export default function WorkflowDashboard() {
 
                 {visible.length > 0 && (
                   <div style={{ marginTop: 14 }}>
-                    <span style={{ fontSize: 12, color: "#64748b" }}>
+                    <span style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>
                       {visible.length === docs.length
                         ? `${docs.length} document${docs.length !== 1 ? "s" : ""}`
                         : `${visible.length} of ${docs.length} documents`}

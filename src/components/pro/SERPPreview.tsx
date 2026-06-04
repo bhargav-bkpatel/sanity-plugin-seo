@@ -85,11 +85,11 @@ function MobileSERP({
     <div
       style={{
         maxWidth: 360,
-        border: "1px solid #e2e8f0",
+        border: "1px solid var(--card-border-color)",
         borderRadius: 12,
         padding: 16,
         fontFamily: "arial, sans-serif",
-        background: "#fff",
+        background: "var(--card-bg-color)",
       }}
     >
       <div style={{ fontSize: 11, color: "#70757a", marginBottom: 4 }}>

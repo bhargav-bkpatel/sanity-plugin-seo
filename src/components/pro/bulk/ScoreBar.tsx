@@ -10,7 +10,7 @@ export default function ScoreBar({ score }: { score: number }) {
           style={{
             width: 72,
             height: 4,
-            background: "#1e293b",
+            background: "var(--card-border-color)",
             borderRadius: 99,
             overflow: "hidden",
           }}
@@ -26,7 +26,7 @@ export default function ScoreBar({ score }: { score: number }) {
           fontSize: 11,
           fontFamily: "sans-serif",
           fontWeight: "400",
-          color: "#b6bdc8ff",
+          color: "var(--card-muted-fg-color)",
           marginTop: 3,
         }}
       >

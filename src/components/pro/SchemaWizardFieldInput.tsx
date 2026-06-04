@@ -324,8 +324,8 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
     <ProGate feature="Schema.org Wizard (30+ Types)" isPro={isPro}>
       <div
         style={{
-          background: "#0f172a",
-          border: "1px solid #1e293b",
+          background: "var(--card-bg-color)",
+          border: "1px solid var(--card-border-color)",
           borderRadius: 12,
           overflow: "hidden",
         }}
@@ -334,17 +334,17 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
         <div
           style={{
             padding: "12px 16px",
-            borderBottom: "1px solid #1e293b",
+            borderBottom: "1px solid var(--card-border-color)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
           }}
         >
           <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#f1f5f9" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "var(--card-fg-color)" }}>
               Structured Data (JSON-LD)
             </div>
-            <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>
+            <div style={{ fontSize: 11, color: "var(--card-muted-fg-color)", marginTop: 2 }}>
               30+ schema types supported · Google Rich Results eligible
             </div>
           </div>
@@ -356,10 +356,13 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
                 gap: 6,
                 padding: "4px 10px",
                 borderRadius: 99,
-                background: filledCount === totalCount ? "#14532d" : "#1e293b",
+                background:
+                  filledCount === totalCount
+                    ? "rgba(34, 197, 94, 0.15)"
+                    : "var(--card-border-color)",
                 fontSize: 11,
                 fontWeight: 700,
-                color: filledCount === totalCount ? "#22c55e" : "#64748b",
+                color: filledCount === totalCount ? "#22c55e" : "var(--card-muted-fg-color)",
               }}
             >
               {filledCount}/{totalCount} fields
@@ -368,15 +371,18 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
         </div>
 
         {/* Type selector */}
-        <div style={{ padding: "12px 16px", borderBottom: "1px solid #1e293b" }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: "#64748b", marginBottom: 6 }}>
+        <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
+          <div
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: "var(--card-muted-fg-color)",
+              marginBottom: 6,
+            }}
+          >
             SCHEMA TYPE
           </div>
-          <Select
-            value={selectedType}
-            onChange={handleTypeChange}
-            style={{ background: "#0a111f", color: "#e2e8f0", border: "1px solid #1e293b" }}
-          >
+          <Select value={selectedType} onChange={handleTypeChange}>
             {SCHEMA_TYPES.map((t) => (
               <option key={t.value} value={t.value}>
                 {t.title}
@@ -387,14 +393,24 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
 
         {/* FAQ items */}
         {selectedType === "FAQPage" && (
-          <div style={{ padding: "12px 16px", borderBottom: "1px solid #1e293b" }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: "#64748b", marginBottom: 10 }}>
+          <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: "var(--card-muted-fg-color)",
+                marginBottom: 10,
+              }}
+            >
               FAQ ITEMS
             </div>
             <Stack space={3}>
               {faqItems.map((item, i) => (
                 // eslint-disable-next-line react/no-array-index-key
-                <div key={i} style={{ padding: 10, background: "#0a111f", borderRadius: 8 }}>
+                <div
+                  key={i}
+                  style={{ padding: 10, background: "var(--card-border-color)", borderRadius: 8 }}
+                >
                   <Stack space={2}>
                     <Text size={1} muted>
                       {`Question ${i + 1}`}
@@ -424,14 +440,28 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
 
         {/* Dynamic fields */}
         {fields.length > 0 && (
-          <div style={{ padding: "12px 16px", borderBottom: "1px solid #1e293b" }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: "#64748b", marginBottom: 10 }}>
+          <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: "var(--card-muted-fg-color)",
+                marginBottom: 10,
+              }}
+            >
               FIELDS
             </div>
             <Stack space={3}>
               {fields.map((field) => (
                 <div key={field.name}>
-                  <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 4, fontWeight: 500 }}>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      color: "var(--card-muted-fg-color)",
+                      marginBottom: 4,
+                      fontWeight: 500,
+                    }}
+                  >
                     {field.label}
                     {schemaOrg[field.name] && (
                       <span style={{ color: "#22c55e", marginLeft: 6 }}>✓</span>
@@ -476,11 +506,11 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
                 style={{
                   margin: 0,
                   padding: "12px 14px",
-                  background: "#0a111f",
-                  border: "1px solid #1e293b",
+                  background: "var(--card-border-color)",
+                  border: "1px solid var(--card-border-color)",
                   borderRadius: 8,
                   fontSize: 11,
-                  color: "#7dd3fc",
+                  color: "#3b82f6",
                   lineHeight: 1.6,
                   overflowX: "auto",
                   whiteSpace: "pre-wrap",
@@ -491,9 +521,10 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
               </pre>
             )}
             {!showPreview && (
-              <div style={{ fontSize: 11, color: "#334155" }}>
+              <div style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
                 JSON-LD ready · Copy into your page&apos;s{" "}
-                <code style={{ color: "#475569" }}>&lt;head&gt;</code> or inject via your framework
+                <code style={{ color: "var(--card-muted-fg-color)" }}>&lt;head&gt;</code> or inject
+                via your framework
               </div>
             )}
           </div>
@@ -501,7 +532,7 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
 
         {!selectedType && (
           <div style={{ padding: "16px", textAlign: "center" }}>
-            <div style={{ fontSize: 12, color: "#334155" }}>
+            <div style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>
               Select a schema type above to get started.
               <br />
               Correctly structured data unlocks Google Rich Results.

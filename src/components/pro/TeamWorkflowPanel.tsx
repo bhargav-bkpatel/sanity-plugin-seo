@@ -10,22 +10,22 @@ const STATUS_CONFIG = {
   draft: {
     label: "Draft",
     description: "Not yet submitted for SEO review",
-    color: "#94a3b8",
-    bg: "#1e293b",
+    color: "var(--card-muted-fg-color)",
+    bg: "var(--card-border-color)",
     Icon: EditIcon,
   },
   review: {
     label: "Needs SEO Review",
     description: "Submitted and awaiting approval",
     color: "#f59e0b",
-    bg: "#422006",
+    bg: "rgba(245, 158, 11, 0.12)",
     Icon: ClockIcon,
   },
   approved: {
     label: "SEO Approved",
     description: "Reviewed and cleared for publishing",
     color: "#22c55e",
-    bg: "#14532d",
+    bg: "rgba(34, 197, 94, 0.12)",
     Icon: CheckmarkCircleIcon,
   },
 };
@@ -192,8 +192,8 @@ export default function TeamWorkflowPanel({
               style={{
                 flex: 1,
                 padding: "8px 0",
-                background: "#422006",
-                border: "1px solid #92400e",
+                background: "rgba(245, 158, 11, 0.12)",
+                border: "1px solid rgba(245, 158, 11, 0.25)",
                 borderRadius: 8,
                 color: "#f59e0b",
                 fontSize: 12,
@@ -211,8 +211,8 @@ export default function TeamWorkflowPanel({
               style={{
                 flex: 1,
                 padding: "8px 0",
-                background: "linear-gradient(135deg, #14532d 0%, #166534 100%)",
-                border: "1px solid #166534",
+                background: "rgba(34, 197, 94, 0.12)",
+                border: "1px solid rgba(34, 197, 94, 0.25)",
                 borderRadius: 8,
                 color: "#22c55e",
                 fontSize: 12,

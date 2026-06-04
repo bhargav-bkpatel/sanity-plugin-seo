@@ -361,7 +361,9 @@ export default function AdvancedValidation({ value, onChange }: Props) {
         {/* Checks */}
         <div style={{ padding: "4px 16px 8px" }}>
           {checks.length === 0 ? (
-            <div style={{ fontSize: 12, color: "#475569", padding: "12px 0" }}>Running checks…</div>
+            <div style={{ fontSize: 12, color: "var(--card-muted-fg-color)", padding: "12px 0" }}>
+              Running checks…
+            </div>
           ) : (
             checks.map((check) => (
               <CheckRow
