@@ -5,176 +5,236 @@
 [![npm version](https://img.shields.io/badge/npm-v1.4.0-blue)](https://www.npmjs.com/package/sanity-plugin-seo)
 [![npm downloads](https://img.shields.io/badge/downloads-22k-brightgreen)](https://www.npmjs.com/package/sanity-plugin-seo)
 [![TypeScript](https://img.shields.io/badge/types-TypeScript-blue)](https://www.typescriptlang.org/)
-[![Built with Sanity](https://img.shields.io/badge/Built%20With-Sanity-8a2be2?logo=sanity&logoColor=white)](https://www.sanity.io/)
-[![Sanity V3](https://img.shields.io/badge/Sanity%20V3%20Plugin-4e5452)](https://www.sanity.io/)
-[![Sanity V4](https://img.shields.io/badge/Sanity%20V4%20Plugin-4e5452)](https://www.sanity.io/)
-[![Sanity V5](https://img.shields.io/badge/Sanity%20V5%20Plugin-4e5452)](https://www.sanity.io/)
+[![MIT License](https://img.shields.io/badge/license-MIT-green)](https://opensource.org/licenses/MIT)
 
-SEO plugin for Sanity Studio. Adds a live SEO score, GEO checklist, AI suggestions, social previews, Schema.org wizard, and ready-to-use integration code for Next.js, Astro, and Vue/Nuxt.
+**Sanity Studio Compatibility:**
 
-**Free** and **AI** tiers are live. **Pro is coming soon.**
+[![Sanity V3](https://img.shields.io/badge/Sanity%20V3-supported-4e5452?style=flat)](https://www.sanity.io/)
+[![Sanity V4](https://img.shields.io/badge/Sanity%20V4-supported-4e5452?style=flat)](https://www.sanity.io/)
+[![Sanity V5](https://img.shields.io/badge/Sanity%20V5-supported-4e5452?style=flat)](https://www.sanity.io/)
+
+**Framework Support:**
+
+[![Next.js](https://img.shields.io/badge/Next.js-supported-000000?logo=next.js&logoColor=white&style=flat)](https://nextjs.org/)
+[![Astro](https://img.shields.io/badge/Astro-supported-FF5D01?logo=astro&logoColor=white&style=flat)](https://astro.build/)
+[![Vue](https://img.shields.io/badge/Vue%203-supported-4FC08D?logo=vue.js&logoColor=white&style=flat)](https://vuejs.org/)
+[![Nuxt](https://img.shields.io/badge/Nuxt%203-supported-00DC82?logo=nuxt.js&logoColor=white&style=flat)](https://nuxt.com/)
+
+The complete SEO toolkit for Sanity Studio. Empower your team with live SEO scoring, AI-powered content suggestions, team workflows, and comprehensive structured data support.
+
+**Production-Ready:** Free and AI tiers live. Pro features coming soon with team workflows, bulk optimization, and schema management.
 
 ![Demo](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/demo-1.gif)
 
 ---
 
-## What's included
+## Complete Feature Set
 
-| Feature | Free | AI | 🔜 Pro |
-|---|:---:|:---:|:---:|
-| Live SEO Score (0–100) | ✅ | ✅ | — |
-| GEO Checklist (AI Overview readiness) | ✅ | ✅ | — |
-| Meta Tags Preview + HTML snippet | ✅ | ✅ | — |
-| Social Preview Cards (X, Facebook, LinkedIn, WhatsApp) | ✅ | ✅ | — |
-| Focus Keyword tracking | ✅ | ✅ | — |
-| Robots Meta (noindex, nofollow, noarchive…) | ✅ | ✅ | — |
-| hreflang / multi-language targeting | ✅ | ✅ | — |
-| Open Graph & Twitter/X card fields | ✅ | ✅ | — |
-| Additional meta tags | ✅ | ✅ | — |
-| Frontend integration guides (Next.js, Astro, Vue) | ✅ | ✅ | — |
-| Readability score | ✅ | ✅ | — |
-| AI Keyword Suggestions | — | ✅ | — |
-| AI Meta Title & Description generation | — | ✅ | — |
-| SERP Preview (desktop + mobile) | — | — | 🔜 |
-| Schema.org Wizard (30+ structured data types) | — | — | 🔜 |
-| Live JSON-LD preview | — | — | 🔜 |
-| SEO Health Dashboard (site-wide scores) | — | — | 🔜 |
-| SEO Optimizer — inline bulk edit, type filter, CSV import/export | — | — | 🔜 |
-| Bulk Open Graph sync | — | — | 🔜 |
-| Advanced Validation (5 checks + auto-fix) | — | — | 🔜 |
-| Team Workflow (Draft → Review → Approved) | — | — | 🔜 |
-| Workflow Dashboard (site-wide status tracking) | — | — | 🔜 |
-| Duplicate meta title detection | — | — | 🔜 |
-| AI Bulk SEO Generation | — | — | 🔜 |
+Everything from basic SEO optimization to advanced team workflows.
+
+| Feature                                                          | Free | AI  | 🔜 Pro |
+| ---------------------------------------------------------------- | :--: | :-: | :----: |
+| Live SEO Score (0–100)                                           |  ✅  | ✅  |   —    |
+| GEO Checklist (AI Overview readiness)                            |  ✅  | ✅  |   —    |
+| Meta Tags Preview + HTML snippet                                 |  ✅  | ✅  |   —    |
+| Social Preview Cards (X, Facebook, LinkedIn, WhatsApp)           |  ✅  | ✅  |   —    |
+| Focus Keyword tracking                                           |  ✅  | ✅  |   —    |
+| Robots Meta (noindex, nofollow, noarchive…)                      |  ✅  | ✅  |   —    |
+| hreflang / multi-language targeting                              |  ✅  | ✅  |   —    |
+| Open Graph & Twitter/X card fields                               |  ✅  | ✅  |   —    |
+| Additional meta tags                                             |  ✅  | ✅  |   —    |
+| Frontend integration guides (Next.js, Astro, Vue)                |  ✅  | ✅  |   —    |
+| Readability score                                                |  ✅  | ✅  |   —    |
+| AI Keyword Suggestions                                           |  —   | ✅  |   —    |
+| AI Meta Title & Description generation                           |  —   | ✅  |   —    |
+| SERP Preview (desktop + mobile)                                  |  —   |  —  |   🔜   |
+| Schema.org Wizard (30+ structured data types)                    |  —   |  —  |   🔜   |
+| Live JSON-LD preview                                             |  —   |  —  |   🔜   |
+| SEO Health Dashboard (site-wide scores)                          |  —   |  —  |   🔜   |
+| SEO Optimizer — inline bulk edit, type filter, CSV import/export |  —   |  —  |   🔜   |
+| Bulk Open Graph sync                                             |  —   |  —  |   🔜   |
+| Advanced Validation (5 checks + auto-fix)                        |  —   |  —  |   🔜   |
+| Team Workflow (Draft → Review → Approved)                        |  —   |  —  |   🔜   |
+| Workflow Dashboard (site-wide status tracking)                   |  —   |  —  |   🔜   |
+| Duplicate meta title detection                                   |  —   |  —  |   🔜   |
+| AI Bulk SEO Generation                                           |  —   |  —  |   🔜   |
+
+---
+
+## What Each Tier Includes
+
+**🎁 Free** — Essential SEO tools built-in. Start optimizing immediately.
+
+**🤖 AI** — Add AI-powered suggestions. Choose from OpenAI, Anthropic, or Groq (free tier available).
+
+**👥 Pro** — Coming Soon. Team workflows, bulk optimization, advanced analytics, and schema management for enterprise teams.
 
 ---
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Studio Setup](#studio-setup)
-- [Add SEO to a Document](#add-seo-to-a-document)
-- [Config Options](#config-options)
-- [Next.js Integration](#nextjs-integration)
-- [Astro Integration](#astro-integration)
-- [Vue 3 / Nuxt Integration](#vue-3--nuxt-integration)
-- [GROQ Fragment](#groq-fragment)
+- [Quick Start](#quick-start)
+  - [1. Install the plugin](#1-install-the-plugin)
+  - [2. Configure in Sanity Studio](#2-configure-in-sanity-studio)
+  - [3. Add SEO to Your Documents](#3-add-seo-to-your-documents)
+- [Configuration Options](#config-options)
+- [Framework Integration Guides](#nextjs-integration)
+  - [Next.js Integration](#nextjs-integration)
+  - [Astro Integration](#astro-integration)
+  - [Vue 3 / Nuxt Integration](#vue-3--nuxt-integration)
+- [GROQ Fragment & Types](#groq-fragment)
 - [Pro Features — Coming Soon](#pro-features--coming-soon)
-- [Pro License Setup — Coming Soon](#pro-license-setup--coming-soon)
-- [AI Setup](#ai-setup)
+- [AI Provider Setup](#ai-setup)
 - [Upgrading from v1.3](#upgrading-from-v13)
 
 ---
 
-## Installation
+## Quick Start
+
+### 1. Install the plugin
 
 ```bash
 npm install sanity-plugin-seo
-# or
-yarn add sanity-plugin-seo
-# or
+```
+
+**Or with yarn/pnpm:**
+
+```bash
+yarn add sanity-plugin-seo    # or
 pnpm add sanity-plugin-seo
 ```
 
-Works with Sanity Studio v3, v4, and v5.
+**Compatibility:** Sanity Studio v3, v4, and v5
 
 ---
 
-## Studio Setup
+## 2. Configure in Sanity Studio
 
-### Free features only
+### Option A: Free features only
 
 ```ts
 // sanity.config.ts
-import { defineConfig } from 'sanity'
-import { seoMetaFields } from 'sanity-plugin-seo'
+import { defineConfig } from "sanity";
+import { seoMetaFields } from "sanity-plugin-seo";
 
 export default defineConfig({
   plugins: [seoMetaFields()],
-})
+});
 ```
 
-### With AI (OpenAI, Anthropic, or Groq)
+### Option B: With AI (OpenAI, Anthropic, or Groq)
+
+Add AI-powered suggestions for meta titles, descriptions, and keywords.
 
 ```ts
-import { seoMetaFields } from 'sanity-plugin-seo'
+import { defineConfig } from "sanity";
+import { seoMetaFields } from "sanity-plugin-seo";
 
-seoMetaFields({
-  aiFeature: {
-    provider: 'openai',                         // 'openai' | 'anthropic' | 'groq'
-    apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
-    model: 'gpt-4o-mini',                       // optional
-  },
-  bodyField: 'body',
-  slugField: 'slug',
-})
+export default defineConfig({
+  plugins: [
+    seoMetaFields({
+      aiFeature: {
+        provider: "openai", // 'openai' | 'anthropic' | 'groq'
+        apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
+        model: "gpt-4o-mini", // optional
+      },
+      bodyField: "body",
+      slugField: "slug",
+    }),
+  ],
+});
 ```
 
-### With Pro license (Coming Soon)
+### Option C: With Pro license (Coming Soon)
+
+Unlock team workflows, bulk optimization, and advanced schema management.
 
 ```ts
 seoMetaFields({
-  proFeature: process.env.SANITY_STUDIO_SEO_LICENSE, // reserved — Pro not yet available
-  bodyField: 'body',
-  slugField: 'slug',
-})
+  proFeature: process.env.SANITY_STUDIO_SEO_LICENSE, // Pro features coming soon
+});
 ```
 
-### Full config
+### Complete Configuration
 
 ```ts
-seoMetaFields({
-  aiFeature: {
-    provider: 'openai',
-    apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
-    model: 'gpt-4o-mini',
-  },
-  bodyField: 'body',
-  slugField: 'slug',
-  dashboard: true, // default: true — shows SEO Health + Optimizer in the toolbar
-})
+import { defineConfig } from "sanity";
+import { seoMetaFields } from "sanity-plugin-seo";
+
+export default defineConfig({
+  plugins: [
+    seoMetaFields({
+      // AI provider (OpenAI, Anthropic, or Groq)
+      aiFeature: {
+        provider: "openai",
+        apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
+        model: "gpt-4o-mini",
+      },
+      // Content field names in your schema
+      bodyField: "body",
+      slugField: "slug",
+      // Show SEO Health + Optimizer in Studio toolbar (default: true)
+      dashboard: true,
+    }),
+  ],
+});
 ```
 
 ---
 
-## Add SEO to a Document
+## 3. Add SEO to Your Documents
 
-Add `seoMetaFields` as a field type in any document schema:
+Add the `seoMetaFields` type to any document schema in your project:
 
 ```ts
 // schemas/page.ts
 export default {
-  name: 'page',
-  type: 'document',
+  name: "page",
+  type: "document",
   fields: [
-    { name: 'title', type: 'string' },
-    { name: 'slug', type: 'slug', options: { source: 'title' } },
-    { name: 'body', type: 'array', of: [{ type: 'block' }] },
-    { name: 'seo', type: 'seoMetaFields' },
+    { name: "title", type: "string" },
+    { name: "slug", type: "slug", options: { source: "title" } },
+    { name: "body", type: "array", of: [{ type: "block" }] },
+    { name: "seo", type: "seoMetaFields" },
   ],
-}
+};
 ```
 
-This adds a tabbed SEO panel with **Basic SEO**, **Social Sharing**, **Advanced**, and **Schema.org** tabs.
+This adds a fully-featured SEO panel with four tabs:
+
+- **Basic SEO** — Meta title, description, keywords
+- **Social Sharing** — Open Graph & Twitter cards
+- **Advanced** — Robots meta, hreflang, custom tags
+- **Schema.org** — 30+ structured data types (Pro)
 
 ---
 
-## Config Options
+## Configuration Options
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `proFeature` | `string` | — | Pro license key — coming soon |
-| `aiFeature` | `AIConfig` | — | AI provider config |
-| `aiFeature.provider` | `'openai' \| 'anthropic' \| 'groq'` | — | Which AI provider to use |
-| `aiFeature.apiKey` | `string` | — | API key for the provider |
-| `aiFeature.model` | `string` | provider default | e.g. `gpt-4o-mini`, `claude-haiku-4-5-20251001` |
-| `bodyField` | `string` | `'body'` | Portable Text field name for AI analysis |
-| `slugField` | `string` | `'slug'` | Slug field name |
-| `dashboard` | `boolean` | `true` | Show SEO Health and Optimizer in Studio toolbar |
+All options are optional. The plugin works great with zero configuration.
+
+| Option               | Type                                | Default          | Description                                                 |
+| -------------------- | ----------------------------------- | ---------------- | ----------------------------------------------------------- |
+| **Content Fields**   |
+| `bodyField`          | `string`                            | `'body'`         | Portable Text field for AI analysis and readability scoring |
+| `slugField`          | `string`                            | `'slug'`         | Slug field for URL preview in SERP                          |
+| **AI Features**      |
+| `aiFeature`          | `object`                            | —                | Enable AI keyword and content suggestions                   |
+| `aiFeature.provider` | `'openai' \| 'anthropic' \| 'groq'` | —                | AI provider (OpenAI/Anthropic/Groq)                         |
+| `aiFeature.apiKey`   | `string`                            | —                | API key from your provider                                  |
+| `aiFeature.model`    | `string`                            | provider default | Model ID (e.g., `gpt-4o-mini`, `claude-haiku-4-5-20251001`) |
+| **Pro Features**     |
+| `proFeature`         | `string`                            | —                | Pro license key (coming soon)                               |
+| **UI**               |
+| `dashboard`          | `boolean`                           | `true`           | Show SEO Health & Optimizer in Studio toolbar               |
 
 ---
 
-## Next.js Integration
+## Framework Integration Guides
+
+Choose your framework and follow the integration guide. All guides include complete examples.
+
+### Next.js Integration
 
 ### 1. Sanity client + GROQ fragment
 
@@ -184,14 +244,14 @@ npm install @sanity/client
 
 ```ts
 // lib/sanity.ts
-import { createClient } from '@sanity/client'
+import { createClient } from "@sanity/client";
 
 export const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
   useCdn: false,
-  apiVersion: '2024-01-01',
-})
+  apiVersion: "2024-01-01",
+});
 
 export const SEO_GROQ = `seo {
   metaTitle, metaDescription, focusKeyword,
@@ -209,7 +269,7 @@ export const SEO_GROQ = `seo {
     startDate, endDate, location,
     faqItems[] { question, answer }
   }
-}`
+}`;
 ```
 
 ```bash
@@ -223,43 +283,61 @@ NEXT_PUBLIC_SITE_URL=https://your-site.com
 
 ```ts
 // app/_seo.ts
-import type { Metadata } from 'next'
+import type { Metadata } from "next";
 
 export type SeoField = {
-  metaTitle?: string
-  metaDescription?: string
-  nofollowAttributes?: boolean
-  robotsMeta?: string[]
-  seoKeywords?: string[]
-  seoStatus?: 'draft' | 'review' | 'approved'
-  seoReviewNotes?: string
-  metaImage?: { asset?: { url?: string } }
-  openGraph?: { title?: string; description?: string; siteName?: string; image?: { asset?: { url?: string } } }
-  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
-  hreflang?: { locale: string; url: string }[]
+  metaTitle?: string;
+  metaDescription?: string;
+  nofollowAttributes?: boolean;
+  robotsMeta?: string[];
+  seoKeywords?: string[];
+  seoStatus?: "draft" | "review" | "approved";
+  seoReviewNotes?: string;
+  metaImage?: { asset?: { url?: string } };
+  openGraph?: {
+    title?: string;
+    description?: string;
+    siteName?: string;
+    image?: { asset?: { url?: string } };
+  };
+  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string };
+  hreflang?: { locale: string; url: string }[];
   schemaOrg?: {
-    schemaType?: string; name?: string; description?: string; url?: string; author?: string
-    datePublished?: string; dateModified?: string
-    faqItems?: { question: string; answer: string }[]
-    [key: string]: unknown
-  }
-}
+    schemaType?: string;
+    name?: string;
+    description?: string;
+    url?: string;
+    author?: string;
+    datePublished?: string;
+    dateModified?: string;
+    faqItems?: { question: string; answer: string }[];
+    [key: string]: unknown;
+  };
+};
 
-export function buildMetadata(seo: SeoField | undefined, fallbackTitle: string | undefined, slug: string): Metadata {
-  const s = seo ?? {}
-  const canonical = `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/${slug}`
-  const ogImage = s.openGraph?.image?.asset?.url ?? s.metaImage?.asset?.url
-  const robots: string[] = []
-  if (s.nofollowAttributes) robots.push('noindex', 'nofollow')
-  s.robotsMeta?.forEach((r) => { if (!robots.includes(r)) robots.push(r) })
-  const languages: Record<string, string> = {}
-  s.hreflang?.forEach(({ locale, url }) => { languages[locale] = url })
+export function buildMetadata(
+  seo: SeoField | undefined,
+  fallbackTitle: string | undefined,
+  slug: string,
+): Metadata {
+  const s = seo ?? {};
+  const canonical = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/${slug}`;
+  const ogImage = s.openGraph?.image?.asset?.url ?? s.metaImage?.asset?.url;
+  const robots: string[] = [];
+  if (s.nofollowAttributes) robots.push("noindex", "nofollow");
+  s.robotsMeta?.forEach((r) => {
+    if (!robots.includes(r)) robots.push(r);
+  });
+  const languages: Record<string, string> = {};
+  s.hreflang?.forEach(({ locale, url }) => {
+    languages[locale] = url;
+  });
 
   return {
     title: s.metaTitle ?? fallbackTitle,
     description: s.metaDescription,
-    ...(s.seoKeywords?.length && { keywords: s.seoKeywords.join(', ') }),
-    ...(robots.length && { robots: robots.join(', ') }),
+    ...(s.seoKeywords?.length && { keywords: s.seoKeywords.join(", ") }),
+    ...(robots.length && { robots: robots.join(", ") }),
     alternates: {
       canonical,
       ...(Object.keys(languages).length && { languages }),
@@ -272,31 +350,36 @@ export function buildMetadata(seo: SeoField | undefined, fallbackTitle: string |
       ...(ogImage && { images: [{ url: ogImage }] }),
     },
     twitter: {
-      card: (s.twitter?.cardType as 'summary' | 'summary_large_image') ?? 'summary_large_image',
+      card: (s.twitter?.cardType as "summary" | "summary_large_image") ?? "summary_large_image",
       site: s.twitter?.site,
       creator: s.twitter?.creator ?? s.twitter?.handle,
     },
-  }
+  };
 }
 
 export function buildJsonLd(seo: SeoField | undefined, fallbackTitle?: string): string {
-  const schema = seo?.schemaOrg
+  const schema = seo?.schemaOrg;
   if (!schema?.schemaType) {
-    return JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebPage', name: seo?.metaTitle ?? fallbackTitle, description: seo?.metaDescription })
-  }
-  if (schema.schemaType === 'FAQPage' && schema.faqItems?.length) {
     return JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'FAQPage',
-      mainEntity: schema.faqItems.map((item) => ({
-        '@type': 'Question',
-        name: item.question,
-        acceptedAnswer: { '@type': 'Answer', text: item.answer },
-      })),
-    })
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: seo?.metaTitle ?? fallbackTitle,
+      description: seo?.metaDescription,
+    });
   }
-  const { schemaType, faqItems, ...rest } = schema
-  return JSON.stringify({ '@context': 'https://schema.org', '@type': schemaType, ...rest })
+  if (schema.schemaType === "FAQPage" && schema.faqItems?.length) {
+    return JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: schema.faqItems.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: { "@type": "Answer", text: item.answer },
+      })),
+    });
+  }
+  const { schemaType, faqItems, ...rest } = schema;
+  return JSON.stringify({ "@context": "https://schema.org", "@type": schemaType, ...rest });
 }
 ```
 
@@ -306,29 +389,39 @@ export function buildJsonLd(seo: SeoField | undefined, fallbackTitle?: string): 
 
 ```tsx
 // app/[slug]/page.tsx
-import type { Metadata } from 'next'
-import { client, SEO_GROQ } from '@/lib/sanity'
-import { buildMetadata, buildJsonLd } from '@/app/_seo'
+import type { Metadata } from "next";
+import { client, SEO_GROQ } from "@/lib/sanity";
+import { buildMetadata, buildJsonLd } from "@/app/_seo";
 
-const query = `*[_type == "page" && slug.current == $slug][0]{ title, ${SEO_GROQ} }`
-type Props = { params: Promise<{ slug: string }> }
+const query = `*[_type == "page" && slug.current == $slug][0]{ title, ${SEO_GROQ} }`;
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params
-  const page = await client.fetch(query, { slug })
-  return buildMetadata(page?.seo, page?.title, slug)
+  const { slug } = await params;
+  const page = await client.fetch(query, { slug });
+  return buildMetadata(page?.seo, page?.title, slug);
 }
 
 export default async function Page({ params }: Props) {
-  const { slug } = await params
-  const page = await client.fetch(query, { slug })
-  if (!page) return <main><p>Page not found.</p></main>
+  const { slug } = await params;
+  const page = await client.fetch(query, { slug });
+  if (!page)
+    return (
+      <main>
+        <p>Page not found.</p>
+      </main>
+    );
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: buildJsonLd(page.seo, page.title) }} />
-      <main><h1>{page.title}</h1></main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: buildJsonLd(page.seo, page.title) }}
+      />
+      <main>
+        <h1>{page.title}</h1>
+      </main>
     </>
-  )
+  );
 }
 ```
 
@@ -340,31 +433,33 @@ npm install next-seo
 
 ```tsx
 // pages/[slug].tsx
-import { NextSeo } from 'next-seo'
-import { GetStaticProps } from 'next'
-import { client, SEO_GROQ } from '@/lib/sanity'
-import type { SeoField } from '@/app/_seo'
+import { NextSeo } from "next-seo";
+import { GetStaticProps } from "next";
+import { client, SEO_GROQ } from "@/lib/sanity";
+import type { SeoField } from "@/app/_seo";
 
-type Props = { page: { title: string; slug: string; seo?: SeoField } }
+type Props = { page: { title: string; slug: string; seo?: SeoField } };
 
 export default function Page({ page }: Props) {
-  const seo = page?.seo ?? {}
-  const canonical = `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/${page.slug}`
-  const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
+  const seo = page?.seo ?? {};
+  const canonical = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/${page.slug}`;
+  const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url;
 
-  const schema = seo.schemaOrg
-  let jsonLd: string | null = null
-  if (schema?.schemaType === 'FAQPage' && schema.faqItems?.length) {
+  const schema = seo.schemaOrg;
+  let jsonLd: string | null = null;
+  if (schema?.schemaType === "FAQPage" && schema.faqItems?.length) {
     jsonLd = JSON.stringify({
-      '@context': 'https://schema.org', '@type': 'FAQPage',
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
       mainEntity: schema.faqItems.map((i) => ({
-        '@type': 'Question', name: i.question,
-        acceptedAnswer: { '@type': 'Answer', text: i.answer },
+        "@type": "Question",
+        name: i.question,
+        acceptedAnswer: { "@type": "Answer", text: i.answer },
       })),
-    })
+    });
   } else if (schema?.schemaType) {
-    const { schemaType, faqItems, ...rest } = schema
-    jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': schemaType, ...rest })
+    const { schemaType, faqItems, ...rest } = schema;
+    jsonLd = JSON.stringify({ "@context": "https://schema.org", "@type": schemaType, ...rest });
   }
 
   return (
@@ -373,10 +468,18 @@ export default function Page({ page }: Props) {
         title={seo.metaTitle}
         description={seo.metaDescription}
         canonical={canonical}
-        noindex={!!(seo.nofollowAttributes || seo.robotsMeta?.includes('noindex'))}
-        nofollow={!!(seo.nofollowAttributes || seo.robotsMeta?.includes('nofollow'))}
-        additionalMetaTags={seo.seoKeywords?.length ? [{ name: 'keywords', content: seo.seoKeywords.join(', ') }] : []}
-        additionalLinkTags={seo.hreflang?.map(({ locale, url }) => ({ rel: 'alternate', hrefLang: locale, href: url })) ?? []}
+        noindex={!!(seo.nofollowAttributes || seo.robotsMeta?.includes("noindex"))}
+        nofollow={!!(seo.nofollowAttributes || seo.robotsMeta?.includes("nofollow"))}
+        additionalMetaTags={
+          seo.seoKeywords?.length ? [{ name: "keywords", content: seo.seoKeywords.join(", ") }] : []
+        }
+        additionalLinkTags={
+          seo.hreflang?.map(({ locale, url }) => ({
+            rel: "alternate",
+            hrefLang: locale,
+            href: url,
+          })) ?? []
+        }
         openGraph={{
           title: seo.openGraph?.title ?? seo.metaTitle,
           description: seo.openGraph?.description ?? seo.metaDescription,
@@ -385,36 +488,38 @@ export default function Page({ page }: Props) {
           images: ogImage ? [{ url: ogImage }] : [],
         }}
         twitter={{
-          cardType: seo.twitter?.cardType ?? 'summary_large_image',
+          cardType: seo.twitter?.cardType ?? "summary_large_image",
           site: seo.twitter?.site,
           handle: seo.twitter?.handle ?? seo.twitter?.creator,
         }}
       />
       {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />}
-      <main><h1>{page.title}</h1></main>
+      <main>
+        <h1>{page.title}</h1>
+      </main>
     </>
-  )
+  );
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const page = await client.fetch(
     `*[_type == "page" && slug.current == $slug][0]{ title, "slug": slug.current, ${SEO_GROQ} }`,
     { slug: params?.slug },
-  )
-  return { props: { page }, revalidate: 60 }
-}
+  );
+  return { props: { page }, revalidate: 60 };
+};
 
 export async function getStaticPaths() {
-  const slugs = await client.fetch(`*[_type == "page"].slug.current`)
-  return { paths: slugs.map((slug: string) => ({ params: { slug } })), fallback: 'blocking' }
+  const slugs = await client.fetch(`*[_type == "page"].slug.current`);
+  return { paths: slugs.map((slug: string) => ({ params: { slug } })), fallback: "blocking" };
 }
 ```
 
 ---
 
-## Astro Integration
+### Astro Integration
 
-### 1. Install + configure
+#### 1. Install + configure
 
 ```bash
 npm install @sanity/client astro-seo
@@ -422,8 +527,8 @@ npm install @sanity/client astro-seo
 
 ```js
 // astro.config.mjs
-import { defineConfig } from 'astro/config'
-export default defineConfig({ output: 'server' })
+import { defineConfig } from "astro/config";
+export default defineConfig({ output: "server" });
 ```
 
 ```bash
@@ -437,14 +542,14 @@ PUBLIC_SITE_URL=https://your-site.com
 
 ```ts
 // src/lib/sanity.ts
-import { createClient } from '@sanity/client'
+import { createClient } from "@sanity/client";
 
 export const client = createClient({
   projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID,
-  dataset: import.meta.env.PUBLIC_SANITY_DATASET ?? 'production',
+  dataset: import.meta.env.PUBLIC_SANITY_DATASET ?? "production",
   useCdn: false,
-  apiVersion: '2024-01-01',
-})
+  apiVersion: "2024-01-01",
+});
 
 export const SEO_GROQ = `seo {
   metaTitle, metaDescription, focusKeyword,
@@ -462,34 +567,58 @@ export const SEO_GROQ = `seo {
     startDate, endDate, location,
     faqItems[] { question, answer }
   }
-}`
+}`;
 
 export type SeoField = {
-  metaTitle?: string; metaDescription?: string
-  nofollowAttributes?: boolean; robotsMeta?: string[]; seoKeywords?: string[]
-  seoStatus?: string; seoReviewNotes?: string
-  metaImage?: { asset?: { url?: string } }
-  openGraph?: { title?: string; description?: string; siteName?: string; image?: { asset?: { url?: string } } }
-  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
-  hreflang?: { locale: string; url: string }[]
-  schemaOrg?: { schemaType?: string; faqItems?: { question: string; answer: string }[]; [key: string]: unknown }
-}
+  metaTitle?: string;
+  metaDescription?: string;
+  nofollowAttributes?: boolean;
+  robotsMeta?: string[];
+  seoKeywords?: string[];
+  seoStatus?: string;
+  seoReviewNotes?: string;
+  metaImage?: { asset?: { url?: string } };
+  openGraph?: {
+    title?: string;
+    description?: string;
+    siteName?: string;
+    image?: { asset?: { url?: string } };
+  };
+  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string };
+  hreflang?: { locale: string; url: string }[];
+  schemaOrg?: {
+    schemaType?: string;
+    faqItems?: { question: string; answer: string }[];
+    [key: string]: unknown;
+  };
+};
 
-export function buildJsonLd(schema: SeoField['schemaOrg'], fallbackTitle?: string, fallbackDesc?: string): string | null {
+export function buildJsonLd(
+  schema: SeoField["schemaOrg"],
+  fallbackTitle?: string,
+  fallbackDesc?: string,
+): string | null {
   if (!schema?.schemaType) {
-    return JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebPage', name: fallbackTitle, description: fallbackDesc })
-  }
-  if (schema.schemaType === 'FAQPage' && schema.faqItems?.length) {
     return JSON.stringify({
-      '@context': 'https://schema.org', '@type': 'FAQPage',
-      mainEntity: schema.faqItems.map((item) => ({
-        '@type': 'Question', name: item.question,
-        acceptedAnswer: { '@type': 'Answer', text: item.answer },
-      })),
-    })
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: fallbackTitle,
+      description: fallbackDesc,
+    });
   }
-  const { schemaType, faqItems, ...rest } = schema
-  return JSON.stringify({ '@context': 'https://schema.org', '@type': schemaType, ...rest })
+  if (schema.schemaType === "FAQPage" && schema.faqItems?.length) {
+    return JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: schema.faqItems.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: { "@type": "Answer", text: item.answer },
+      })),
+    });
+  }
+  const { schemaType, faqItems, ...rest } = schema;
+  return JSON.stringify({ "@context": "https://schema.org", "@type": schemaType, ...rest });
 }
 ```
 
@@ -610,7 +739,7 @@ const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
 
 ---
 
-## Vue 3 / Nuxt Integration
+### Vue 3 / Nuxt Integration
 
 > Don't use `@nuxtjs/sanity` — it pulls in React packages and breaks hydration. Use `@sanity/client` directly.
 
@@ -625,12 +754,12 @@ npm install @sanity/client
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      sanityProjectId: process.env.NUXT_PUBLIC_SANITY_PROJECT_ID ?? '',
-      sanityDataset: process.env.NUXT_PUBLIC_SANITY_DATASET ?? 'production',
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? '',
+      sanityProjectId: process.env.NUXT_PUBLIC_SANITY_PROJECT_ID ?? "",
+      sanityDataset: process.env.NUXT_PUBLIC_SANITY_DATASET ?? "production",
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? "",
     },
   },
-})
+});
 ```
 
 ```bash
@@ -645,25 +774,25 @@ NUXT_PUBLIC_SITE_URL=https://your-site.com
 **`composables/useSanityFetch.ts`**
 
 ```ts
-import { createClient } from '@sanity/client'
+import { createClient } from "@sanity/client";
 
-let _client: ReturnType<typeof createClient> | null = null
+let _client: ReturnType<typeof createClient> | null = null;
 
 function getSanityClient() {
-  if (_client) return _client
-  const config = useRuntimeConfig()
+  if (_client) return _client;
+  const config = useRuntimeConfig();
   _client = createClient({
     projectId: config.public.sanityProjectId,
     dataset: config.public.sanityDataset,
     useCdn: false,
-    apiVersion: '2024-01-01',
-  })
-  return _client
+    apiVersion: "2024-01-01",
+  });
+  return _client;
 }
 
 export function useSanityFetch<T>(query: string, params?: Record<string, unknown>) {
-  const key = query + (params ? JSON.stringify(params) : '')
-  return useAsyncData<T>(key, () => getSanityClient().fetch<T>(query, params ?? {}))
+  const key = query + (params ? JSON.stringify(params) : "");
+  return useAsyncData<T>(key, () => getSanityClient().fetch<T>(query, params ?? {}));
 }
 ```
 
@@ -671,24 +800,34 @@ export function useSanityFetch<T>(query: string, params?: Record<string, unknown
 
 ```ts
 export type SeoField = {
-  metaTitle?: string
-  metaDescription?: string
-  nofollowAttributes?: boolean
-  robotsMeta?: string[]
-  seoKeywords?: string[]
-  seoStatus?: string
-  seoReviewNotes?: string
-  metaImage?: { asset?: { url?: string } }
-  openGraph?: { title?: string; description?: string; siteName?: string; image?: { asset?: { url?: string } } }
-  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
-  hreflang?: { locale: string; url: string }[]
+  metaTitle?: string;
+  metaDescription?: string;
+  nofollowAttributes?: boolean;
+  robotsMeta?: string[];
+  seoKeywords?: string[];
+  seoStatus?: string;
+  seoReviewNotes?: string;
+  metaImage?: { asset?: { url?: string } };
+  openGraph?: {
+    title?: string;
+    description?: string;
+    siteName?: string;
+    image?: { asset?: { url?: string } };
+  };
+  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string };
+  hreflang?: { locale: string; url: string }[];
   schemaOrg?: {
-    schemaType?: string; name?: string; description?: string; url?: string; author?: string
-    datePublished?: string; dateModified?: string
-    faqItems?: { question: string; answer: string }[]
-    [key: string]: unknown
-  }
-}
+    schemaType?: string;
+    name?: string;
+    description?: string;
+    url?: string;
+    author?: string;
+    datePublished?: string;
+    dateModified?: string;
+    faqItems?: { question: string; answer: string }[];
+    [key: string]: unknown;
+  };
+};
 
 export const SEO_GROQ = `seo {
   metaTitle, metaDescription, focusKeyword,
@@ -706,23 +845,34 @@ export const SEO_GROQ = `seo {
     startDate, endDate, location,
     faqItems[] { question, answer }
   }
-}`
+}`;
 
-export function buildJsonLd(schema: SeoField['schemaOrg'], fallbackTitle?: string, fallbackDesc?: string): string | null {
+export function buildJsonLd(
+  schema: SeoField["schemaOrg"],
+  fallbackTitle?: string,
+  fallbackDesc?: string,
+): string | null {
   if (!schema?.schemaType) {
-    return JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebPage', name: fallbackTitle, description: fallbackDesc })
-  }
-  if (schema.schemaType === 'FAQPage' && schema.faqItems?.length) {
     return JSON.stringify({
-      '@context': 'https://schema.org', '@type': 'FAQPage',
-      mainEntity: schema.faqItems.map((item) => ({
-        '@type': 'Question', name: item.question,
-        acceptedAnswer: { '@type': 'Answer', text: item.answer },
-      })),
-    })
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: fallbackTitle,
+      description: fallbackDesc,
+    });
   }
-  const { schemaType, faqItems, ...rest } = schema
-  return JSON.stringify({ '@context': 'https://schema.org', '@type': schemaType, ...rest })
+  if (schema.schemaType === "FAQPage" && schema.faqItems?.length) {
+    return JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: schema.faqItems.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: { "@type": "Answer", text: item.answer },
+      })),
+    });
+  }
+  const { schemaType, faqItems, ...rest } = schema;
+  return JSON.stringify({ "@context": "https://schema.org", "@type": schemaType, ...rest });
 }
 ```
 
@@ -730,52 +880,69 @@ export function buildJsonLd(schema: SeoField['schemaOrg'], fallbackTitle?: strin
 
 ```vue
 <script setup lang="ts">
-import { SEO_GROQ, buildJsonLd, type SeoField } from '~/composables/useSeo'
+import { SEO_GROQ, buildJsonLd, type SeoField } from "~/composables/useSeo";
 
-const route = useRoute()
-const slug = route.params.slug as string
-const siteUrl = useRuntimeConfig().public.siteUrl
+const route = useRoute();
+const slug = route.params.slug as string;
+const siteUrl = useRuntimeConfig().public.siteUrl;
 
-type Page = { title: string; slug: string; description?: string; seo?: SeoField }
+type Page = { title: string; slug: string; description?: string; seo?: SeoField };
 
 const { data: page } = await useSanityFetch<Page | null>(
   `*[_type == "page" && slug.current == $slug][0]{ title, "slug": slug.current, description, ${SEO_GROQ} }`,
   { slug },
-)
+);
 
-if (!page.value) throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+if (!page.value) throw createError({ statusCode: 404, statusMessage: "Page not found" });
 
-const seo = computed(() => page.value?.seo)
-const pageUrl = `${siteUrl}/${slug}`
-const title = computed(() => seo.value?.metaTitle ?? page.value?.title ?? '')
-const description = computed(() => seo.value?.metaDescription ?? page.value?.description ?? '')
-const ogImage = computed(() => seo.value?.openGraph?.image?.asset?.url ?? seo.value?.metaImage?.asset?.url)
-const jsonLd = computed(() => buildJsonLd(seo.value?.schemaOrg, title.value, description.value))
+const seo = computed(() => page.value?.seo);
+const pageUrl = `${siteUrl}/${slug}`;
+const title = computed(() => seo.value?.metaTitle ?? page.value?.title ?? "");
+const description = computed(() => seo.value?.metaDescription ?? page.value?.description ?? "");
+const ogImage = computed(
+  () => seo.value?.openGraph?.image?.asset?.url ?? seo.value?.metaImage?.asset?.url,
+);
+const jsonLd = computed(() => buildJsonLd(seo.value?.schemaOrg, title.value, description.value));
 
 useHead({
   title: title.value,
   meta: [
-    { name: 'description', content: description.value },
-    { name: 'robots', content: seo.value?.robotsMeta?.join(', ') ?? 'index,follow' },
-    ...(seo.value?.seoKeywords?.length ? [{ name: 'keywords', content: seo.value.seoKeywords.join(', ') }] : []),
-    { property: 'og:title', content: seo.value?.openGraph?.title ?? title.value },
-    { property: 'og:description', content: seo.value?.openGraph?.description ?? description.value },
-    { property: 'og:type', content: 'article' },
-    { property: 'og:url', content: pageUrl },
-    ...(ogImage.value ? [{ property: 'og:image', content: ogImage.value }] : []),
-    ...(seo.value?.openGraph?.siteName ? [{ property: 'og:site_name', content: seo.value.openGraph.siteName }] : []),
-    { name: 'twitter:card', content: seo.value?.twitter?.cardType ?? 'summary_large_image' },
-    ...(seo.value?.twitter?.site ? [{ name: 'twitter:site', content: seo.value.twitter.site }] : []),
+    { name: "description", content: description.value },
+    { name: "robots", content: seo.value?.robotsMeta?.join(", ") ?? "index,follow" },
+    ...(seo.value?.seoKeywords?.length
+      ? [{ name: "keywords", content: seo.value.seoKeywords.join(", ") }]
+      : []),
+    { property: "og:title", content: seo.value?.openGraph?.title ?? title.value },
+    { property: "og:description", content: seo.value?.openGraph?.description ?? description.value },
+    { property: "og:type", content: "article" },
+    { property: "og:url", content: pageUrl },
+    ...(ogImage.value ? [{ property: "og:image", content: ogImage.value }] : []),
+    ...(seo.value?.openGraph?.siteName
+      ? [{ property: "og:site_name", content: seo.value.openGraph.siteName }]
+      : []),
+    { name: "twitter:card", content: seo.value?.twitter?.cardType ?? "summary_large_image" },
+    ...(seo.value?.twitter?.site
+      ? [{ name: "twitter:site", content: seo.value.twitter.site }]
+      : []),
     ...(seo.value?.twitter?.creator ?? seo.value?.twitter?.handle
-      ? [{ name: 'twitter:creator', content: seo.value?.twitter?.creator ?? seo.value?.twitter?.handle ?? '' }]
+      ? [
+          {
+            name: "twitter:creator",
+            content: seo.value?.twitter?.creator ?? seo.value?.twitter?.handle ?? "",
+          },
+        ]
       : []),
   ],
   link: [
-    { rel: 'canonical', href: pageUrl },
-    ...(seo.value?.hreflang?.map(({ locale, url }) => ({ rel: 'alternate', hreflang: locale, href: url })) ?? []),
+    { rel: "canonical", href: pageUrl },
+    ...(seo.value?.hreflang?.map(({ locale, url }) => ({
+      rel: "alternate",
+      hreflang: locale,
+      href: url,
+    })) ?? []),
   ],
-  script: jsonLd.value ? [{ type: 'application/ld+json', innerHTML: jsonLd.value }] : [],
-})
+  script: jsonLd.value ? [{ type: "application/ld+json", innerHTML: jsonLd.value }] : [],
+});
 </script>
 
 <template>
@@ -793,25 +960,37 @@ npm install @sanity/client @unhead/vue
 
 ```ts
 // src/composables/useSeo.ts
-import { createClient } from '@sanity/client'
-import { useHead } from '@unhead/vue'
+import { createClient } from "@sanity/client";
+import { useHead } from "@unhead/vue";
 
 const client = createClient({
   projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
-  dataset: import.meta.env.VITE_SANITY_DATASET ?? 'production',
+  dataset: import.meta.env.VITE_SANITY_DATASET ?? "production",
   useCdn: false,
-  apiVersion: '2024-01-01',
-})
+  apiVersion: "2024-01-01",
+});
 
 type SeoField = {
-  metaTitle?: string; metaDescription?: string
-  nofollowAttributes?: boolean; robotsMeta?: string[]; seoKeywords?: string[]
-  metaImage?: { asset?: { url?: string } }
-  openGraph?: { title?: string; description?: string; siteName?: string; image?: { asset?: { url?: string } } }
-  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string }
-  hreflang?: { locale: string; url: string }[]
-  schemaOrg?: { schemaType?: string; faqItems?: { question: string; answer: string }[]; [key: string]: unknown }
-}
+  metaTitle?: string;
+  metaDescription?: string;
+  nofollowAttributes?: boolean;
+  robotsMeta?: string[];
+  seoKeywords?: string[];
+  metaImage?: { asset?: { url?: string } };
+  openGraph?: {
+    title?: string;
+    description?: string;
+    siteName?: string;
+    image?: { asset?: { url?: string } };
+  };
+  twitter?: { cardType?: string; site?: string; creator?: string; handle?: string };
+  hreflang?: { locale: string; url: string }[];
+  schemaOrg?: {
+    schemaType?: string;
+    faqItems?: { question: string; answer: string }[];
+    [key: string]: unknown;
+  };
+};
 
 export async function useSanityPage(slug: string) {
   const page = await client.fetch<{ title: string; seo?: SeoField } | null>(
@@ -827,58 +1006,70 @@ export async function useSanityPage(slug: string) {
       }
     }`,
     { slug },
-  )
+  );
 
-  const seo = page?.seo ?? {}
-  const canonical = `${import.meta.env.VITE_SITE_URL ?? ''}/${slug}`
-  const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
+  const seo = page?.seo ?? {};
+  const canonical = `${import.meta.env.VITE_SITE_URL ?? ""}/${slug}`;
+  const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url;
 
-  let jsonLd: string | null = null
-  const schema = seo.schemaOrg
-  if (schema?.schemaType === 'FAQPage' && schema.faqItems?.length) {
+  let jsonLd: string | null = null;
+  const schema = seo.schemaOrg;
+  if (schema?.schemaType === "FAQPage" && schema.faqItems?.length) {
     jsonLd = JSON.stringify({
-      '@context': 'https://schema.org', '@type': 'FAQPage',
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
       mainEntity: schema.faqItems.map((i) => ({
-        '@type': 'Question', name: i.question,
-        acceptedAnswer: { '@type': 'Answer', text: i.answer },
+        "@type": "Question",
+        name: i.question,
+        acceptedAnswer: { "@type": "Answer", text: i.answer },
       })),
-    })
+    });
   } else if (schema?.schemaType) {
-    const { schemaType, faqItems, ...rest } = schema
-    jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': schemaType, ...rest })
+    const { schemaType, faqItems, ...rest } = schema;
+    jsonLd = JSON.stringify({ "@context": "https://schema.org", "@type": schemaType, ...rest });
   }
 
   useHead({
     title: seo.metaTitle,
     meta: [
-      { name: 'description', content: seo.metaDescription },
-      { name: 'robots', content: seo.robotsMeta?.join(', ') ?? 'index,follow' },
-      ...(seo.seoKeywords?.length ? [{ name: 'keywords', content: seo.seoKeywords.join(', ') }] : []),
-      { property: 'og:title', content: seo.openGraph?.title ?? seo.metaTitle },
-      { property: 'og:description', content: seo.openGraph?.description ?? seo.metaDescription },
-      { property: 'og:url', content: canonical },
-      ...(seo.openGraph?.siteName ? [{ property: 'og:site_name', content: seo.openGraph.siteName }] : []),
-      ...(ogImage ? [{ property: 'og:image', content: ogImage }] : []),
-      { name: 'twitter:card', content: seo.twitter?.cardType ?? 'summary_large_image' },
-      ...(seo.twitter?.site ? [{ name: 'twitter:site', content: seo.twitter.site }] : []),
+      { name: "description", content: seo.metaDescription },
+      { name: "robots", content: seo.robotsMeta?.join(", ") ?? "index,follow" },
+      ...(seo.seoKeywords?.length
+        ? [{ name: "keywords", content: seo.seoKeywords.join(", ") }]
+        : []),
+      { property: "og:title", content: seo.openGraph?.title ?? seo.metaTitle },
+      { property: "og:description", content: seo.openGraph?.description ?? seo.metaDescription },
+      { property: "og:url", content: canonical },
+      ...(seo.openGraph?.siteName
+        ? [{ property: "og:site_name", content: seo.openGraph.siteName }]
+        : []),
+      ...(ogImage ? [{ property: "og:image", content: ogImage }] : []),
+      { name: "twitter:card", content: seo.twitter?.cardType ?? "summary_large_image" },
+      ...(seo.twitter?.site ? [{ name: "twitter:site", content: seo.twitter.site }] : []),
       ...(seo.twitter?.creator ?? seo.twitter?.handle
-        ? [{ name: 'twitter:creator', content: seo.twitter.creator ?? seo.twitter.handle }]
+        ? [{ name: "twitter:creator", content: seo.twitter.creator ?? seo.twitter.handle }]
         : []),
     ],
     link: [
-      { rel: 'canonical', href: canonical },
-      ...(seo.hreflang?.map(({ locale, url }) => ({ rel: 'alternate', hreflang: locale, href: url })) ?? []),
+      { rel: "canonical", href: canonical },
+      ...(seo.hreflang?.map(({ locale, url }) => ({
+        rel: "alternate",
+        hreflang: locale,
+        href: url,
+      })) ?? []),
     ],
-    script: jsonLd ? [{ type: 'application/ld+json', innerHTML: jsonLd }] : [],
-  })
+    script: jsonLd ? [{ type: "application/ld+json", innerHTML: jsonLd }] : [],
+  });
 
-  return { page }
+  return { page };
 }
 ```
 
 ---
 
-## GROQ Fragment
+## GROQ Fragment & Types
+
+Copy and use this GROQ fragment to fetch all SEO fields from your documents:
 
 ```ts
 const pageQuery = groq`*[_type == "page" && slug.current == $slug][0]{
@@ -900,30 +1091,30 @@ const pageQuery = groq`*[_type == "page" && slug.current == $slug][0]{
     },
     seoStatus, seoReviewNotes
   }
-}`
+}`;
 ```
 
-| Field | Type | Notes |
-|---|---|---|
-| `metaTitle` | `string` | Page title for search engines |
-| `metaDescription` | `string` | Page description |
-| `focusKeyword` | `string` | Primary keyword |
-| `seoKeywords` | `string[]` | Additional keywords |
-| `nofollowAttributes` | `boolean` | Noindex toggle |
-| `robotsMeta` | `string[]` | e.g. `['noindex', 'nofollow']` |
-| `metaImage.asset.url` | `string` | Fallback OG/Twitter image |
-| `openGraph.title` | `string` | OG title |
-| `openGraph.description` | `string` | OG description |
-| `openGraph.siteName` | `string` | OG site name |
-| `openGraph.image.asset.url` | `string` | OG image |
-| `twitter.cardType` | `string` | e.g. `summary_large_image` |
-| `twitter.site` | `string` | Twitter @account |
-| `twitter.creator` | `string` | Twitter @author |
-| `hreflang[].locale` | `string` | BCP 47 locale code |
-| `hreflang[].url` | `string` | Alternate URL for that locale |
-| `schemaOrg.schemaType` | `string` | Schema.org type |
-| `seoStatus` | `string` | `draft` \| `review` \| `approved` |
-| `seoReviewNotes` | `string` | Reviewer notes |
+| Field                       | Type       | Notes                             |
+| --------------------------- | ---------- | --------------------------------- |
+| `metaTitle`                 | `string`   | Page title for search engines     |
+| `metaDescription`           | `string`   | Page description                  |
+| `focusKeyword`              | `string`   | Primary keyword                   |
+| `seoKeywords`               | `string[]` | Additional keywords               |
+| `nofollowAttributes`        | `boolean`  | Noindex toggle                    |
+| `robotsMeta`                | `string[]` | e.g. `['noindex', 'nofollow']`    |
+| `metaImage.asset.url`       | `string`   | Fallback OG/Twitter image         |
+| `openGraph.title`           | `string`   | OG title                          |
+| `openGraph.description`     | `string`   | OG description                    |
+| `openGraph.siteName`        | `string`   | OG site name                      |
+| `openGraph.image.asset.url` | `string`   | OG image                          |
+| `twitter.cardType`          | `string`   | e.g. `summary_large_image`        |
+| `twitter.site`              | `string`   | Twitter @account                  |
+| `twitter.creator`           | `string`   | Twitter @author                   |
+| `hreflang[].locale`         | `string`   | BCP 47 locale code                |
+| `hreflang[].url`            | `string`   | Alternate URL for that locale     |
+| `schemaOrg.schemaType`      | `string`   | Schema.org type                   |
+| `seoStatus`                 | `string`   | `draft` \| `review` \| `approved` |
+| `seoReviewNotes`            | `string`   | Reviewer notes                    |
 
 ---
 
@@ -933,20 +1124,22 @@ const pageQuery = groq`*[_type == "page" && slug.current == $slug][0]{
 
 Calculates a Flesch-Kincaid Grade Level for your content and shows it with color-coded feedback directly beneath the body field.
 
-| Grade | Meaning |
-|---|---|
-| 1–6 | Very easy — general public |
-| 7–8 | Easy — ideal for most blog posts |
-| 9–12 | Average — acceptable for technical content |
-| 13+ | Difficult — academic/specialist |
+| Grade | Meaning                                    |
+| ----- | ------------------------------------------ |
+| 1–6   | Very easy — general public                 |
+| 7–8   | Easy — ideal for most blog posts           |
+| 9–12  | Average — acceptable for technical content |
+| 13+   | Difficult — academic/specialist            |
 
 Green = Grade ≤ 8, Amber = 9–12, Red = 13+.
 
 ---
 
-## Pro Features — Coming Soon
+## Pro Features (Coming Soon)
 
-> Not launched yet. Star the repo or watch the [npm package](https://www.npmjs.com/package/sanity-plugin-seo) to get notified.
+Advanced team workflows, bulk optimization, and analytics for enterprise teams. All features are in development and launching soon.
+
+> **Get notified when Pro launches:** Star the [GitHub repo](https://github.com/bhargav-bkpatel/sanity-plugin-seo) or watch the [npm package](https://www.npmjs.com/package/sanity-plugin-seo)
 
 ### SERP Preview
 
@@ -962,13 +1155,13 @@ Supported types: Article, Blog Post, Product, FAQ Page, Local Business, Event, O
 
 5 checks with one-click fixes where possible:
 
-| Check | Auto-fixable |
-|---|:---:|
-| Unique meta title (GROQ query) | — |
-| Open Graph image present | — |
-| Open Graph title set | ✅ Copy from meta title |
-| Focus keyword in meta title | — |
-| Meta description length (100–160 chars) | — |
+| Check                                   |      Auto-fixable       |
+| --------------------------------------- | :---------------------: |
+| Unique meta title (GROQ query)          |            —            |
+| Open Graph image present                |            —            |
+| Open Graph title set                    | ✅ Copy from meta title |
+| Focus keyword in meta title             |            —            |
+| Meta description length (100–160 chars) |            —            |
 
 Progress bar + "Fix all" button. Each auto-fix shows a 2.5-second inline confirmation.
 
@@ -1033,61 +1226,64 @@ SANITY_STUDIO_SEO_LICENSE=your-license-key-here
 ```ts
 seoMetaFields({
   proFeature: process.env.SANITY_STUDIO_SEO_LICENSE,
-})
+});
 ```
 
 > Sanity Studio env vars must be prefixed with `SANITY_STUDIO_` to be included in the browser bundle.
 
 ---
 
-## AI Setup
+## AI Provider Setup
 
-### OpenAI
+Three AI providers supported. Choose based on your needs and budget.
+
+### OpenAI (Paid)
 
 ```ts
 seoMetaFields({
   aiFeature: {
-    provider: 'openai',
+    provider: "openai",
     apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
-    model: 'gpt-4o-mini',
+    model: "gpt-4o-mini",
   },
-  bodyField: 'body',
-})
+  bodyField: "body",
+});
 ```
 
 Recommended: `gpt-4o-mini` (fast), `gpt-4o` (better quality)
 
-### Anthropic
+### Anthropic (Paid)
 
 ```ts
 seoMetaFields({
   aiFeature: {
-    provider: 'anthropic',
+    provider: "anthropic",
     apiKey: process.env.SANITY_STUDIO_ANTHROPIC_KEY!,
-    model: 'claude-haiku-4-5-20251001',
+    model: "claude-haiku-4-5-20251001",
   },
-  bodyField: 'body',
-})
+  bodyField: "body",
+});
 ```
 
-Recommended: `claude-haiku-4-5-20251001` (fast), `claude-sonnet-4-6` (better quality)
+**Recommended models:** `claude-haiku-4-5-20251001` (fast & cheap), `claude-sonnet-4-6` (best quality)
 
-### Groq (free tier)
+### Groq (Free)
 
 ```ts
 seoMetaFields({
   aiFeature: {
-    provider: 'groq',
+    provider: "groq",
     apiKey: process.env.SANITY_STUDIO_GROQ_KEY!,
-    model: 'llama-3.3-70b-versatile',
+    model: "llama-3.3-70b-versatile",
   },
-  bodyField: 'body',
-})
+  bodyField: "body",
+});
 ```
 
-Free API at [console.groq.com](https://console.groq.com). Recommended: `llama-3.3-70b-versatile`, `mixtral-8x7b-32768`.
+**Free API:** Sign up at [console.groq.com](https://console.groq.com)  
+**Recommended models:** `llama-3.3-70b-versatile`, `mixtral-8x7b-32768`
 
-> API keys go through the browser bundle. Use restricted keys and prefix with `SANITY_STUDIO_`.
+> ⚠️ **Security Note:** API keys are bundled in the browser. Always use restricted API keys with minimal permissions, and prefix env vars with `SANITY_STUDIO_`.
 
 ---
 
@@ -1097,30 +1293,46 @@ No schema migration needed. Existing fields all still work.
 
 ### Config key renames
 
-| Old (v1.3) | New (v1.4) |
-|---|---|
-| `license` | `proFeature` |
-| `ai` | `aiFeature` |
+| Old (v1.3) | New (v1.4)   |
+| ---------- | ------------ |
+| `license`  | `proFeature` |
+| `ai`       | `aiFeature`  |
 
 ```ts
 // Before
-seoMetaFields({ license: '...', ai: { provider: 'openai', apiKey: '...' } })
+seoMetaFields({ license: "...", ai: { provider: "openai", apiKey: "..." } });
 
 // After
-seoMetaFields({ proFeature: '...', aiFeature: { provider: 'openai', apiKey: '...' } })
+seoMetaFields({ proFeature: "...", aiFeature: { provider: "openai", apiKey: "..." } });
 ```
 
 ### New fields in v1.4
 
-| Field | Description |
-|---|---|
-| `focusKeyword` | Primary keyword for rank tracking |
-| `robotsMeta` | noindex, nofollow, noarchive, nosnippet checkboxes |
-| `hreflang` | Locale + URL pairs |
-| `additionalMetaTags` | Freeform name/content meta tags |
-| `schemaOrg` | Schema.org wizard |
-| `seoStatus` | Draft / Needs Review / Approved |
-| `seoReviewNotes` | Reviewer notes |
+| Field                | Description                                        |
+| -------------------- | -------------------------------------------------- |
+| `focusKeyword`       | Primary keyword for rank tracking                  |
+| `robotsMeta`         | noindex, nofollow, noarchive, nosnippet checkboxes |
+| `hreflang`           | Locale + URL pairs                                 |
+| `additionalMetaTags` | Freeform name/content meta tags                    |
+| `schemaOrg`          | Schema.org wizard                                  |
+| `seoStatus`          | Draft / Needs Review / Approved                    |
+| `seoReviewNotes`     | Reviewer notes                                     |
+
+---
+
+## Free Features Deep Dive
+
+Everything you need to optimize your content for search engines without leaving Sanity Studio.
+
+- **Live SEO Score** — Real-time scoring (0-100) with detailed breakdown of what's missing or needs improvement
+- **GEO Checklist** — Validates content structure for Google's AI Overview eligibility
+- **Meta Tags Preview** — See exactly how your page appears in Google search results
+- **Social Preview Cards** — X, Facebook, LinkedIn, and WhatsApp preview rendering
+- **Readability Score** — Flesch-Kincaid grade level analysis with color-coded feedback
+- **Robots Meta Control** — Set noindex, nofollow, noarchive, and nosnippet flags
+- **hreflang / Multi-language** — Target alternate versions for different locales
+- **Additional Meta Tags** — Add custom meta tags for any use case
+- **Frontend Integration Guides** — Ready-to-use code for Next.js, Astro, Vue, and Nuxt
 
 ---
 
@@ -1128,65 +1340,63 @@ seoMetaFields({ proFeature: '...', aiFeature: { provider: 'openai', apiKey: '...
 
 ```ts
 interface SeoData {
-  metaTitle?: string
-  metaDescription?: string
-  focusKeyword?: string
-  seoKeywords?: string[]
-  nofollowAttributes?: boolean
-  robotsMeta?: string[]
-  metaImage?: { asset: { url: string } }
+  metaTitle?: string;
+  metaDescription?: string;
+  focusKeyword?: string;
+  seoKeywords?: string[];
+  nofollowAttributes?: boolean;
+  robotsMeta?: string[];
+  metaImage?: { asset: { url: string } };
   openGraph?: {
-    title?: string
-    description?: string
-    siteName?: string
-    image?: { asset: { url: string } }
-  }
+    title?: string;
+    description?: string;
+    siteName?: string;
+    image?: { asset: { url: string } };
+  };
   twitter?: {
-    cardType?: string
-    site?: string
-    creator?: string
-    handle?: string
-  }
-  hreflang?: { locale: string; url: string }[]
+    cardType?: string;
+    site?: string;
+    creator?: string;
+    handle?: string;
+  };
+  hreflang?: { locale: string; url: string }[];
   schemaOrg?: {
-    schemaType?: string
-    name?: string
-    description?: string
-    url?: string
-    author?: string
-    datePublished?: string
-    dateModified?: string
-    price?: string
-    priceCurrency?: string
-    availability?: string
-    ratingValue?: string
-    ratingCount?: string
-    startDate?: string
-    endDate?: string
-    location?: string
-    faqItems?: { question: string; answer: string }[]
-  }
-  seoStatus?: 'draft' | 'review' | 'approved'
-  seoReviewNotes?: string
+    schemaType?: string;
+    name?: string;
+    description?: string;
+    url?: string;
+    author?: string;
+    datePublished?: string;
+    dateModified?: string;
+    price?: string;
+    priceCurrency?: string;
+    availability?: string;
+    ratingValue?: string;
+    ratingCount?: string;
+    startDate?: string;
+    endDate?: string;
+    location?: string;
+    faqItems?: { question: string; answer: string }[];
+  };
+  seoStatus?: "draft" | "review" | "approved";
+  seoReviewNotes?: string;
 }
 ```
 
 ---
 
-## Demo
+## Support & Community
 
-| | Link |
-|---|---|
-| Frontend (Pages Router) | [sanity-nextjs-seo-boilerplate.vercel.app](https://sanity-nextjs-seo-boilerplate.vercel.app/) |
-| Frontend (App Router) | [sanity-nextjs-with-app-router-seo-boilerplate.vercel.app](https://sanity-nextjs-with-app-router-seo-boilerplate.vercel.app/) |
-| Sanity Studio | [sanity-nextjs-seo-boilerplate.vercel.app/studio](https://sanity-nextjs-seo-boilerplate.vercel.app/studio/) |
+- **Bug Reports:** [GitHub Issues](https://github.com/bhargav-bkpatel/sanity-plugin-seo/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/bhargav-bkpatel/sanity-plugin-seo/discussions)
+- **NPM Package:** [sanity-plugin-seo](https://www.npmjs.com/package/sanity-plugin-seo)
 
 ---
 
-## Author
+## Creator
 
-Built by [Bhargav Patel](https://bkpatel.com/)
+Built by **[Bhargav Patel](https://bkpatel.com/)** with ❤️ for content creators and developers
 
 ## License
 
-MIT — free features are open source. Pro is coming soon.
+MIT — Free and AI features are open source. Pro coming soon.
