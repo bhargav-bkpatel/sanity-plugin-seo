@@ -1388,7 +1388,6 @@ interface SeoData {
 ## Support & Community
 
 - **Bug Reports:** [GitHub Issues](https://github.com/bhargav-bkpatel/sanity-plugin-seo/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/bhargav-bkpatel/sanity-plugin-seo/discussions)
 - **NPM Package:** [sanity-plugin-seo](https://www.npmjs.com/package/sanity-plugin-seo)
 
 ---
