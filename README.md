@@ -1395,7 +1395,7 @@ interface SeoData {
 
 ## Creator
 
-Built by **[Bhargav Patel](https://bkpatel.com/)** with ❤️ for content creators and developers
+Built by [Bhargav Patel](https://bkpatel.com/)
 
 ## License
 
