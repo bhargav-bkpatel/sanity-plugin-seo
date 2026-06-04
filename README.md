@@ -24,7 +24,7 @@ The complete SEO toolkit for Sanity Studio. Empower your team with live SEO scor
 
 **Production-Ready:** Free and AI tiers live. Pro features coming soon with team workflows, bulk optimization, and schema management.
 
-![Demo](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/demo-1.gif)
+![Demo](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/demo-2.gif)
 
 ---
 
@@ -1297,15 +1297,15 @@ The basic setup works exactly the same:
 
 ```ts
 // v1.3 and v1.4 — no changes needed
-plugins: [seoMetaFields()]
+plugins: [seoMetaFields()];
 ```
 
 **New in v1.4:** AI and Pro features are now available with renamed config keys:
 
-| Feature | Config Key (v1.4) |
-|---|---|
-| AI suggestions | `aiFeature` |
-| Pro license | `proFeature` |
+| Feature        | Config Key (v1.4) |
+| -------------- | ----------------- |
+| AI suggestions | `aiFeature`       |
+| Pro license    | `proFeature`      |
 
 See [AI Provider Setup](#ai-provider-setup) and [Pro License Setup](#pro-license-setup--coming-soon) for configuration examples.
 
@@ -1313,15 +1313,15 @@ See [AI Provider Setup](#ai-provider-setup) and [Pro License Setup](#pro-license
 
 These new schema fields are optional and automatically included:
 
-| Field | Type | Purpose |
-|---|---|---|
-| `focusKeyword` | `string` | Primary target keyword for tracking |
-| `robotsMeta` | `string[]` | Indexing control (noindex, nofollow, noarchive, nosnippet) |
-| `hreflang` | `array` | Alternate language/regional URLs |
-| `additionalMetaTags` | `array` | Custom name/content meta tag pairs |
-| `schemaOrg` | `object` | Schema.org structured data (Pro feature) |
-| `seoStatus` | `string` | Workflow status: draft, review, approved (Pro feature) |
-| `seoReviewNotes` | `string` | Reviewer feedback and notes (Pro feature) |
+| Field                | Type       | Purpose                                                    |
+| -------------------- | ---------- | ---------------------------------------------------------- |
+| `focusKeyword`       | `string`   | Primary target keyword for tracking                        |
+| `robotsMeta`         | `string[]` | Indexing control (noindex, nofollow, noarchive, nosnippet) |
+| `hreflang`           | `array`    | Alternate language/regional URLs                           |
+| `additionalMetaTags` | `array`    | Custom name/content meta tag pairs                         |
+| `schemaOrg`          | `object`   | Schema.org structured data (Pro feature)                   |
+| `seoStatus`          | `string`   | Workflow status: draft, review, approved (Pro feature)     |
+| `seoReviewNotes`     | `string`   | Reviewer feedback and notes (Pro feature)                  |
 
 Existing documents work fine without these new fields — they're completely optional.
 
