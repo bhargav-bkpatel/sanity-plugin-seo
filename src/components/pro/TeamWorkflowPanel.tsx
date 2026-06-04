@@ -48,8 +48,8 @@ export default function TeamWorkflowPanel({
     <ProGate feature="Team SEO Workflow" isPro={isPro}>
       <div
         style={{
-          background: "#0f172a",
-          border: "1px solid #1e293b",
+          background: "var(--card-bg-color)",
+          border: "1px solid var(--card-border-color)",
           borderRadius: 12,
           overflow: "hidden",
         }}
@@ -58,13 +58,15 @@ export default function TeamWorkflowPanel({
         <div
           style={{
             padding: "12px 16px",
-            borderBottom: "1px solid #1e293b",
+            borderBottom: "1px solid var(--card-border-color)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
           }}
         >
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#f1f5f9" }}>Team SEO Workflow</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "var(--card-fg-color)" }}>
+            Team SEO Workflow
+          </div>
           <div
             style={{
               display: "inline-flex",
@@ -84,15 +86,15 @@ export default function TeamWorkflowPanel({
         </div>
 
         {/* Status description */}
-        <div style={{ padding: "10px 16px", borderBottom: "1px solid #1e293b" }}>
-          <div style={{ fontSize: 12, color: "#64748b" }}>{cfg.description}</div>
+        <div style={{ padding: "10px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
+          <div style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>{cfg.description}</div>
         </div>
 
         {/* Status steps */}
         <div
           style={{
             padding: "10px 16px",
-            borderBottom: "1px solid #1e293b",
+            borderBottom: "1px solid var(--card-border-color)",
             display: "flex",
             alignItems: "center",
             gap: 0,
@@ -105,17 +107,17 @@ export default function TeamWorkflowPanel({
               (s === "draft" && (status === "review" || status === "approved")) ||
               (s === "review" && status === "approved");
 
-            let dotBg = "#0a111f";
+            let dotBg = "var(--card-bg-color)";
             if (isActive) dotBg = c.bg;
-            else if (isPast) dotBg = "#1e293b";
+            else if (isPast) dotBg = "var(--card-border-color)";
 
-            let dotBorder = "#1e293b";
+            let dotBorder = "var(--card-border-color)";
             if (isActive) dotBorder = c.color;
-            else if (isPast) dotBorder = "#334155";
+            else if (isPast) dotBorder = "var(--card-muted-fg-color)";
 
-            let iconColor = "#334155";
+            let iconColor = "var(--card-muted-fg-color)";
             if (isActive) iconColor = c.color;
-            else if (isPast) iconColor = "#475569";
+            else if (isPast) iconColor = "var(--card-muted-fg-color)";
 
             const labelColor = isActive ? c.color : iconColor;
             const connectorActive = isPast || (i === 0 && status === "approved");
@@ -168,7 +170,9 @@ export default function TeamWorkflowPanel({
                     style={{
                       height: 2,
                       width: 24,
-                      background: connectorActive ? "#334155" : "#1e293b",
+                      background: connectorActive
+                        ? "var(--card-muted-fg-color)"
+                        : "var(--card-border-color)",
                       flexShrink: 0,
                       marginBottom: 14,
                     }}
@@ -227,10 +231,10 @@ export default function TeamWorkflowPanel({
               style={{
                 flex: 1,
                 padding: "8px 0",
-                background: "#1e293b",
-                border: "1px solid #334155",
+                background: "var(--card-border-color)",
+                border: "1px solid var(--card-border-color)",
                 borderRadius: 8,
-                color: "#64748b",
+                color: "var(--card-muted-fg-color)",
                 fontSize: 12,
                 fontWeight: 600,
                 cursor: "pointer",

@@ -128,7 +128,7 @@ function ScoreBar({ score }: { score: number }) {
           style={{
             width: 80,
             height: 6,
-            background: "#1e293b",
+            background: "var(--card-border-color)",
             borderRadius: 99,
             overflow: "hidden",
           }}
@@ -144,7 +144,9 @@ function ScoreBar({ score }: { score: number }) {
         </div>
         <span style={{ fontSize: 13, fontWeight: 700, color, minWidth: 26 }}>{score}</span>
       </div>
-      <div style={{ fontSize: 10, color: "#64748b", marginTop: 3 }}>{scoreLabel(score)}</div>
+      <div style={{ fontSize: 10, color: "var(--card-muted-fg-color)", marginTop: 3 }}>
+        {scoreLabel(score)}
+      </div>
     </div>
   );
 }
@@ -163,7 +165,7 @@ function StatCard({
   return (
     <div
       style={{
-        background: "#0f172a",
+        background: "var(--card-bg-color)",
         border: `1px solid ${accent}40`,
         borderTop: `3px solid ${accent}`,
         borderRadius: 12,
@@ -197,8 +199,10 @@ function StatCard({
       >
         {value}
       </div>
-      <div style={{ fontSize: 13, fontWeight: 700, color: "#f1f5f9", marginTop: 10 }}>{label}</div>
-      <div style={{ fontSize: 11, color: "#64748b", marginTop: 3 }}>{sub}</div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: "var(--card-fg-color)", marginTop: 10 }}>
+        {label}
+      </div>
+      <div style={{ fontSize: 11, color: "var(--card-muted-fg-color)", marginTop: 3 }}>{sub}</div>
     </div>
   );
 }
@@ -225,7 +229,7 @@ function DistributionStrip({
           height: 8,
           borderRadius: 99,
           overflow: "hidden",
-          background: "#1e293b",
+          background: "var(--card-border-color)",
           gap: 1,
         }}
       >
@@ -241,7 +245,7 @@ function DistributionStrip({
         ].map(({ count, color, label }) => (
           <div key={label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: color }} />
-            <span style={{ fontSize: 11, color: "#94a3b8" }}>
+            <span style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
               {label}: {count} ({pct(count)})
             </span>
           </div>
@@ -274,9 +278,9 @@ function Pagination({
     width: 36,
     height: 36,
     borderRadius: 10,
-    border: `1px solid #1e3a5f`,
-    background: "#0d2040",
-    color: "#7dd3fc",
+    border: `1px solid var(--card-border-color)`,
+    background: "var(--card-bg-color)",
+    color: "var(--card-link-color)",
     cursor: disabled ? "not-allowed" : "pointer",
     transition: "all 0.15s",
     flexShrink: 0,
@@ -291,16 +295,16 @@ function Pagination({
         justifyContent: "space-between",
         marginTop: 20,
         padding: "12px 16px",
-        background: "#080e1c",
-        border: "1px solid #111827",
+        background: "var(--card-bg-color)",
+        border: "1px solid var(--card-border-color)",
         borderRadius: 12,
       }}
     >
-      <span style={{ fontSize: 12, color: "#64748b" }}>
-        <span style={{ color: "#7dd3fc", fontWeight: 600 }}>
+      <span style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>
+        <span style={{ color: "var(--card-link-color)", fontWeight: 600 }}>
           {Math.min(page * pageSize + 1, total)}–{Math.min((page + 1) * pageSize, total)}
         </span>{" "}
-        of <span style={{ color: "#94a3b8" }}>{total}</span> pages
+        of <span style={{ color: "var(--card-fg-color)" }}>{total}</span> pages
       </span>
 
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -326,9 +330,9 @@ function Pagination({
                 width: 36,
                 height: 36,
                 borderRadius: 10,
-                border: "none",
-                background: page === i ? "linear-gradient(135deg, #1d4ed8, #2563eb)" : "#0d2040",
-                color: page === i ? "#fff" : "#475569",
+                border: page === i ? "none" : "1px solid var(--card-border-color)",
+                background: page === i ? "var(--card-link-color)" : "var(--card-bg-color)",
+                color: page === i ? "#fff" : "var(--card-muted-fg-color)",
                 fontSize: 13,
                 fontWeight: page === i ? 700 : 400,
                 cursor: "pointer",
@@ -458,14 +462,14 @@ export default function SEODashboardPane() {
   }
 
   return (
-    <Box style={{ minHeight: "100vh", background: "#060b14", padding: "32px 40px" }}>
+    <Box style={{ minHeight: "100vh", background: "var(--card-bg-color)", padding: "32px 40px" }}>
       <div style={{ maxWidth: 1040, margin: "0 auto" }}>
         <Stack space={5}>
           {/* Header — analytics / monitoring identity */}
           <div
             style={{
-              background: "#000",
-              border: "1px solid #1a3a6b",
+              background: "var(--card-bg-color)",
+              border: "1px solid var(--card-border-color)",
               borderRadius: 16,
               padding: "28px 32px",
               display: "flex",
@@ -476,12 +480,12 @@ export default function SEODashboardPane() {
           >
             <div style={{ flex: 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                <ActivityIcon style={{ fontSize: 16, color: "#38bdf8" }} />
+                <ActivityIcon style={{ fontSize: 16, color: "var(--card-link-color)" }} />
                 <span
                   style={{
                     fontSize: 10,
                     fontWeight: 700,
-                    color: "#38bdf8",
+                    color: "var(--card-link-color)",
                     letterSpacing: 2,
                     textTransform: "uppercase",
                   }}
@@ -489,11 +493,11 @@ export default function SEODashboardPane() {
                   SEO Analytics
                 </span>
               </div>
-              <Text size={4} weight="bold" style={{ color: "#f0f9ff" }}>
+              <Text size={4} weight="bold" style={{ color: "var(--card-fg-color)" }}>
                 SEO Health Dashboard
               </Text>
               <div style={{ marginTop: 14, marginBottom: loading ? 0 : 20 }}>
-                <Text size={1} style={{ color: "#64748b" }}>
+                <Text size={1} style={{ color: "var(--card-muted-fg-color)" }}>
                   {loading
                     ? "Loading SEO health data…"
                     : `Monitoring ${totalDocs} page${
@@ -511,7 +515,7 @@ export default function SEODashboardPane() {
                         flexShrink: 0,
                       }}
                     />
-                    <span style={{ fontSize: 11, color: "#64748b" }}>
+                    <span style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
                       Last scanned {cacheAge} · cached
                     </span>
                   </div>
@@ -535,10 +539,10 @@ export default function SEODashboardPane() {
                 alignItems: "center",
                 gap: 8,
                 padding: "10px 20px",
-                background: loading ? "#0f1d33" : "#0c4a84",
-                border: `1px solid ${loading ? "#1e293b" : "#1d6aad"}`,
+                background: loading ? "var(--card-border-color)" : "var(--card-link-color)",
+                border: "none",
                 borderRadius: 10,
-                color: loading ? "#334155" : "#bae6fd",
+                color: loading ? "var(--card-muted-fg-color)" : "#fff",
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: loading ? "not-allowed" : "pointer",
@@ -592,9 +596,9 @@ export default function SEODashboardPane() {
                 gap: 2,
                 padding: "3px",
                 height: 36,
-                background: "#000000ff",
+                background: "var(--card-bg-color)",
                 borderRadius: 8,
-                border: "1px solid #1a2a40",
+                border: "1px solid var(--card-border-color)",
                 boxSizing: "border-box",
               }}
             >
@@ -614,8 +618,9 @@ export default function SEODashboardPane() {
                     cursor: "pointer",
                     fontSize: 12,
                     fontWeight: filter === f.key ? 600 : 400,
-                    background: filter === f.key ? "#0c2d50" : "transparent",
-                    color: filter === f.key ? "#7dd3fc" : "#94a3b8",
+                    background: filter === f.key ? "var(--card-border-color)" : "transparent",
+                    color:
+                      filter === f.key ? "var(--card-link-color)" : "var(--card-muted-fg-color)",
                     transition: "all 0.15s",
                     whiteSpace: "nowrap",
                   }}
@@ -631,10 +636,10 @@ export default function SEODashboardPane() {
                 height: 36,
                 fontSize: 12,
                 padding: "0 12px",
-                background: "#0a1020",
-                border: "1px solid #1a2a40",
+                background: "var(--card-bg-color)",
+                border: "1px solid var(--card-border-color)",
                 borderRadius: 8,
-                color: "#7dd3fc",
+                color: "var(--card-link-color)",
                 cursor: "pointer",
                 outline: "none",
                 boxSizing: "border-box",
@@ -653,7 +658,7 @@ export default function SEODashboardPane() {
                   background: "transparent",
                   border: "transparent",
                   borderRadius: 8,
-                  color: "#7dd3fc",
+                  color: "var(--card-link-color)",
                   cursor: "pointer",
                   outline: "none",
                   boxSizing: "border-box",
@@ -693,7 +698,7 @@ export default function SEODashboardPane() {
                       fontSize: 10,
                       fontWeight: 700,
                       letterSpacing: 1.5,
-                      color: "#64748b",
+                      color: "var(--card-muted-fg-color)",
                       textTransform: "uppercase",
                     }}
                   >
@@ -708,11 +713,11 @@ export default function SEODashboardPane() {
                     style={{
                       padding: "40px 0",
                       textAlign: "center",
-                      color: "#64748b",
+                      color: "var(--card-muted-fg-color)",
                       fontSize: 14,
-                      background: "#0a1020",
+                      background: "var(--card-bg-color)",
                       borderRadius: 10,
-                      border: "1px solid #1a2a40",
+                      border: "1px solid var(--card-border-color)",
                     }}
                   >
                     No pages match this filter
@@ -728,8 +733,8 @@ export default function SEODashboardPane() {
                       gap: 16,
                       alignItems: "center",
                       padding: "14px 16px",
-                      background: "#040404ff",
-                      border: "1px solid #797979",
+                      background: "var(--card-bg-color)",
+                      border: "1px solid var(--card-border-color)",
                       borderRadius: 10,
                     }}
                   >
@@ -740,14 +745,14 @@ export default function SEODashboardPane() {
                         style={{
                           fontSize: 13,
                           fontWeight: 600,
-                          color: "#cbd5e1",
+                          color: "var(--card-fg-color)",
                           lineHeight: 1.4,
                           marginBottom: 3,
                         }}
                       >
                         {doc.docTitle}
                       </div>
-                      <div style={{ fontSize: 11, color: "#94a3b8" }}>
+                      <div style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
                         Updated {new Date(doc._updatedAt).toLocaleDateString()}
                       </div>
                     </div>
@@ -757,11 +762,11 @@ export default function SEODashboardPane() {
                         display: "inline-flex",
                         alignItems: "center",
                         padding: "3px 10px",
-                        background: "#111d35",
-                        border: "1px solid #1e3a5f",
+                        background: "var(--card-border-color)",
+                        border: "1px solid var(--card-border-color)",
                         borderRadius: 99,
                         fontSize: 11,
-                        color: "#60a5fa",
+                        color: "var(--card-link-color)",
                         fontWeight: 500,
                         width: "fit-content",
                       }}
@@ -796,12 +801,19 @@ export default function SEODashboardPane() {
                                 width: 6,
                                 height: 6,
                                 borderRadius: "50%",
-                                background: doc.score === 0 ? "#94a3b8" : "#f87171",
+                                background:
+                                  doc.score === 0 ? "var(--card-muted-fg-color)" : "#ef4444",
                                 flexShrink: 0,
                                 marginTop: 3,
                               }}
                             />
-                            <span style={{ fontSize: 11, color: "#cbd5e1", lineHeight: 1.5 }}>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                color: "var(--card-fg-color)",
+                                lineHeight: 1.5,
+                              }}
+                            >
                               {issue}
                             </span>
                           </div>
@@ -814,14 +826,14 @@ export default function SEODashboardPane() {
                         intent="edit"
                         params={{ id: doc._id, type: doc._type }}
                         style={{
-                          color: "#38bdf8",
+                          color: "var(--card-link-color)",
                           fontSize: 12,
                           fontWeight: 600,
                           textDecoration: "none",
                           padding: "4px 10px",
-                          border: "1px solid #0c3d5e",
+                          border: "1px solid var(--card-border-color)",
                           borderRadius: 6,
-                          background: "#071929",
+                          background: "var(--card-bg-color)",
                           whiteSpace: "nowrap",
                           display: "inline-block",
                         }}

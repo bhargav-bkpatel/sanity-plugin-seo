@@ -17,9 +17,9 @@ function StatCard({
   return (
     <div
       style={{
-        background: loaded ? "#0f172a" : "#080e1a",
-        border: `1px solid ${loaded ? `${accent}40` : "#1e293b"}`,
-        borderTop: `3px solid ${loaded ? accent : "#1e293b"}`,
+        background: loaded ? "var(--card-bg-color)" : "var(--card-border-color)",
+        border: `1px solid ${loaded ? `${accent}40` : "var(--card-border-color)"}`,
+        borderTop: `3px solid ${loaded ? accent : "var(--card-border-color)"}`,
         borderRadius: 12,
         padding: "20px 24px",
         flex: 1,
@@ -47,7 +47,7 @@ function StatCard({
         style={{
           fontSize: 40,
           fontWeight: 900,
-          color: loaded ? accent : "#1e293b",
+          color: loaded ? accent : "var(--card-muted-fg-color)",
           lineHeight: 1,
           letterSpacing: -1,
           transition: "color 0.3s",
@@ -59,14 +59,14 @@ function StatCard({
         style={{
           fontSize: 13,
           fontWeight: 700,
-          color: loaded ? "#f1f5f9" : "#64748b",
+          color: loaded ? "var(--card-fg-color)" : "var(--card-muted-fg-color)",
           marginTop: 10,
           transition: "color 0.3s",
         }}
       >
         {label}
       </div>
-      <div style={{ fontSize: 11, color: "#64748b", marginTop: 3 }}>{sub}</div>
+      <div style={{ fontSize: 11, color: "var(--card-muted-fg-color)", marginTop: 3 }}>{sub}</div>
     </div>
   );
 }

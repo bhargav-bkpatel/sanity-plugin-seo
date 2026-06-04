@@ -11,7 +11,9 @@ import AdvancedValidation from "./pro/AdvancedValidation";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const HR = () => <Box style={{ borderTop: "1px solid #e2e8f0", margin: "4px 0" }} />;
+const HR = () => (
+  <Box style={{ borderTop: "1px solid var(--card-border-color)", margin: "4px 0" }} />
+);
 
 const SEOMetaFieldsWrapper = ({
   value: rawValue,

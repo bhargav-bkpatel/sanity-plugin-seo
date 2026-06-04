@@ -297,7 +297,7 @@ export default function SchemaWizard({
                   key={i}
                   padding={2}
                   radius={2}
-                  style={{ border: "1px solid #e2e8f0" }}
+                  style={{ border: "1px solid var(--card-border-color)" }}
                 >
                   <Stack space={2}>
                     <Text size={1} muted>

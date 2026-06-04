@@ -124,7 +124,7 @@ function PixelBar({ label, px, max }: { label: string; px: number; max: number }
         style={{
           flex: 1,
           height: 6,
-          background: "#e2e8f0",
+          background: "var(--card-border-color)",
           borderRadius: 3,
           overflow: "hidden",
         }}
@@ -152,8 +152,8 @@ const TAB_STYLE = (active: boolean) => ({
   cursor: "pointer",
   fontSize: 12,
   fontWeight: active ? 600 : 400,
-  background: active ? "#1e293b" : "transparent",
-  color: active ? "#f8fafc" : "#64748b",
+  background: active ? "var(--card-border-color)" : "transparent",
+  color: active ? "var(--card-fg-color)" : "var(--card-muted-fg-color)",
 });
 
 export default function SERPPreview({ value }: Props) {
@@ -191,7 +191,10 @@ export default function SERPPreview({ value }: Props) {
           <Card
             padding={3}
             radius={2}
-            style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}
+            style={{
+              background: "var(--card-bg-color)",
+              border: "1px solid var(--card-border-color)",
+            }}
           >
             {mode === "desktop" ? (
               <DesktopSERP title={title} description={description} url={url} />

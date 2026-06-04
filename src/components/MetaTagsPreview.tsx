@@ -85,7 +85,7 @@ export default function MetaTagsPreview({ value }: { value: Record<string, any> 
           <Stack space={2}>
             <Box
               style={{
-                background: "#0f172a",
+                background: "var(--card-code-bg-color)",
                 borderRadius: 6,
                 padding: 12,
                 overflow: "auto",
@@ -96,7 +96,7 @@ export default function MetaTagsPreview({ value }: { value: Record<string, any> 
                 language="html"
                 style={{
                   fontSize: 12,
-                  color: "#e2e8f0",
+                  color: "var(--card-code-fg-color)",
                   whiteSpace: "pre",
                   fontFamily: "monospace",
                 }}

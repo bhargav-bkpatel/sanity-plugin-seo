@@ -22,7 +22,7 @@ function PageGate({ feature }: { feature: string }) {
       style={{
         height: "100vh",
         overflow: "hidden",
-        background: "#070d1a",
+        background: "var(--card-bg-color)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -33,8 +33,8 @@ function PageGate({ feature }: { feature: string }) {
         {/* Card */}
         <div
           style={{
-            background: "#0d1527",
-            border: "1px solid #1e293b",
+            background: "var(--card-bg-color)",
+            border: "1px solid var(--card-border-color)",
             borderRadius: 24,
             overflow: "hidden",
           }}
@@ -62,11 +62,11 @@ function PageGate({ feature }: { feature: string }) {
                   width: 60,
                   height: 60,
                   borderRadius: 16,
-                  background: "#111d35",
-                  border: "1px solid #1e3a5f",
+                  background: "var(--card-bg-color)",
+                  border: "1px solid var(--card-border-color)",
                 }}
               >
-                <LockIcon style={{ fontSize: 26, color: "#60a5fa" }} />
+                <LockIcon style={{ fontSize: 26, color: "var(--card-link-color)" }} />
               </div>
 
               <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -76,12 +76,12 @@ function PageGate({ feature }: { feature: string }) {
                     alignItems: "center",
                     gap: 6,
                     padding: "7px 16px",
-                    background: "#111d35",
-                    border: "1px solid #1e3a5f",
+                    background: "var(--card-bg-color)",
+                    border: "1px solid var(--card-border-color)",
                     borderRadius: 99,
                     fontSize: 13,
                     fontWeight: 700,
-                    color: "#60a5fa",
+                    color: "var(--card-link-color)",
                     letterSpacing: 1.2,
                     textTransform: "uppercase",
                   }}
@@ -112,7 +112,7 @@ function PageGate({ feature }: { feature: string }) {
               style={{
                 fontSize: 32,
                 fontWeight: 800,
-                color: "#f1f5f9",
+                color: "var(--card-fg-color)",
                 marginBottom: 10,
                 lineHeight: 1.2,
               }}
@@ -121,17 +121,26 @@ function PageGate({ feature }: { feature: string }) {
             </div>
 
             {/* Subtitle */}
-            <div style={{ fontSize: 15, color: "#475569", marginBottom: 28, lineHeight: 1.7 }}>
+            <div
+              style={{
+                fontSize: 15,
+                color: "var(--card-muted-fg-color)",
+                marginBottom: 28,
+                lineHeight: 1.7,
+              }}
+            >
               This feature is part of{" "}
-              <span style={{ color: "#94a3b8", fontWeight: 600 }}>sanity-plugin-seo Pro</span>.
-              We&apos;re working on making it available — add your license key below when ready.
+              <span style={{ color: "var(--card-fg-color)", fontWeight: 600 }}>
+                sanity-plugin-seo Pro
+              </span>
+              . We&apos;re working on making it available — add your license key below when ready.
             </div>
 
             {/* Two-column feature list */}
             <div
               style={{
-                background: "#080f1e",
-                border: "1px solid #1a2a40",
+                background: "var(--card-bg-color)",
+                border: "1px solid var(--card-border-color)",
                 borderRadius: 14,
                 padding: "20px 24px",
                 marginBottom: 20,
@@ -145,7 +154,7 @@ function PageGate({ feature }: { feature: string }) {
                   gridColumn: "1 / -1",
                   fontSize: 11,
                   fontWeight: 700,
-                  color: "#334155",
+                  color: "var(--card-muted-fg-color)",
                   letterSpacing: 1.5,
                   textTransform: "uppercase",
                   marginBottom: 6,
@@ -169,10 +178,14 @@ function PageGate({ feature }: { feature: string }) {
                     }}
                   />
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "#94a3b8" }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "var(--card-fg-color)" }}>
                       {item.label}
                     </div>
-                    <div style={{ fontSize: 12, color: "#334155", marginTop: 2 }}>{item.desc}</div>
+                    <div
+                      style={{ fontSize: 12, color: "var(--card-muted-fg-color)", marginTop: 2 }}
+                    >
+                      {item.desc}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -181,8 +194,8 @@ function PageGate({ feature }: { feature: string }) {
             {/* License key hint */}
             <div
               style={{
-                background: "#080f1e",
-                border: "1px solid #1a2a40",
+                background: "var(--card-bg-color)",
+                border: "1px solid var(--card-border-color)",
                 borderRadius: 12,
                 padding: "16px 20px",
                 display: "flex",
@@ -191,18 +204,25 @@ function PageGate({ feature }: { feature: string }) {
                 flexWrap: "wrap",
               }}
             >
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#475569", flexShrink: 0 }}>
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "var(--card-muted-fg-color)",
+                  flexShrink: 0,
+                }}
+              >
                 Already have a key?
               </div>
               <code
                 style={{
                   flex: 1,
                   fontSize: 13,
-                  color: "#60a5fa",
-                  background: "#0a1628",
+                  color: "var(--card-link-color)",
+                  background: "var(--card-bg-color)",
                   padding: "8px 14px",
                   borderRadius: 8,
-                  border: "1px solid #1e293b",
+                  border: "1px solid var(--card-border-color)",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -222,8 +242,8 @@ function CardGate({ feature }: { feature: string }) {
   return (
     <div
       style={{
-        background: "#080f1e",
-        border: "1px solid #1a2a40",
+        background: "var(--card-bg-color)",
+        border: "1px solid var(--card-border-color)",
         borderRadius: 14,
         overflow: "hidden",
       }}
@@ -251,16 +271,18 @@ function CardGate({ feature }: { feature: string }) {
                 width: 30,
                 height: 30,
                 borderRadius: 8,
-                background: "#111d35",
-                border: "1px solid #1e3a5f",
+                background: "var(--card-bg-color)",
+                border: "1px solid var(--card-border-color)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <LockIcon style={{ fontSize: 13, color: "#60a5fa" }} />
+              <LockIcon style={{ fontSize: 13, color: "var(--card-link-color)" }} />
             </div>
-            <span style={{ fontSize: 13, fontWeight: 700, color: "#cbd5e1" }}>{feature}</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "var(--card-fg-color)" }}>
+              {feature}
+            </span>
           </div>
 
           <div style={{ display: "flex", gap: 6 }}>
@@ -270,12 +292,12 @@ function CardGate({ feature }: { feature: string }) {
                 alignItems: "center",
                 gap: 4,
                 padding: "3px 9px",
-                background: "#111d35",
-                border: "1px solid #1e3a5f",
+                background: "var(--card-bg-color)",
+                border: "1px solid var(--card-border-color)",
                 borderRadius: 99,
                 fontSize: 10,
                 fontWeight: 700,
-                color: "#60a5fa",
+                color: "var(--card-link-color)",
                 letterSpacing: 0.8,
                 textTransform: "uppercase",
               }}
@@ -286,8 +308,8 @@ function CardGate({ feature }: { feature: string }) {
             <span
               style={{
                 padding: "3px 9px",
-                background: "#1a0d35",
-                border: "1px solid #6d28d950",
+                background: "linear-gradient(90deg, #7c3aed22, #3b82f622)",
+                border: "1px solid #7c3aed50",
                 borderRadius: 99,
                 fontSize: 10,
                 fontWeight: 700,
@@ -301,10 +323,10 @@ function CardGate({ feature }: { feature: string }) {
           </div>
         </div>
 
-        <div style={{ fontSize: 12, color: "#334155", lineHeight: 1.6 }}>
+        <div style={{ fontSize: 12, color: "var(--card-muted-fg-color)", lineHeight: 1.6 }}>
           This feature is part of the Pro plan. Add your license key to{" "}
-          <code style={{ fontSize: 11, color: "#475569" }}>proFeature</code> in your plugin config
-          to unlock it.
+          <code style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>proFeature</code> in
+          your plugin config to unlock it.
         </div>
       </div>
     </div>

@@ -62,8 +62,8 @@ export default function BulkActions({
   return (
     <div
       style={{
-        background: "#0f172a",
-        border: "1px solid #2d4a7a",
+        background: "var(--card-bg-color)",
+        border: "1px solid var(--card-border-color)",
         borderRadius: 12,
         overflow: "hidden",
       }}
@@ -72,8 +72,8 @@ export default function BulkActions({
       <div
         style={{
           padding: "10px 16px",
-          background: "#080e1a",
-          borderBottom: "1px solid #1e293b",
+          background: "var(--card-bg-color)",
+          borderBottom: "1px solid var(--card-border-color)",
           display: "flex",
           alignItems: "center",
           gap: 10,
@@ -84,7 +84,7 @@ export default function BulkActions({
           style={{
             fontSize: 10,
             fontWeight: 700,
-            color: "#64748b",
+            color: "var(--card-muted-fg-color)",
             letterSpacing: 1.5,
             textTransform: "uppercase",
           }}
@@ -94,8 +94,8 @@ export default function BulkActions({
         <span
           style={{
             padding: "2px 8px",
-            background: "#1e3a5f",
-            color: "#60a5fa",
+            background: "var(--card-border-color)",
+            color: "var(--card-link-color)",
             borderRadius: 99,
             fontSize: 11,
             fontWeight: 600,
@@ -117,8 +117,8 @@ export default function BulkActions({
                 cursor: "pointer",
                 fontSize: 12,
                 fontWeight: bulkTab === tab ? 600 : 400,
-                background: bulkTab === tab ? "#1e3a5f" : "transparent",
-                color: bulkTab === tab ? "#60a5fa" : "#64748b",
+                background: bulkTab === tab ? "var(--card-border-color)" : "transparent",
+                color: bulkTab === tab ? "var(--card-link-color)" : "var(--card-muted-fg-color)",
                 transition: "all 0.15s",
                 display: "flex",
                 alignItems: "center",
@@ -143,11 +143,11 @@ export default function BulkActions({
                 style={{
                   marginBottom: 12,
                   padding: "9px 12px",
-                  background: "#431407",
-                  border: "1px solid #9a3412",
+                  background: "rgba(249, 115, 22, 0.15)",
+                  border: "1px solid rgba(249, 115, 22, 0.3)",
                   borderRadius: 8,
                   fontSize: 12,
-                  color: "#fdba74",
+                  color: "#f97316",
                   display: "flex",
                   alignItems: "center",
                   gap: 8,
@@ -162,12 +162,19 @@ export default function BulkActions({
               </div>
             )}
             {/* Why this matters */}
-            <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 12, lineHeight: 1.6 }}>
+            <div
+              style={{
+                fontSize: 12,
+                color: "var(--card-muted-fg-color)",
+                marginBottom: 12,
+                lineHeight: 1.6,
+              }}
+            >
               When someone shares your page on{" "}
-              <span style={{ color: "#e2e8f0" }}>Twitter, LinkedIn, WhatsApp</span> or any social
-              platform, they see the <span style={{ color: "#e2e8f0" }}>Open Graph title</span> —
-              not the meta title. If OG is empty, social platforms guess a title which often looks
-              broken.
+              <span style={{ color: "var(--card-fg-color)" }}>Twitter, LinkedIn, WhatsApp</span> or
+              any social platform, they see the{" "}
+              <span style={{ color: "var(--card-fg-color)" }}>Open Graph title</span> — not the meta
+              title. If OG is empty, social platforms guess a title which often looks broken.
             </div>
 
             {/* Visual: what this does */}
@@ -184,8 +191,8 @@ export default function BulkActions({
               <div
                 style={{
                   padding: "10px 12px",
-                  background: "#0a111f",
-                  border: "1px solid #1e293b",
+                  background: "var(--card-bg-color)",
+                  border: "1px solid var(--card-border-color)",
                   borderRadius: 8,
                 }}
               >
@@ -193,7 +200,7 @@ export default function BulkActions({
                   style={{
                     fontSize: 9,
                     fontWeight: 700,
-                    color: "#64748b",
+                    color: "var(--card-muted-fg-color)",
                     letterSpacing: 1,
                     textTransform: "uppercase",
                     marginBottom: 6,
@@ -201,8 +208,10 @@ export default function BulkActions({
                 >
                   Each page has
                 </div>
-                <div style={{ fontSize: 11, color: "#60a5fa", marginBottom: 3 }}>✓ Meta Title</div>
-                <div style={{ fontSize: 11, color: "#60a5fa", marginBottom: 3 }}>
+                <div style={{ fontSize: 11, color: "var(--card-link-color)", marginBottom: 3 }}>
+                  ✓ Meta Title
+                </div>
+                <div style={{ fontSize: 11, color: "var(--card-link-color)", marginBottom: 3 }}>
                   ✓ Meta Description
                 </div>
                 <div style={{ fontSize: 11, color: "#ef4444" }}>✗ OG Title (empty)</div>
@@ -210,7 +219,14 @@ export default function BulkActions({
               </div>
 
               {/* Arrow */}
-              <div style={{ textAlign: "center", fontSize: 18, color: "#1e3a5f", fontWeight: 700 }}>
+              <div
+                style={{
+                  textAlign: "center",
+                  fontSize: 18,
+                  color: "var(--card-muted-fg-color)",
+                  fontWeight: 700,
+                }}
+              >
                 →
               </div>
 
@@ -218,8 +234,8 @@ export default function BulkActions({
               <div
                 style={{
                   padding: "10px 12px",
-                  background: "#052e16",
-                  border: "1px solid #166534",
+                  background: "rgba(34, 197, 94, 0.15)",
+                  border: "1px solid rgba(34, 197, 94, 0.3)",
                   borderRadius: 8,
                 }}
               >
@@ -227,7 +243,7 @@ export default function BulkActions({
                   style={{
                     fontSize: 9,
                     fontWeight: 700,
-                    color: "#166534",
+                    color: "#22c55e",
                     letterSpacing: 1,
                     textTransform: "uppercase",
                     marginBottom: 6,
@@ -235,8 +251,10 @@ export default function BulkActions({
                 >
                   After applying
                 </div>
-                <div style={{ fontSize: 11, color: "#60a5fa", marginBottom: 3 }}>✓ Meta Title</div>
-                <div style={{ fontSize: 11, color: "#60a5fa", marginBottom: 3 }}>
+                <div style={{ fontSize: 11, color: "var(--card-link-color)", marginBottom: 3 }}>
+                  ✓ Meta Title
+                </div>
+                <div style={{ fontSize: 11, color: "var(--card-link-color)", marginBottom: 3 }}>
                   ✓ Meta Description
                 </div>
                 <div style={{ fontSize: 11, color: "#4ade80", marginBottom: 3 }}>
@@ -247,7 +265,7 @@ export default function BulkActions({
             </div>
 
             {/* Footer note */}
-            <div style={{ fontSize: 11, color: "#64748b", fontStyle: "italic" }}>
+            <div style={{ fontSize: 11, color: "var(--card-muted-fg-color)", fontStyle: "italic" }}>
               Each page gets its own values — pages without a meta title are skipped.
             </div>
           </div>
@@ -274,11 +292,11 @@ export default function BulkActions({
               disabled={!canApply}
               style={{
                 padding: "8px 20px",
-                background: canApply ? "#1e3a5f" : "#1e293b",
+                background: canApply ? "var(--card-border-color)" : "var(--card-border-color)",
                 border: "1px solid",
-                borderColor: canApply ? "#2d4a7a" : "#1e293b",
+                borderColor: canApply ? "var(--card-border-color)" : "var(--card-border-color)",
                 borderRadius: 8,
-                color: canApply ? "#60a5fa" : "#475569",
+                color: canApply ? "var(--card-link-color)" : "var(--card-muted-fg-color)",
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: canApply ? "pointer" : "not-allowed",
@@ -295,8 +313,8 @@ export default function BulkActions({
           <div
             style={{
               marginTop: 14,
-              background: "#020408",
-              border: "1px solid #1e293b",
+              background: "var(--card-bg-color)",
+              border: "1px solid var(--card-border-color)",
               borderRadius: 8,
               padding: "10px 14px",
               fontFamily: "monospace",
@@ -306,7 +324,7 @@ export default function BulkActions({
               style={{
                 fontSize: 10,
                 fontWeight: 700,
-                color: "#64748b",
+                color: "var(--card-muted-fg-color)",
                 letterSpacing: 1.5,
                 textTransform: "uppercase",
                 marginBottom: 8,
@@ -323,7 +341,8 @@ export default function BulkActions({
                     fontSize: 12,
                     color: entry.ok ? "#4ade80" : "#f87171",
                     lineHeight: 1.7,
-                    borderBottom: i < log.length - 1 ? "1px solid #0f172a" : "none",
+                    borderBottom:
+                      i < log.length - 1 ? "1px solid var(--card-border-color)" : "none",
                     paddingBottom: 2,
                   }}
                 >
@@ -361,25 +380,25 @@ function CsvImportTab({
       {/* Instructions */}
       <div
         style={{
-          background: "#0a1628",
-          border: "1px solid #1e293b",
+          background: "var(--card-bg-color)",
+          border: "1px solid var(--card-border-color)",
           borderRadius: 8,
           padding: "12px 14px",
           marginBottom: 14,
           fontSize: 12,
-          color: "#64748b",
+          color: "var(--card-muted-fg-color)",
           lineHeight: 1.7,
         }}
       >
-        <div style={{ fontWeight: 600, color: "#94a3b8", marginBottom: 4 }}>
+        <div style={{ fontWeight: 600, color: "var(--card-muted-fg-color)", marginBottom: 4 }}>
           Expected CSV headers (first row):
         </div>
-        <code style={{ color: "#60a5fa", fontSize: 11 }}>
+        <code style={{ color: "var(--card-link-color)", fontSize: 11 }}>
           _id, metaTitle, metaDescription, focusKeyword, ogTitle, ogDescription
         </code>
         <div style={{ marginTop: 6 }}>
           Use{" "}
-          <strong style={{ color: "#94a3b8" }}>
+          <strong style={{ color: "var(--card-muted-fg-color)" }}>
             <DownloadIcon style={{ fontSize: 12 }} /> Export CSV
           </strong>{" "}
           below the table to get a pre-filled template with current values — then edit in Excel or
@@ -395,10 +414,10 @@ function CsvImportTab({
           onClick={() => csvFileRef.current?.click()}
           style={{
             padding: "7px 14px",
-            background: "#1e3a5f",
-            border: "1px solid #2d4a7a",
+            background: "var(--card-bg-color)",
+            border: "1px solid var(--card-border-color)",
             borderRadius: 6,
-            color: "#60a5fa",
+            color: "var(--card-link-color)",
             fontSize: 12,
             fontWeight: 600,
             cursor: "pointer",
@@ -418,7 +437,7 @@ function CsvImportTab({
           style={{ display: "none" }}
           aria-hidden="true"
         />
-        <span style={{ fontSize: 11, color: "#64748b" }}>
+        <span style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
           {csvPreview.length > 0 ? `${csvPreview.length} rows parsed` : "No file selected"}
         </span>
       </div>
@@ -447,7 +466,7 @@ function CsvImportTab({
             style={{
               fontSize: 10,
               fontWeight: 700,
-              color: "#64748b",
+              color: "var(--card-muted-fg-color)",
               letterSpacing: 1.2,
               textTransform: "uppercase",
               marginBottom: 8,
@@ -459,7 +478,7 @@ function CsvImportTab({
             style={{
               maxHeight: 220,
               overflow: "auto",
-              border: "1px solid #1e293b",
+              border: "1px solid var(--card-border-color)",
               borderRadius: 8,
             }}
           >
@@ -472,7 +491,8 @@ function CsvImportTab({
                   gridTemplateColumns: "16px 1fr 1fr",
                   gap: 8,
                   padding: "8px 12px",
-                  borderBottom: i < csvPreview.length - 1 ? "1px solid #1e293b" : "none",
+                  borderBottom:
+                    i < csvPreview.length - 1 ? "1px solid var(--card-border-color)" : "none",
                   background: row.found ? "transparent" : "#450a0a22",
                   alignItems: "center",
                 }}
@@ -488,7 +508,7 @@ function CsvImportTab({
                 <span
                   style={{
                     fontSize: 11,
-                    color: row.found ? "#e2e8f0" : "#64748b",
+                    color: row.found ? "var(--card-fg-color)" : "var(--card-muted-fg-color)",
                     fontWeight: 600,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -498,7 +518,9 @@ function CsvImportTab({
                 >
                   {row.title}
                 </span>
-                <span style={{ fontSize: 11, color: "#64748b" }}>{row.focusKeyword || "—"}</span>
+                <span style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
+                  {row.focusKeyword || "—"}
+                </span>
               </div>
             ))}
           </div>
@@ -510,11 +532,11 @@ function CsvImportTab({
               disabled={csvApplying || matched === 0}
               style={{
                 padding: "8px 20px",
-                background: csvApplying || matched === 0 ? "#1e293b" : "#14532d",
+                background: csvApplying || matched === 0 ? "var(--card-border-color)" : "#14532d",
                 border: "1px solid",
-                borderColor: csvApplying || matched === 0 ? "#1e293b" : "#166534",
+                borderColor: csvApplying || matched === 0 ? "var(--card-border-color)" : "#166534",
                 borderRadius: 8,
-                color: csvApplying || matched === 0 ? "#475569" : "#4ade80",
+                color: csvApplying || matched === 0 ? "var(--card-muted-fg-color)" : "#4ade80",
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: csvApplying || matched === 0 ? "not-allowed" : "pointer",

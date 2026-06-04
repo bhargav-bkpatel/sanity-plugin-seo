@@ -22,23 +22,23 @@ export const STATUS_CFG: Record<
 > = {
   draft: {
     label: "Draft",
-    color: "#94a3b8",
-    bg: "#1e293b",
-    border: "#334155",
+    color: "var(--card-muted-fg-color)",
+    bg: "var(--card-border-color)",
+    border: "var(--card-border-color)",
     Icon: EditIcon,
   },
   review: {
     label: "Needs Review",
     color: "#f59e0b",
-    bg: "#422006",
-    border: "#92400e",
+    bg: "rgba(245, 158, 11, 0.12)",
+    border: "rgba(245, 158, 11, 0.25)",
     Icon: ClockIcon,
   },
   approved: {
     label: "Approved",
     color: "#22c55e",
-    bg: "#14532d",
-    border: "#166534",
+    bg: "rgba(34, 197, 94, 0.12)",
+    border: "rgba(34, 197, 94, 0.25)",
     Icon: CheckmarkCircleIcon,
   },
 };

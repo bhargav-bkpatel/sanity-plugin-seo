@@ -101,7 +101,7 @@ export default function WorkflowDashboard() {
 
   return (
     <ProGate feature="SEO Workflow Dashboard" isPro={isPro} variant="page">
-      <Box style={{ minHeight: "100vh", background: "#070d1a", padding: "32px 40px" }}>
+      <Box style={{ minHeight: "100vh", background: "var(--card-bg-color)", padding: "32px 40px" }}>
         <div style={{ maxWidth: 1040, margin: "0 auto" }}>
           <Stack space={5}>
             <Header
@@ -227,8 +227,8 @@ function Header({
   return (
     <div
       style={{
-        background: "#000000ff",
-        border: "1px solid #1e3a5f",
+        background: "var(--card-bg-color)",
+        border: "1px solid var(--card-border-color)",
         borderRadius: 16,
         padding: "28px 32px",
         display: "flex",
@@ -239,12 +239,12 @@ function Header({
     >
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-          <ActivityIcon style={{ fontSize: 16, color: "#60a5fa" }} />
+          <ActivityIcon style={{ fontSize: 16, color: "var(--card-link-color)" }} />
           <span
             style={{
               fontSize: 10,
               fontWeight: 700,
-              color: "#60a5fa",
+              color: "var(--card-link-color)",
               letterSpacing: 2,
               textTransform: "uppercase",
             }}
@@ -252,11 +252,11 @@ function Header({
             SEO Workflow
           </span>
         </div>
-        <Text size={4} weight="bold" style={{ color: "#f0f9ff" }}>
+        <Text size={4} weight="bold" style={{ color: "var(--card-fg-color)" }}>
           Workflow Dashboard
         </Text>
         <div style={{ marginTop: 14 }}>
-          <Text size={1} style={{ color: "#94a3b8" }}>
+          <Text size={1} style={{ color: "var(--card-muted-fg-color)" }}>
             {loaded
               ? `${docCount} document${
                   docCount !== 1 ? "s" : ""
@@ -274,15 +274,15 @@ function Header({
           alignItems: "center",
           gap: 8,
           padding: "12px 24px",
-          background: loading ? "#0d1a2e" : "#1e3a5f",
-          border: `1px solid ${loading ? "#1e3a5f" : "#2d4a7a"}`,
+          background: loading ? "var(--card-border-color)" : "var(--card-bg-color)",
+          border: `1px solid var(--card-border-color)`,
           borderRadius: 10,
-          color: loading ? "#4b5563" : "#93c5fd",
+          color: loading ? "var(--card-muted-fg-color)" : "var(--card-link-color)",
           fontSize: 14,
           fontWeight: 700,
           cursor: loading ? "not-allowed" : "pointer",
           whiteSpace: "nowrap",
-          boxShadow: loading ? "none" : "0 0 20px #2d4a7a50",
+          boxShadow: "none",
           transition: "all 0.2s",
           flexShrink: 0,
         }}
@@ -340,8 +340,8 @@ function FilterBar({
                 cursor: "pointer",
                 fontSize: 12,
                 fontWeight: isActive ? 700 : 400,
-                background: isActive ? cfg?.bg ?? "#1e3a5f" : "transparent",
-                color: isActive ? cfg?.color ?? "#60a5fa" : "#64748b",
+                background: isActive ? "var(--card-border-color)" : "transparent",
+                color: isActive ? "var(--card-link-color)" : "var(--card-muted-fg-color)",
                 transition: "all 0.15s",
                 display: "flex",
                 alignItems: "center",
@@ -356,8 +356,8 @@ function FilterBar({
                   fontWeight: 700,
                   padding: "2px 5px",
                   borderRadius: 100,
-                  background: isActive ? "rgba(255,255,255,0.15)" : "#1e293b",
-                  color: isActive ? cfg?.color ?? "#60a5fa" : "#94a3b8",
+                  background: isActive ? "rgba(34, 197, 94, 0.1)" : "var(--card-border-color)",
+                  color: isActive ? "var(--card-link-color)" : "var(--card-muted-fg-color)",
                 }}
               >
                 {count}
@@ -374,7 +374,7 @@ function FilterBar({
             style={{
               fontSize: 10,
               fontWeight: 700,
-              color: "#64748b",
+              color: "var(--card-muted-fg-color)",
               letterSpacing: 1,
               textTransform: "uppercase",
             }}
@@ -386,10 +386,10 @@ function FilterBar({
               height: 32,
               fontSize: 12,
               padding: "0 10px",
-              background: "#0a1020",
-              border: "1px solid #1a2a40",
+              background: "var(--card-bg-color)",
+              border: "1px solid var(--card-border-color)",
               borderRadius: 8,
-              color: "#7dd3fc",
+              color: "var(--card-link-color)",
               cursor: "pointer",
               outline: "none",
             }}
@@ -403,7 +403,7 @@ function FilterBar({
                 background: "transparent",
                 border: "transparent",
                 borderRadius: 8,
-                color: "#7dd3fc",
+                color: "var(--card-link-color)",
                 cursor: "pointer",
                 outline: "none",
               }}
@@ -440,16 +440,18 @@ function EmptyState({ filter }: { filter: WorkflowStatus | "all" }) {
       style={{
         textAlign: "center",
         padding: "48px 0",
-        background: "#0f172a",
+        background: "var(--card-bg-color)",
         borderRadius: 12,
-        border: "1px solid #1e293b",
+        border: "1px solid var(--card-border-color)",
       }}
     >
       <div style={{ fontSize: 28, marginBottom: 10 }}>{filter === "approved" ? "🎉" : "📭"}</div>
-      <div style={{ fontSize: 14, fontWeight: 700, color: "#f8fafc", marginBottom: 6 }}>
+      <div
+        style={{ fontSize: 14, fontWeight: 700, color: "var(--card-fg-color)", marginBottom: 6 }}
+      >
         {titles[filter] ?? "No documents match this filter"}
       </div>
-      <div style={{ fontSize: 12, color: "#64748b" }}>
+      <div style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>
         {subs[filter] ?? "Try a different filter."}
       </div>
     </div>

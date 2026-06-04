@@ -49,8 +49,8 @@ export default function WorkflowRow({
   return (
     <div
       style={{
-        background: "#000000ff",
-        border: `1px solid #797979ff`,
+        background: "var(--card-bg-color)",
+        border: `1px solid var(--card-border-color)`,
         borderRadius: 10,
         overflow: "hidden",
         transition: "border-color 0.15s",
@@ -78,7 +78,7 @@ export default function WorkflowRow({
               style={{
                 width: 56,
                 height: 4,
-                background: "#1e293b",
+                background: "var(--card-border-color)",
                 borderRadius: 99,
                 overflow: "hidden",
               }}
@@ -94,7 +94,7 @@ export default function WorkflowRow({
             </div>
             <span style={{ fontSize: 12, fontWeight: 700, color: scoreCol }}>{doc.score}</span>
           </div>
-          <div style={{ fontSize: 11, color: "#d4d4d4ff", marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: "var(--card-muted-fg-color)", marginTop: 2 }}>
             {scoreLabel(doc.score)}
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function WorkflowRow({
             style={{
               fontSize: 13,
               fontWeight: 600,
-              color: "#e2e8f0",
+              color: "var(--card-fg-color)",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -123,7 +123,7 @@ export default function WorkflowRow({
               marginTop: "10px",
             }}
           >
-            <span style={{ fontSize: 10, color: "#64748b" }}>
+            <span style={{ fontSize: 10, color: "var(--card-muted-fg-color)" }}>
               {new Date(doc._updatedAt).toLocaleDateString(undefined, {
                 month: "short",
                 day: "numeric",
@@ -151,8 +151,8 @@ export default function WorkflowRow({
                   fontSize: 10,
                   fontWeight: 600,
                   color: "#22c55e",
-                  background: "#14532d40",
-                  border: "1px solid #16653440",
+                  background: "rgba(34, 197, 94, 0.15)",
+                  border: "1px solid rgba(34, 197, 94, 0.3)",
                   borderRadius: 99,
                   padding: "1px 7px",
                 }}
@@ -167,12 +167,12 @@ export default function WorkflowRow({
         <span
           style={{
             padding: "4px 15px",
-            background: "#111d35",
-            border: "1px solid #1e3a5f",
+            background: "var(--card-border-color)",
+            border: "1px solid var(--card-border-color)",
             borderRadius: 99,
             fontSize: 12,
             lineHeight: "120%",
-            color: "#60a5fa",
+            color: "var(--card-link-color)",
             fontWeight: 500,
             whiteSpace: "nowrap",
             width: "fit-content",
@@ -215,7 +215,12 @@ export default function WorkflowRow({
 
       {/* ── Expanded panel ── */}
       {isOpen && (
-        <div style={{ borderTop: "1px solid #1e293b", background: "#070d1a" }}>
+        <div
+          style={{
+            borderTop: "1px solid var(--card-border-color)",
+            background: "var(--card-bg-color)",
+          }}
+        >
           {/* SEO issues */}
           <IssuesSection issues={doc.issues} />
 
@@ -255,7 +260,7 @@ function SectionHeader({
       style={{
         fontSize: 10,
         fontWeight: 700,
-        color: "#94a3b8",
+        color: "var(--card-muted-fg-color)",
         letterSpacing: 1.5,
         textTransform: "uppercase",
         marginBottom: 10,
@@ -267,7 +272,14 @@ function SectionHeader({
       <Icon style={{ fontSize: 14, flexShrink: 0 }} />
       {title}
       {sub && (
-        <span style={{ fontSize: 10, color: "#c0c0c3ff", fontWeight: 500, letterSpacing: 0 }}>
+        <span
+          style={{
+            fontSize: 10,
+            color: "var(--card-muted-fg-color)",
+            fontWeight: 500,
+            letterSpacing: 0,
+          }}
+        >
           {sub}
         </span>
       )}
@@ -277,7 +289,13 @@ function SectionHeader({
 
 function IssuesSection({ issues }: { issues: string[] }) {
   return (
-    <div style={{ padding: "14px 18px", background: "#000", borderBottom: "1px solid #1e293b" }}>
+    <div
+      style={{
+        padding: "14px 18px",
+        background: "var(--card-bg-color)",
+        borderBottom: "1px solid var(--card-border-color)",
+      }}
+    >
       <SectionHeader icon={WarningOutlineIcon} title="SEO Issues to Review" />
       {issues.length === 0 ? (
         <div
@@ -293,9 +311,9 @@ function IssuesSection({ issues }: { issues: string[] }) {
               key={issue}
               style={{
                 fontSize: 11,
-                color: "#f87171",
-                background: "#1a0808",
-                border: "1px solid #7f1d1d40",
+                color: "#ef4444",
+                background: "rgba(239, 68, 68, 0.15)",
+                border: "1px solid var(--card-border-color)",
                 borderRadius: 99,
                 padding: "3px 10px",
               }}
@@ -328,7 +346,13 @@ function NotesSection({
 }) {
   const isDisabled = savingNotes || notes === savedNotes;
   return (
-    <div style={{ padding: "14px 18px", borderBottom: "1px solid #1e293b", background: "#000" }}>
+    <div
+      style={{
+        padding: "14px 18px",
+        borderBottom: "1px solid var(--card-border-color)",
+        background: "var(--card-bg-color)",
+      }}
+    >
       <SectionHeader
         icon={EditIcon}
         title="Review Notes"
@@ -346,10 +370,10 @@ function NotesSection({
         style={{
           width: "100%",
           padding: "10px 12px",
-          background: "#161616ff",
-          border: "1px solid #2d3f55",
+          background: "var(--card-bg-color)",
+          border: "1px solid var(--card-border-color)",
           borderRadius: 8,
-          color: "#e2e8f0",
+          color: "var(--card-fg-color)",
           fontSize: 13,
           outline: "none",
           fontFamily: "inherit",
@@ -387,10 +411,10 @@ function NotesSection({
           disabled={isDisabled}
           style={{
             padding: "6px 16px",
-            background: isDisabled ? "#1e293b" : "#1d4ed8",
+            background: isDisabled ? "var(--card-border-color)" : "#1d4ed8",
             border: "none",
             borderRadius: 7,
-            color: isDisabled ? "#64748b" : "#fff",
+            color: isDisabled ? "var(--card-muted-fg-color)" : "#fff",
             fontSize: 12,
             fontWeight: 700,
             cursor: isDisabled ? "not-allowed" : "pointer",
@@ -421,11 +445,11 @@ function ActionsSection({
         alignItems: "center",
         justifyContent: "space-between",
         gap: 12,
-        background: "#000",
+        background: "var(--card-bg-color)",
       }}
     >
       {/* Context hint */}
-      <div style={{ fontSize: 12, color: "#94a3b8" }}>
+      <div style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>
         {doc.seoStatus === "draft" && "Submit this document for SEO review when ready."}
         {doc.seoStatus === "review" && (
           <span>
@@ -457,9 +481,9 @@ function ActionsSection({
                 gap: 5,
                 padding: "7px 14px",
                 borderRadius: 8,
-                background: "#1e3a5f",
-                border: "1px solid #2d4a7a",
-                color: "#60a5fa",
+                background: "var(--card-bg-color)",
+                border: "1px solid var(--card-border-color)",
+                color: "var(--card-link-color)",
                 textDecoration: "none",
                 fontSize: 12,
                 fontWeight: 600,
@@ -473,8 +497,8 @@ function ActionsSection({
               <ActionBtn
                 label="Request Review"
                 color="#f59e0b"
-                bg="#422006"
-                border="#92400e"
+                bg="rgba(245, 158, 11, 0.12)"
+                border="rgba(245, 158, 11, 0.25)"
                 onClick={() => onPatch(doc, "review")}
               />
             )}
@@ -482,16 +506,16 @@ function ActionsSection({
               <>
                 <ActionBtn
                   label="Reset to Draft"
-                  color="#94a3b8"
-                  bg="#1e293b"
-                  border="#334155"
+                  color="var(--card-muted-fg-color)"
+                  bg="var(--card-border-color)"
+                  border="var(--card-border-color)"
                   onClick={() => onPatch(doc, "draft")}
                 />
                 <ActionBtn
                   label="Mark Approved"
                   color="#22c55e"
-                  bg="#14532d"
-                  border="#166534"
+                  bg="rgba(34, 197, 94, 0.12)"
+                  border="rgba(34, 197, 94, 0.25)"
                   onClick={() => onPatch(doc, "approved")}
                 />
               </>
@@ -499,9 +523,9 @@ function ActionsSection({
             {doc.seoStatus === "approved" && (
               <ActionBtn
                 label="Reset to Draft"
-                color="#94a3b8"
-                bg="#1e293b"
-                border="#334155"
+                color="var(--card-muted-fg-color)"
+                bg="var(--card-border-color)"
+                border="var(--card-border-color)"
                 onClick={() => onPatch(doc, "draft")}
               />
             )}

@@ -29,12 +29,18 @@ function CheckRow({ check, justFixed }: { check: CheckResult; justFixed: boolean
         alignItems: "flex-start",
         gap: 10,
         padding: "8px 0",
-        borderBottom: "1px solid #1e293b",
+        borderBottom: "1px solid var(--card-border-color)",
       }}
     >
       <Icon style={{ fontSize: 16, color, flexShrink: 0, marginTop: 2 }} />
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: justFixed ? passColor : "#e2e8f0" }}>
+        <div
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: justFixed ? passColor : "var(--card-fg-color)",
+          }}
+        >
           {check.label}
           {justFixed && (
             <span
@@ -43,7 +49,7 @@ function CheckRow({ check, justFixed }: { check: CheckResult; justFixed: boolean
                 fontSize: 10,
                 fontWeight: 700,
                 color: passColor,
-                background: "#14532d",
+                background: "rgba(34, 197, 94, 0.15)",
                 padding: "1px 7px",
                 borderRadius: 99,
               }}
@@ -53,7 +59,14 @@ function CheckRow({ check, justFixed }: { check: CheckResult; justFixed: boolean
           )}
         </div>
         {!check.pass && !justFixed && check.description && (
-          <div style={{ fontSize: 11, color: "#64748b", marginTop: 2, lineHeight: 1.5 }}>
+          <div
+            style={{
+              fontSize: 11,
+              color: "var(--card-muted-fg-color)",
+              marginTop: 2,
+              lineHeight: 1.5,
+            }}
+          >
             {check.description}
           </div>
         )}
@@ -61,7 +74,7 @@ function CheckRow({ check, justFixed }: { check: CheckResult; justFixed: boolean
           <div
             style={{
               fontSize: 11,
-              color: "#475569",
+              color: "var(--card-muted-fg-color)",
               marginTop: 4,
               fontStyle: "italic",
               lineHeight: 1.5,
@@ -235,8 +248,8 @@ export default function AdvancedValidation({ value, onChange }: Props) {
     <ProGate feature="Advanced Validation" isPro={isPro}>
       <div
         style={{
-          background: "#0f172a",
-          border: "1px solid #1e293b",
+          background: "var(--card-bg-color)",
+          border: "1px solid var(--card-border-color)",
           borderRadius: 12,
           overflow: "hidden",
         }}
@@ -245,7 +258,7 @@ export default function AdvancedValidation({ value, onChange }: Props) {
         <div
           style={{
             padding: "12px 16px",
-            borderBottom: "1px solid #1e293b",
+            borderBottom: "1px solid var(--card-border-color)",
           }}
         >
           <div
@@ -256,7 +269,7 @@ export default function AdvancedValidation({ value, onChange }: Props) {
               marginBottom: 8,
             }}
           >
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#f1f5f9" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "var(--card-fg-color)" }}>
               Advanced Validation
             </div>
             {checks.length > 0 && (
@@ -267,9 +280,13 @@ export default function AdvancedValidation({ value, onChange }: Props) {
                   fontSize: 11,
                   fontWeight: 700,
                   // eslint-disable-next-line no-nested-ternary
-                  background: allClear ? "#14532d" : issueCount <= 2 ? "#422006" : "#450a0a",
+                  background: allClear
+                    ? "rgba(34, 197, 94, 0.15)"
+                    : issueCount <= 2
+                    ? "rgba(245, 158, 11, 0.15)"
+                    : "rgba(239, 68, 68, 0.15)",
                   // eslint-disable-next-line no-nested-ternary
-                  color: allClear ? "#22c55e" : issueCount <= 2 ? "#f59e0b" : "#f87171",
+                  color: allClear ? "#22c55e" : issueCount <= 2 ? "#f59e0b" : "#ef4444",
                 }}
               >
                 {allClear ? "All clear" : `${issueCount} issue${issueCount !== 1 ? "s" : ""}`}
@@ -283,7 +300,7 @@ export default function AdvancedValidation({ value, onChange }: Props) {
               <div
                 style={{
                   height: 5,
-                  background: "#1e293b",
+                  background: "var(--card-border-color)",
                   borderRadius: 99,
                   overflow: "hidden",
                   marginBottom: 4,
@@ -299,7 +316,13 @@ export default function AdvancedValidation({ value, onChange }: Props) {
                   }}
                 />
               </div>
-              <div style={{ fontSize: 10, color: "#475569" }}>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: "var(--card-muted-fg-color)",
+                  fontFamily: "monospace",
+                }}
+              >
                 {passCount}/{checks.length} checks passing
               </div>
             </div>
@@ -308,7 +331,7 @@ export default function AdvancedValidation({ value, onChange }: Props) {
 
         {/* Fix all button */}
         {fixableChecks.length > 0 && (
-          <div style={{ padding: "8px 16px", borderBottom: "1px solid #1e293b" }}>
+          <div style={{ padding: "8px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
             <button
               type="button"
               onClick={() => {

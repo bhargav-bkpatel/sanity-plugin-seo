@@ -26,7 +26,7 @@ export default function WorkflowStatCard({
       type="button"
       onClick={onClick}
       style={{
-        background: active ? `${accent}18` : "#0b0b0bff",
+        background: active ? `${accent}18` : "var(--card-bg-color)",
         border: `1px solid ${active ? `${accent}60` : `${accent}30`}`,
         borderTop: `3px solid ${active ? accent : `${accent}60`}`,
         borderRadius: 12,
@@ -76,13 +76,13 @@ export default function WorkflowStatCard({
         style={{
           fontSize: 13,
           fontWeight: 700,
-          color: active ? "#f1f5f9" : "#94a3b8",
+          color: active ? "var(--card-fg-color)" : "var(--card-muted-fg-color)",
           marginTop: 10,
         }}
       >
         {label}
       </div>
-      <div style={{ fontSize: 11, color: "#64748b", marginTop: 3 }}>{sub}</div>
+      <div style={{ fontSize: 11, color: "var(--card-muted-fg-color)", marginTop: 3 }}>{sub}</div>
     </button>
   );
 }

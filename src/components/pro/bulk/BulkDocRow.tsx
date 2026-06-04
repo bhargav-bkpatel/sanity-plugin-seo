@@ -18,10 +18,10 @@ interface Props {
 const FIELD_INPUT: React.CSSProperties = {
   width: "100%",
   padding: "9px 12px",
-  background: "#0a111f",
-  border: "1px solid #2d3f55",
+  background: "var(--card-bg-color)",
+  border: "1px solid var(--card-border-color)",
   borderRadius: 8,
-  color: "#e2e8f0",
+  color: "var(--card-fg-color)",
   fontSize: 13,
   outline: "none",
   fontFamily: "inherit",
@@ -32,7 +32,7 @@ const FIELD_INPUT: React.CSSProperties = {
 const SECTION_HEADER: React.CSSProperties = {
   fontSize: 10,
   fontWeight: 700,
-  color: "#64748b",
+  color: "var(--card-muted-fg-color)",
   letterSpacing: 1.5,
   textTransform: "uppercase",
   marginBottom: 10,
@@ -54,8 +54,8 @@ function CharBadge({ length, min, max }: { length: number; min: number; max: num
         borderRadius: 99,
         fontSize: 10,
         fontWeight: 700,
-        background: ok ? "#14532d" : "#451a00",
-        color: ok ? "#4ade80" : "#fb923c",
+        background: ok ? "rgba(34, 197, 94, 0.15)" : "rgba(249, 115, 22, 0.15)",
+        color: ok ? "#22c55e" : "#fb923c",
       }}
     >
       {length} / {max}
@@ -77,13 +77,24 @@ function FieldBlock({
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", marginBottom: 5, gap: 4 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", letterSpacing: 0.3 }}>
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            color: "var(--card-muted-fg-color)",
+            letterSpacing: 0.3,
+          }}
+        >
           {label}
         </span>
         {required && <span style={{ fontSize: 10, color: "#ef4444", fontWeight: 700 }}>*</span>}
       </div>
       {children}
-      {hint && <div style={{ fontSize: 10, color: "#64748b", marginTop: 4 }}>{hint}</div>}
+      {hint && (
+        <div style={{ fontSize: 10, color: "var(--card-muted-fg-color)", marginTop: 4 }}>
+          {hint}
+        </div>
+      )}
     </div>
   );
 }
@@ -109,8 +120,8 @@ export default function BulkDocRow({
   return (
     <div
       style={{
-        background: "#000000ff",
-        border: `1px solid #797979`,
+        background: "var(--card-bg-color)",
+        border: `1px solid var(--card-border-color)`,
         borderRadius: 10,
         overflow: "hidden",
         transition: "background 0.1s, border-color 0.1s",
@@ -138,7 +149,7 @@ export default function BulkDocRow({
             checked={doc.selected}
             onChange={(e) => onToggleSelect(doc._id, e as any)}
             onClick={(e) => e.stopPropagation()}
-            style={{ cursor: "pointer", accentColor: "#60a5fa" }}
+            style={{ cursor: "pointer", accentColor: "var(--card-link-color)" }}
           />
         </div>
 
@@ -151,7 +162,7 @@ export default function BulkDocRow({
             style={{
               fontSize: 13,
               fontWeight: 600,
-              color: "#e2e8f0",
+              color: "var(--card-fg-color)",
               lineHeight: 1.4,
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -164,7 +175,7 @@ export default function BulkDocRow({
             <div
               style={{
                 fontSize: 11,
-                color: "#64748b",
+                color: "var(--card-muted-fg-color)",
                 marginTop: 2,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -180,11 +191,11 @@ export default function BulkDocRow({
         <div
           style={{
             padding: "3px 10px",
-            background: "#111d35",
-            border: "1px solid #1e3a5f",
+            background: "var(--card-border-color)",
+            border: "1px solid var(--card-border-color)",
             borderRadius: 99,
             fontSize: 11,
-            color: "#60a5fa",
+            color: "var(--card-link-color)",
             fontWeight: 500,
             whiteSpace: "nowrap",
           }}
@@ -200,8 +211,8 @@ export default function BulkDocRow({
             gap: 5,
             padding: "3px 10px",
             borderRadius: 99,
-            background: issueCount === 0 ? "#052e16" : "#1a0a00",
-            border: `1px solid ${issueCount === 0 ? "#166534" : `${color}30`}`,
+            background: issueCount === 0 ? "rgba(34, 197, 94, 0.15)" : "rgba(239, 68, 68, 0.15)",
+            border: `1px solid var(--card-border-color)`,
           }}
         >
           <div
@@ -228,7 +239,7 @@ export default function BulkDocRow({
         {/* Chevron */}
         <div
           style={{
-            color: "#64748b",
+            color: "var(--card-muted-fg-color)",
             transition: "transform 0.2s",
             transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
             display: "flex",
@@ -244,8 +255,8 @@ export default function BulkDocRow({
       {isOpen && (
         <div
           style={{
-            borderTop: "1px solid #1e293b",
-            background: "#000000ff",
+            borderTop: "1px solid var(--card-border-color)",
+            background: "var(--card-bg-color)",
           }}
         >
           {/* Issue list */}
@@ -253,7 +264,7 @@ export default function BulkDocRow({
             <div
               style={{
                 padding: "10px 20px",
-                borderBottom: "1px solid #1e293b",
+                borderBottom: "1px solid var(--card-border-color)",
                 display: "flex",
                 flexWrap: "wrap",
                 gap: 6,
@@ -265,8 +276,8 @@ export default function BulkDocRow({
                   style={{
                     fontSize: 11,
                     color: "#f87171",
-                    background: "#1a0808",
-                    border: "1px solid #7f1d1d40",
+                    background: "rgba(239, 68, 68, 0.15)",
+                    border: "1px solid var(--card-border-color)",
                     borderRadius: 99,
                     padding: "2px 10px",
                     whiteSpace: "nowrap",
@@ -288,17 +299,24 @@ export default function BulkDocRow({
                 gap: 8,
                 marginBottom: 20,
                 paddingBottom: 14,
-                borderBottom: "1px solid #1e293b",
+                borderBottom: "1px solid var(--card-border-color)",
               }}
             >
-              <EditIcon style={{ color: "#3b82f6", fontSize: 14 }} />
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#60a5fa", letterSpacing: 0.5 }}>
+              <EditIcon style={{ color: "var(--card-link-color)", fontSize: 14 }} />
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: "var(--card-link-color)",
+                  letterSpacing: 0.5,
+                }}
+              >
                 Edit SEO Fields
               </span>
               <span
                 style={{
                   fontSize: 11,
-                  color: "#64748b",
+                  color: "var(--card-muted-fg-color)",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -339,7 +357,9 @@ export default function BulkDocRow({
                     marginTop: 4,
                   }}
                 >
-                  <span style={{ fontSize: 10, color: "#64748b" }}>Ideal: 50–60 characters</span>
+                  <span style={{ fontSize: 10, color: "var(--card-muted-fg-color)" }}>
+                    Ideal: 50–60 characters
+                  </span>
                   <CharBadge length={edit.metaTitle.length} min={50} max={60} />
                 </div>
               </FieldBlock>
@@ -371,7 +391,7 @@ export default function BulkDocRow({
                       marginTop: 4,
                     }}
                   >
-                    <span style={{ fontSize: 10, color: "#64748b" }}>
+                    <span style={{ fontSize: 10, color: "var(--card-muted-fg-color)" }}>
                       Ideal: 100–160 characters
                     </span>
                     <CharBadge length={edit.metaDescription.length} min={100} max={160} />
@@ -421,7 +441,7 @@ export default function BulkDocRow({
               style={{
                 marginTop: 20,
                 paddingTop: 16,
-                borderTop: "1px solid #1e293b",
+                borderTop: "1px solid var(--card-border-color)",
                 display: "flex",
                 justifyContent: "flex-end",
                 alignItems: "center",
@@ -448,10 +468,10 @@ export default function BulkDocRow({
                 disabled={edit.saving}
                 style={{
                   padding: "9px 22px",
-                  background: edit.saving ? "#1e293b" : "#1d4ed8",
+                  background: edit.saving ? "var(--card-border-color)" : "#1d4ed8",
                   border: "none",
                   borderRadius: 8,
-                  color: edit.saving ? "#64748b" : "#fff",
+                  color: edit.saving ? "var(--card-muted-fg-color)" : "#fff",
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: edit.saving ? "not-allowed" : "pointer",

@@ -20,7 +20,7 @@ function ImageSlot({ url }: { url: string | null }) {
       style={{
         width: "100%",
         height: 220,
-        background: "#0d1117",
+        background: "var(--card-bg-color)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -47,14 +47,16 @@ function ImageSlot({ url }: { url: string | null }) {
             height="32"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#334155"
+            stroke="var(--card-muted-fg-color)"
             strokeWidth="1.5"
           >
             <rect x="3" y="3" width="18" height="18" rx="2" />
             <circle cx="8.5" cy="8.5" r="1.5" />
             <path d="m21 15-5-5L5 21" />
           </svg>
-          <span style={{ fontSize: 11, color: "#334155" }}>No image uploaded</span>
+          <span style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
+            No image uploaded
+          </span>
         </div>
       )}
     </div>
@@ -69,22 +71,24 @@ function TwitterCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
   return (
     <div
       style={{
-        border: "1px solid #2f3336",
+        border: "1px solid var(--card-border-color)",
         borderRadius: 16,
         overflow: "hidden",
-        background: "#16181c",
+        background: "var(--card-bg-color)",
         maxWidth: 504,
         fontFamily: "TwitterChirp, -apple-system, BlinkMacSystemFont, sans-serif",
       }}
     >
       <ImageSlot url={imageUrl} />
       <div style={{ padding: "12px 14px 14px" }}>
-        <div style={{ fontSize: 13, color: "#71767b", marginBottom: 2 }}>{domain}</div>
+        <div style={{ fontSize: 13, color: "var(--card-muted-fg-color)", marginBottom: 2 }}>
+          {domain}
+        </div>
         <div
           style={{
             fontSize: 15,
             fontWeight: 700,
-            color: "#e7e9ea",
+            color: "var(--card-fg-color)",
             lineHeight: 1.3,
             marginBottom: 2,
             overflow: "hidden",
@@ -97,7 +101,7 @@ function TwitterCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
         <div
           style={{
             fontSize: 13,
-            color: "#71767b",
+            color: "var(--card-muted-fg-color)",
             lineHeight: 1.4,
             overflow: "hidden",
             display: "-webkit-box",
@@ -116,10 +120,10 @@ function FacebookCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
   return (
     <div
       style={{
-        border: "1px solid #3a3b3c",
+        border: "1px solid var(--card-border-color)",
         borderRadius: 8,
         overflow: "hidden",
-        background: "#242526",
+        background: "var(--card-bg-color)",
         maxWidth: 504,
         fontFamily: "Helvetica, Arial, sans-serif",
       }}
@@ -129,7 +133,7 @@ function FacebookCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
         <div
           style={{
             fontSize: 11,
-            color: "#b0b3b8",
+            color: "var(--card-muted-fg-color)",
             textTransform: "uppercase",
             letterSpacing: 0.8,
             marginBottom: 4,
@@ -141,7 +145,7 @@ function FacebookCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
           style={{
             fontSize: 16,
             fontWeight: 600,
-            color: "#e4e6eb",
+            color: "var(--card-fg-color)",
             lineHeight: 1.3,
             marginBottom: 4,
           }}
@@ -151,7 +155,7 @@ function FacebookCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
         <div
           style={{
             fontSize: 13,
-            color: "#b0b3b8",
+            color: "var(--card-muted-fg-color)",
             lineHeight: 1.4,
             overflow: "hidden",
             display: "-webkit-box",
@@ -172,8 +176,8 @@ function LinkedInCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
       style={{
         borderRadius: 8,
         overflow: "hidden",
-        background: "#1b1f23",
-        border: "1px solid #2d3748",
+        background: "var(--card-bg-color)",
+        border: "1px solid var(--card-border-color)",
         maxWidth: 504,
       }}
     >
@@ -183,7 +187,7 @@ function LinkedInCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
           style={{
             fontSize: 14,
             fontWeight: 600,
-            color: "#e2e8f0",
+            color: "var(--card-fg-color)",
             lineHeight: 1.4,
             marginBottom: 6,
           }}
@@ -205,7 +209,9 @@ function LinkedInCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
           >
             <span style={{ fontSize: 9, color: "#fff", fontWeight: 800 }}>in</span>
           </div>
-          <span style={{ fontSize: 12, color: "#64748b" }}>{og?.siteName || "yoursite.com"}</span>
+          <span style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>
+            {og?.siteName || "yoursite.com"}
+          </span>
         </div>
       </div>
     </div>
@@ -217,7 +223,7 @@ function WhatsAppCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
     <div style={{ maxWidth: 380 }}>
       <div
         style={{
-          background: "#1f2c34",
+          background: "var(--card-bg-color)",
           borderRadius: 8,
           overflow: "hidden",
           borderLeft: "4px solid #00a884",
@@ -230,7 +236,7 @@ function WhatsAppCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
             style={{
               fontSize: 14,
               fontWeight: 600,
-              color: "#e9edef",
+              color: "var(--card-fg-color)",
               lineHeight: 1.35,
               marginBottom: 4,
             }}
@@ -240,7 +246,7 @@ function WhatsAppCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
           <div
             style={{
               fontSize: 13,
-              color: "#8696a0",
+              color: "var(--card-muted-fg-color)",
               lineHeight: 1.4,
               marginBottom: 6,
               overflow: "hidden",
@@ -261,7 +267,7 @@ function WhatsAppCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
 }
 
 const PLATFORMS = [
-  { label: "X / Twitter", color: "#e7e9ea" },
+  { label: "X / Twitter", color: "var(--card-fg-color)" },
   { label: "Facebook", color: "#1877f2" },
   { label: "LinkedIn", color: "#0a66c2" },
   { label: "WhatsApp", color: "#25d366" },
@@ -278,8 +284,8 @@ export default function SocialPreviewCard({ value: og }: Props) {
   return (
     <div
       style={{
-        background: "#0f172a",
-        border: "1px solid #1e293b",
+        background: "var(--card-bg-color)",
+        border: "1px solid var(--card-border-color)",
         borderRadius: 12,
         overflow: "hidden",
       }}
@@ -288,7 +294,7 @@ export default function SocialPreviewCard({ value: og }: Props) {
       <div
         style={{
           padding: "10px 16px",
-          borderBottom: "1px solid #1e293b",
+          borderBottom: "1px solid var(--card-border-color)",
           display: "flex",
           alignItems: "center",
           gap: 8,
@@ -299,20 +305,33 @@ export default function SocialPreviewCard({ value: og }: Props) {
           height="14"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#60a5fa"
+          stroke="var(--card-link-color)"
           strokeWidth="2"
         >
           <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
           <polyline points="16 6 12 2 8 6" />
           <line x1="12" y1="2" x2="12" y2="15" />
         </svg>
-        <span style={{ fontSize: 11, fontWeight: 600, color: "#64748b", letterSpacing: 1 }}>
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: "var(--card-muted-fg-color)",
+            letterSpacing: 1,
+          }}
+        >
           SOCIAL SHARE PREVIEW
         </span>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", background: "#080e1a", borderBottom: "1px solid #1e293b" }}>
+      <div
+        style={{
+          display: "flex",
+          background: "var(--card-bg-color)",
+          borderBottom: "1px solid var(--card-border-color)",
+        }}
+      >
         {PLATFORMS.map((p, i) => (
           <button
             key={p.label}
@@ -326,7 +345,7 @@ export default function SocialPreviewCard({ value: og }: Props) {
               cursor: "pointer",
               fontSize: 11,
               fontWeight: activeTab === i ? 700 : 400,
-              color: activeTab === i ? p.color : "#475569",
+              color: activeTab === i ? p.color : "var(--card-muted-fg-color)",
               borderBottom: activeTab === i ? `2px solid ${p.color}` : "2px solid transparent",
               marginBottom: -1,
               transition: "all 0.15s",
@@ -339,7 +358,7 @@ export default function SocialPreviewCard({ value: og }: Props) {
       </div>
 
       {/* Preview */}
-      <div style={{ padding: 20, background: "#060d18" }}>
+      <div style={{ padding: 20, background: "var(--card-bg-color)" }}>
         {activeTab === 0 && <TwitterCard og={og} imageUrl={imageUrl} />}
         {activeTab === 1 && <FacebookCard og={og} imageUrl={imageUrl} />}
         {activeTab === 2 && <LinkedInCard og={og} imageUrl={imageUrl} />}
@@ -350,10 +369,10 @@ export default function SocialPreviewCard({ value: og }: Props) {
       <div
         style={{
           padding: "7px 16px",
-          borderTop: "1px solid #1e293b",
-          background: "#080e1a",
+          borderTop: "1px solid var(--card-border-color)",
+          background: "var(--card-bg-color)",
           fontSize: 11,
-          color: "#334155",
+          color: "var(--card-muted-fg-color)",
         }}
       >
         Preview is approximate — actual appearance varies by platform.

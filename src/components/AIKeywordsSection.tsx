@@ -86,9 +86,9 @@ export default function AIKeywordsSection({ value, onChange }: Props) {
                   style={{
                     padding: "4px 10px",
                     borderRadius: 20,
-                    border: "1px solid #6366f1",
-                    background: "#eef2ff",
-                    color: "#4338ca",
+                    border: "1px solid var(--card-border-color)",
+                    background: "var(--card-border-color)",
+                    color: "var(--card-fg-color)",
                     cursor: "pointer",
                     fontSize: 12,
                   }}

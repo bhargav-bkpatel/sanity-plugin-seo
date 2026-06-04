@@ -6,9 +6,9 @@ import useProEnabled from "../../hooks/useProEnabled";
 import { computeSEOScore } from "../../utils/seoScore";
 import ProGate from "./ProGate";
 import BulkStatCards from "./bulk/BulkStatCards";
-import BulkDocRow from "./bulk/BulkDocRow";
 import BulkActions from "./bulk/BulkActions";
 import { BulkDoc, RowEdit, BulkTab, getIssues } from "./bulk/types";
+import BulkDocRow from "./bulk/BulkDocRow";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -435,14 +435,14 @@ export default function BulkSEOPanel() {
 
   return (
     <ProGate feature="SEO Optimizer" isPro={isPro} variant="page">
-      <Box style={{ minHeight: "100vh", background: "#070d1a", padding: "32px 40px" }}>
+      <Box style={{ minHeight: "100vh", background: "var(--card-bg-color)", padding: "32px 40px" }}>
         <div style={{ maxWidth: 1040, margin: "0 auto" }}>
           <Stack space={5}>
             {/* Header */}
             <div
               style={{
-                background: "#000000ff",
-                border: "1px solid #1e3a5f",
+                background: "var(--card-bg-color)",
+                border: "1px solid var(--card-border-color)",
                 borderRadius: 16,
                 padding: "28px 32px",
                 display: "flex",
@@ -453,12 +453,12 @@ export default function BulkSEOPanel() {
             >
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                  <SearchIcon style={{ fontSize: 14, color: "#60a5fa" }} />
+                  <SearchIcon style={{ fontSize: 14, color: "var(--card-link-color)" }} />
                   <span
                     style={{
                       fontSize: 10,
                       fontWeight: 700,
-                      color: "#60a5fa",
+                      color: "var(--card-link-color)",
                       letterSpacing: 2,
                       textTransform: "uppercase",
                     }}
@@ -466,11 +466,11 @@ export default function BulkSEOPanel() {
                     Fix Queue
                   </span>
                 </div>
-                <Text size={4} weight="bold" style={{ color: "#f0fdf4" }}>
+                <Text size={4} weight="bold" style={{ color: "var(--card-fg-color)" }}>
                   SEO Optimizer
                 </Text>
                 <div style={{ marginTop: 12 }}>
-                  <Text size={1} style={{ color: "#8f8f90ff" }}>
+                  <Text size={1} style={{ color: "var(--card-muted-fg-color)" }}>
                     {loaded
                       ? `${docs.length} page${
                           docs.length !== 1 ? "s" : ""
@@ -485,8 +485,8 @@ export default function BulkSEOPanel() {
                           alignItems: "center",
                           gap: 6,
                           padding: "4px 10px",
-                          background: "#1e3a5f",
-                          border: "1px solid #2d4a7a",
+                          background: "var(--card-border-color)",
+                          border: "1px solid var(--card-border-color)",
                           borderRadius: 99,
                         }}
                       >
@@ -495,15 +495,17 @@ export default function BulkSEOPanel() {
                             width: 6,
                             height: 6,
                             borderRadius: "50%",
-                            background: "#4e85dcff",
+                            background: "var(--card-link-color)",
                             flexShrink: 0,
                           }}
                         />
-                        <span style={{ fontSize: 11, fontWeight: 600, color: "#93c5fd" }}>
+                        <span
+                          style={{ fontSize: 11, fontWeight: 600, color: "var(--card-link-color)" }}
+                        >
                           Cached
                         </span>
-                        <span style={{ fontSize: 11, color: "#7193bbff" }}>·</span>
-                        <span style={{ fontSize: 11, color: "#7193bbff" }}>
+                        <span style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>·</span>
+                        <span style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
                           Last scanned {cacheAge}
                         </span>
                       </span>
@@ -520,15 +522,15 @@ export default function BulkSEOPanel() {
                   alignItems: "center",
                   gap: 8,
                   padding: "12px 24px",
-                  background: loading ? "#0d1a2e" : "#1e3a5f",
-                  border: `1px solid ${loading ? "#1e3a5f" : "#2d4a7a"}`,
+                  background: loading ? "var(--card-border-color)" : "var(--card-bg-color)",
+                  border: `1px solid var(--card-border-color)`,
                   borderRadius: 10,
-                  color: loading ? "#4b5563" : "#93c5fd",
+                  color: loading ? "var(--card-muted-fg-color)" : "var(--card-link-color)",
                   fontSize: 14,
                   fontWeight: 700,
                   cursor: loading ? "not-allowed" : "pointer",
                   whiteSpace: "nowrap",
-                  boxShadow: loading ? "none" : "0 0 20px #2d4a7a50",
+                  boxShadow: "none",
                   transition: "all 0.2s",
                   flexShrink: 0,
                 }}
@@ -558,16 +560,23 @@ export default function BulkSEOPanel() {
                 style={{
                   textAlign: "center",
                   padding: "60px 0",
-                  background: "#0f172a",
+                  background: "var(--card-bg-color)",
                   borderRadius: 12,
-                  border: "1px solid #1e293b",
+                  border: "1px solid var(--card-border-color)",
                 }}
               >
                 <div style={{ fontSize: 32, marginBottom: 12 }}>🎉</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "#f8fafc", marginBottom: 6 }}>
+                <div
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 700,
+                    color: "var(--card-fg-color)",
+                    marginBottom: 6,
+                  }}
+                >
                   All pages look great!
                 </div>
-                <div style={{ fontSize: 13, color: "#64748b" }}>
+                <div style={{ fontSize: 13, color: "var(--card-muted-fg-color)" }}>
                   No SEO issues found across your content.
                 </div>
               </div>
@@ -582,7 +591,7 @@ export default function BulkSEOPanel() {
                       style={{
                         fontSize: 10,
                         fontWeight: 700,
-                        color: "#64748b",
+                        color: "var(--card-muted-fg-color)",
                         letterSpacing: 1,
                         textTransform: "uppercase",
                       }}
@@ -594,10 +603,10 @@ export default function BulkSEOPanel() {
                         height: 32,
                         fontSize: 12,
                         padding: "0 10px",
-                        background: "#0a1020",
-                        border: "1px solid #1a2a40",
+                        background: "var(--card-bg-color)",
+                        border: "1px solid var(--card-border-color)",
                         borderRadius: 8,
-                        color: "#7dd3fc",
+                        color: "var(--card-link-color)",
                         cursor: "pointer",
                         outline: "none",
                       }}
@@ -611,7 +620,7 @@ export default function BulkSEOPanel() {
                           background: "transparent",
                           border: "transparent",
                           borderRadius: 8,
-                          color: "#7dd3fc",
+                          color: "var(--card-link-color)",
                           cursor: "pointer",
                           outline: "none",
                         }}
@@ -641,7 +650,7 @@ export default function BulkSEOPanel() {
                       type="checkbox"
                       checked={visibleDocs.length > 0 && visibleDocs.every((d) => d.selected)}
                       onChange={toggleAll}
-                      style={{ cursor: "pointer", accentColor: "#60a5fa" }}
+                      style={{ cursor: "pointer", accentColor: "var(--card-link-color)" }}
                     />
                   </div>
                   {["Score", "Page"].map((h) => (
@@ -651,7 +660,7 @@ export default function BulkSEOPanel() {
                         fontSize: 10,
                         fontWeight: 700,
                         letterSpacing: 1.5,
-                        color: "#64748b",
+                        color: "var(--card-muted-fg-color)",
                         textTransform: "uppercase",
                       }}
                     >
@@ -698,7 +707,7 @@ export default function BulkSEOPanel() {
                     marginTop: 16,
                   }}
                 >
-                  <span style={{ fontSize: 12, color: "#64748b" }}>
+                  <span style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>
                     {visibleDocs.length === docs.length
                       ? `${docs.length} pages with SEO issues`
                       : `${visibleDocs.length} of ${docs.length} pages`}{" "}
@@ -712,10 +721,10 @@ export default function BulkSEOPanel() {
                       alignItems: "center",
                       gap: 6,
                       padding: "6px 14px",
-                      background: "#0f172a",
-                      border: "1px solid #1e293b",
+                      background: "var(--card-bg-color)",
+                      border: "1px solid var(--card-border-color)",
                       borderRadius: 8,
-                      color: "#94a3b8",
+                      color: "var(--card-muted-fg-color)",
                       fontSize: 12,
                       fontWeight: 500,
                       cursor: "pointer",
@@ -754,16 +763,27 @@ export default function BulkSEOPanel() {
                 style={{
                   textAlign: "center",
                   padding: "60px 0",
-                  background: "#0f172a",
+                  background: "var(--card-bg-color)",
                   borderRadius: 12,
-                  border: "1px dashed #1e293b",
+                  border: "1px dashed var(--card-border-color)",
                 }}
               >
-                <SearchIcon style={{ fontSize: 36, color: "#1e293b", marginBottom: 12 }} />
-                <div style={{ fontSize: 15, fontWeight: 700, color: "#f8fafc", marginBottom: 6 }}>
+                <SearchIcon
+                  style={{ fontSize: 36, color: "var(--card-muted-fg-color)", marginBottom: 12 }}
+                />
+                <div
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 700,
+                    color: "var(--card-fg-color)",
+                    marginBottom: 6,
+                  }}
+                >
                   Scan your content for SEO issues
                 </div>
-                <div style={{ fontSize: 13, color: "#64748b", marginBottom: 20 }}>
+                <div
+                  style={{ fontSize: 13, color: "var(--card-muted-fg-color)", marginBottom: 20 }}
+                >
                   Click a page row to expand and edit all its SEO fields individually, or select
                   multiple pages for bulk changes
                 </div>
@@ -775,10 +795,10 @@ export default function BulkSEOPanel() {
                     alignItems: "center",
                     gap: 8,
                     padding: "10px 24px",
-                    background: "#1e3a5f",
-                    border: "1px solid #2d4a7a",
+                    background: "var(--card-bg-color)",
+                    border: "1px solid var(--card-border-color)",
                     borderRadius: 8,
-                    color: "#60a5fa",
+                    color: "var(--card-link-color)",
                     fontSize: 13,
                     fontWeight: 600,
                     cursor: "pointer",
