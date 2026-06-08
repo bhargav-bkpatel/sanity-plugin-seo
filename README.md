@@ -1,4 +1,4 @@
-![Sanity Plugin SEO](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/background.png)
+![Sanity Plugin SEO](https://raw.githubusercontent.com/bhargav-bkpatel/sanity-plugin-seo/main/public/assets/background.png)
 
 ## ⚡ Sanity Plugin SEO
 
@@ -20,11 +20,19 @@
 [![Vue](https://img.shields.io/badge/Vue%203-supported-4FC08D?logo=vue.js&logoColor=white&style=flat)](https://vuejs.org/)
 [![Nuxt](https://img.shields.io/badge/Nuxt%203-supported-00DC82?logo=nuxt.js&logoColor=white&style=flat)](https://nuxt.com/)
 
+---
+
 The complete SEO toolkit for Sanity Studio. Empower your team with live SEO scoring, AI-powered content suggestions, team workflows, and comprehensive structured data support.
 
 **Production-Ready:** Free and AI tiers live. Pro features coming soon with team workflows, bulk optimization, and schema management.
 
-![Demo](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/demo-2.gif)
+---
+
+## Demo Video
+
+![Demo](https://raw.githubusercontent.com/bhargav-bkpatel/sanity-plugin-seo/main/public/assets/demo-2.gif)
+
+---
 
 ---
 
