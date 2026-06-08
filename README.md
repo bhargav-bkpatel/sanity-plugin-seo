@@ -24,7 +24,9 @@ The complete SEO toolkit for Sanity Studio. Empower your team with live SEO scor
 
 **Production-Ready:** Free and AI tiers live. Pro features coming soon with team workflows, bulk optimization, and schema management.
 
-![Demo](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/demo-1.gif)
+
+https://github.com/user-attachments/assets/e3bf1686-a2b2-4d5e-af0a-ec7e3158b2c3
+
 
 ---
 
