@@ -1,11 +1,10 @@
-![Sanity Plugin SEO](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/background.png)
+![Sanity Plugin SEO](https://raw.githubusercontent.com/bhargav-bkpatel/sanity-plugin-seo/main/public/assets/background.png)
 
 ## ⚡ Sanity Plugin SEO
 
 [![npm version](https://img.shields.io/badge/npm-v1.4.0-blue)](https://www.npmjs.com/package/sanity-plugin-seo)
 [![npm downloads](https://img.shields.io/badge/downloads-22k-brightgreen)](https://www.npmjs.com/package/sanity-plugin-seo)
 [![TypeScript](https://img.shields.io/badge/types-TypeScript-blue)](https://www.typescriptlang.org/)
-[![MIT License](https://img.shields.io/badge/license-MIT-green)](https://opensource.org/licenses/MIT)
 
 **Sanity Studio Compatibility:**
 
@@ -18,15 +17,14 @@
 [![Next.js](https://img.shields.io/badge/Next.js-supported-000000?logo=next.js&logoColor=white&style=flat)](https://nextjs.org/)
 [![Astro](https://img.shields.io/badge/Astro-supported-FF5D01?logo=astro&logoColor=white&style=flat)](https://astro.build/)
 [![Vue](https://img.shields.io/badge/Vue%203-supported-4FC08D?logo=vue.js&logoColor=white&style=flat)](https://vuejs.org/)
-[![Nuxt](https://img.shields.io/badge/Nuxt%203-supported-00DC82?logo=nuxt.js&logoColor=white&style=flat)](https://nuxt.com/)
 
 The complete SEO toolkit for Sanity Studio. Empower your team with live SEO scoring, AI-powered content suggestions, team workflows, and comprehensive structured data support.
 
 **Production-Ready:** Free and AI tiers live. Pro features coming soon with team workflows, bulk optimization, and schema management.
 
-![Demo](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/demo-2.gif)
+## Demo Video
 
----
+![Demo](https://raw.githubusercontent.com/bhargav-bkpatel/sanity-plugin-seo/main/public/assets/demo-2.gif)
 
 ## Complete Feature Set
 
@@ -59,8 +57,6 @@ Everything from basic SEO optimization to advanced team workflows.
 | Duplicate meta title detection                                   |  —   |  —  |   🔜   |
 | AI Bulk SEO Generation                                           |  —   |  —  |   🔜   |
 
----
-
 ## What Each Tier Includes
 
 **🎁 Free** — Essential SEO tools built-in. Start optimizing immediately.
@@ -68,8 +64,6 @@ Everything from basic SEO optimization to advanced team workflows.
 **🤖 AI** — Add AI-powered suggestions. Choose from OpenAI, Anthropic, or Groq (free tier available).
 
 **👥 Pro** — Coming Soon. Team workflows, bulk optimization, advanced analytics, and schema management for enterprise teams.
-
----
 
 ## Table of Contents
 
@@ -86,8 +80,6 @@ Everything from basic SEO optimization to advanced team workflows.
 - [Pro Features — Coming Soon](#pro-features--coming-soon)
 - [AI Provider Setup](#ai-setup)
 - [Upgrading from v1.3](#upgrading-from-v13)
-
----
 
 ## Quick Start
 
@@ -106,13 +98,11 @@ pnpm add sanity-plugin-seo
 
 **Compatibility:** Sanity Studio v3, v4, and v5
 
----
-
 ## 2. Configure in Sanity Studio
 
 ### Option A: Free features only
 
-```ts
+```
 // sanity.config.ts
 import { defineConfig } from "sanity";
 import { seoMetaFields } from "sanity-plugin-seo";
@@ -126,7 +116,7 @@ export default defineConfig({
 
 Add AI-powered suggestions for meta titles, descriptions, and keywords.
 
-```ts
+```
 import { defineConfig } from "sanity";
 import { seoMetaFields } from "sanity-plugin-seo";
 
@@ -149,7 +139,7 @@ export default defineConfig({
 
 Unlock team workflows, bulk optimization, and advanced schema management.
 
-```ts
+```
 seoMetaFields({
   proFeature: process.env.SANITY_STUDIO_SEO_LICENSE, // Pro features coming soon
 });
@@ -157,7 +147,7 @@ seoMetaFields({
 
 ### Complete Configuration
 
-```ts
+```
 import { defineConfig } from "sanity";
 import { seoMetaFields } from "sanity-plugin-seo";
 
@@ -180,13 +170,11 @@ export default defineConfig({
 });
 ```
 
----
-
 ## 3. Add SEO to Your Documents
 
 Add the `seoMetaFields` type to any document schema in your project:
 
-```ts
+```
 // schemas/page.ts
 export default {
   name: "page",
@@ -207,8 +195,6 @@ This adds a fully-featured SEO panel with four tabs:
 - **Advanced** — Robots meta, hreflang, custom tags
 - **Schema.org** — 30+ structured data types (Pro)
 
----
-
 ## Configuration Options
 
 All options are optional. The plugin works great with zero configuration.
@@ -228,8 +214,6 @@ All options are optional. The plugin works great with zero configuration.
 | **UI**               |
 | `dashboard`          | `boolean`                           | `true`           | Show SEO Health & Optimizer in Studio toolbar               |
 
----
-
 ## Framework Integration Guides
 
 Choose your framework and follow the integration guide. All guides include complete examples.
@@ -238,11 +222,11 @@ Choose your framework and follow the integration guide. All guides include compl
 
 ### 1. Sanity client + GROQ fragment
 
-```bash
+```
 npm install @sanity/client
 ```
 
-```ts
+```
 // lib/sanity.ts
 import { createClient } from "@sanity/client";
 
@@ -272,7 +256,7 @@ export const SEO_GROQ = `seo {
 }`;
 ```
 
-```bash
+```
 # .env.local
 NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
 NEXT_PUBLIC_SANITY_DATASET=production
@@ -281,7 +265,7 @@ NEXT_PUBLIC_SITE_URL=https://your-site.com
 
 ### 2. SEO helpers
 
-```javascript
+```
 // app/_seo.ts
 import type { Metadata } from "next";
 
@@ -387,7 +371,7 @@ export function buildJsonLd(seo: SeoField | undefined, fallbackTitle?: string): 
 
 > Next.js 15: `params` is a Promise — `await` it first.
 
-```javascript
+```
 // app/[slug]/page.tsx
 import type { Metadata } from "next";
 import { client, SEO_GROQ } from "@/lib/sanity";
@@ -427,11 +411,11 @@ export default async function Page({ params }: Props) {
 
 ### Pages Router
 
-```bash
+```
 npm install next-seo
 ```
 
-```javascript
+```
 // pages/[slug].tsx
 import { NextSeo } from "next-seo";
 import { GetStaticProps } from "next";
@@ -515,23 +499,21 @@ export async function getStaticPaths() {
 }
 ```
 
----
-
 ### Astro Integration
 
 #### 1. Install + configure
 
-```bash
+```
 npm install @sanity/client astro-seo
 ```
 
-```js
+```
 // astro.config.mjs
 import { defineConfig } from "astro/config";
 export default defineConfig({ output: "server" });
 ```
 
-```bash
+```
 # .env
 PUBLIC_SANITY_PROJECT_ID=your-project-id
 PUBLIC_SANITY_DATASET=production
@@ -540,7 +522,7 @@ PUBLIC_SITE_URL=https://your-site.com
 
 ### 2. Sanity client
 
-```javascript
+```
 // src/lib/sanity.ts
 import { createClient } from "@sanity/client";
 
@@ -624,8 +606,7 @@ export function buildJsonLd(
 
 ### 3. Page route
 
-```astro
----
+```
 // src/pages/[slug].astro
 import { SEO } from 'astro-seo'
 import { client, SEO_GROQ, buildJsonLd } from '../lib/sanity'
@@ -645,7 +626,6 @@ const title = seo.metaTitle ?? page.title
 const description = seo.metaDescription ?? page.description ?? ''
 const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
 const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
----
 
 <html lang="en">
   <head>
@@ -685,8 +665,7 @@ const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
 <details>
 <summary>Without astro-seo (native head tags)</summary>
 
-```astro
----
+```
 import { client, SEO_GROQ, buildJsonLd } from '../lib/sanity'
 export const prerender = false
 
@@ -703,7 +682,6 @@ const title = seo.metaTitle ?? page.title
 const description = seo.metaDescription ?? page.description ?? ''
 const ogImage = seo.openGraph?.image?.asset?.url ?? seo.metaImage?.asset?.url
 const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
----
 
 <html lang="en">
   <head>
@@ -737,19 +715,17 @@ const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
 
 </details>
 
----
-
 ### Vue 3 / Nuxt Integration
 
 > Don't use `@nuxtjs/sanity` — it pulls in React packages and breaks hydration. Use `@sanity/client` directly.
 
 ### Nuxt 3
 
-```bash
+```
 npm install @sanity/client
 ```
 
-```ts
+```
 // nuxt.config.ts
 export default defineNuxtConfig({
   runtimeConfig: {
@@ -762,7 +738,7 @@ export default defineNuxtConfig({
 });
 ```
 
-```bash
+```
 # .env
 NUXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
 NUXT_PUBLIC_SANITY_DATASET=production
@@ -773,7 +749,7 @@ NUXT_PUBLIC_SITE_URL=https://your-site.com
 
 **`composables/useSanityFetch.ts`**
 
-```javascript
+```
 import { createClient } from "@sanity/client";
 
 let _client: ReturnType<typeof createClient> | null = null;
@@ -798,7 +774,7 @@ export function useSanityFetch<T>(query: string, params?: Record<string, unknown
 
 **`composables/useSeo.ts`**
 
-```javascript
+```
 export type SeoField = {
   metaTitle?: string;
   metaDescription?: string;
@@ -878,7 +854,7 @@ export function buildJsonLd(
 
 **`pages/[slug].vue`**
 
-```vue
+```
 <script setup lang="ts">
 import { SEO_GROQ, buildJsonLd, type SeoField } from "~/composables/useSeo";
 
@@ -954,11 +930,11 @@ useHead({
 
 ### Vue 3 standalone (Vite + @unhead/vue)
 
-```bash
+```
 npm install @sanity/client @unhead/vue
 ```
 
-```javascript
+```
 // src/composables/useSeo.ts
 import { createClient } from "@sanity/client";
 import { useHead } from "@unhead/vue";
@@ -1065,13 +1041,11 @@ export async function useSanityPage(slug: string) {
 }
 ```
 
----
-
 ## GROQ Fragment & Types
 
 Copy and use this GROQ fragment to fetch all SEO fields from your documents:
 
-```ts
+```
 const pageQuery = groq`*[_type == "page" && slug.current == $slug][0]{
   title,
   seo {
@@ -1116,8 +1090,6 @@ const pageQuery = groq`*[_type == "page" && slug.current == $slug][0]{
 | `seoStatus`                 | `string`   | `draft` \| `review` \| `approved` |
 | `seoReviewNotes`            | `string`   | Reviewer notes                    |
 
----
-
 ## Free Features
 
 ### Readability Score
@@ -1132,8 +1104,6 @@ Calculates a Flesch-Kincaid Grade Level for your content and shows it with color
 | 13+   | Difficult — academic/specialist            |
 
 Green = Grade ≤ 8, Amber = 9–12, Red = 13+.
-
----
 
 ## Pro Features (Coming Soon)
 
@@ -1206,8 +1176,6 @@ Top-level tool that shows every document's review status in one place.
 
 Generate meta titles and descriptions for every page using your configured AI provider. Pick a target field in the SEO Optimizer, select pages, and let it run.
 
----
-
 ## Pro License Setup — Coming Soon
 
 > Not available yet. Watch the [npm package](https://www.npmjs.com/package/sanity-plugin-seo) for launch.
@@ -1217,13 +1185,13 @@ When it launches:
 1. Purchase a license (link shared on launch)
 2. Add the key to your env file:
 
-```bash
+```
 SANITY_STUDIO_SEO_LICENSE=your-license-key-here
 ```
 
 3. Pass it to the plugin:
 
-```ts
+```
 seoMetaFields({
   proFeature: process.env.SANITY_STUDIO_SEO_LICENSE,
 });
@@ -1231,15 +1199,13 @@ seoMetaFields({
 
 > Sanity Studio env vars must be prefixed with `SANITY_STUDIO_` to be included in the browser bundle.
 
----
-
 ## AI Provider Setup
 
 Three AI providers supported. Choose based on your needs and budget.
 
 ### OpenAI (Paid)
 
-```ts
+```
 seoMetaFields({
   aiFeature: {
     provider: "openai",
@@ -1254,7 +1220,7 @@ Recommended: `gpt-4o-mini` (fast), `gpt-4o` (better quality)
 
 ### Anthropic (Paid)
 
-```ts
+```
 seoMetaFields({
   aiFeature: {
     provider: "anthropic",
@@ -1269,7 +1235,7 @@ seoMetaFields({
 
 ### Groq (Free)
 
-```ts
+```
 seoMetaFields({
   aiFeature: {
     provider: "groq",
@@ -1285,8 +1251,6 @@ seoMetaFields({
 
 > ⚠️ **Security Note:** API keys are bundled in the browser. Always use restricted API keys with minimal permissions, and prefix env vars with `SANITY_STUDIO_`.
 
----
-
 ## Upgrading from v1.3 to v1.4
 
 **Good news:** No schema migrations needed. All existing SEO fields continue to work. Just update your config.
@@ -1295,7 +1259,7 @@ seoMetaFields({
 
 The basic setup works exactly the same:
 
-```ts
+```
 // v1.3 and v1.4 — no changes needed
 plugins: [seoMetaFields()];
 ```
@@ -1325,8 +1289,6 @@ These new schema fields are optional and automatically included:
 
 Existing documents work fine without these new fields — they're completely optional.
 
----
-
 ## Free Features Deep Dive
 
 Everything you need to optimize your content for search engines without leaving Sanity Studio.
@@ -1341,11 +1303,9 @@ Everything you need to optimize your content for search engines without leaving 
 - **Additional Meta Tags** — Add custom meta tags for any use case
 - **Frontend Integration Guides** — Ready-to-use code for Next.js, Astro, Vue, and Nuxt
 
----
-
 ## TypeScript Types
 
-```javascript
+```
 interface SeoData {
   metaTitle?: string;
   metaDescription?: string;
@@ -1390,14 +1350,10 @@ interface SeoData {
 }
 ```
 
----
-
 ## Support & Community
 
 - **Bug Reports:** [GitHub Issues](https://github.com/bhargav-bkpatel/sanity-plugin-seo/issues)
 - **NPM Package:** [sanity-plugin-seo](https://www.npmjs.com/package/sanity-plugin-seo)
-
----
 
 ## Creator
 
