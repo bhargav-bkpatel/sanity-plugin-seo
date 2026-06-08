@@ -24,9 +24,7 @@ The complete SEO toolkit for Sanity Studio. Empower your team with live SEO scor
 
 **Production-Ready:** Free and AI tiers live. Pro features coming soon with team workflows, bulk optimization, and schema management.
 
-
-https://github.com/user-attachments/assets/e3bf1686-a2b2-4d5e-af0a-ec7e3158b2c3
-
+![Demo](https://github.com/bhargav-bkpatel/sanity-plugin-seo/blob/main/public/assets/demo-2.gif)
 
 ---
 
@@ -283,7 +281,7 @@ NEXT_PUBLIC_SITE_URL=https://your-site.com
 
 ### 2. SEO helpers
 
-```ts
+```javascript
 // app/_seo.ts
 import type { Metadata } from "next";
 
@@ -389,7 +387,7 @@ export function buildJsonLd(seo: SeoField | undefined, fallbackTitle?: string): 
 
 > Next.js 15: `params` is a Promise — `await` it first.
 
-```tsx
+```javascript
 // app/[slug]/page.tsx
 import type { Metadata } from "next";
 import { client, SEO_GROQ } from "@/lib/sanity";
@@ -433,7 +431,7 @@ export default async function Page({ params }: Props) {
 npm install next-seo
 ```
 
-```tsx
+```javascript
 // pages/[slug].tsx
 import { NextSeo } from "next-seo";
 import { GetStaticProps } from "next";
@@ -542,7 +540,7 @@ PUBLIC_SITE_URL=https://your-site.com
 
 ### 2. Sanity client
 
-```ts
+```javascript
 // src/lib/sanity.ts
 import { createClient } from "@sanity/client";
 
@@ -775,7 +773,7 @@ NUXT_PUBLIC_SITE_URL=https://your-site.com
 
 **`composables/useSanityFetch.ts`**
 
-```ts
+```javascript
 import { createClient } from "@sanity/client";
 
 let _client: ReturnType<typeof createClient> | null = null;
@@ -800,7 +798,7 @@ export function useSanityFetch<T>(query: string, params?: Record<string, unknown
 
 **`composables/useSeo.ts`**
 
-```ts
+```javascript
 export type SeoField = {
   metaTitle?: string;
   metaDescription?: string;
@@ -960,7 +958,7 @@ useHead({
 npm install @sanity/client @unhead/vue
 ```
 
-```ts
+```javascript
 // src/composables/useSeo.ts
 import { createClient } from "@sanity/client";
 import { useHead } from "@unhead/vue";
@@ -1347,7 +1345,7 @@ Everything you need to optimize your content for search engines without leaving 
 
 ## TypeScript Types
 
-```ts
+```javascript
 interface SeoData {
   metaTitle?: string;
   metaDescription?: string;
