@@ -499,7 +499,6 @@ export async function getStaticPaths() {
 }
 ```
 
-
 ### Astro Integration
 
 #### 1. Install + configure
@@ -508,7 +507,7 @@ export async function getStaticPaths() {
 npm install @sanity/client astro-seo
 ```
 
-```js
+```
 // astro.config.mjs
 import { defineConfig } from "astro/config";
 export default defineConfig({ output: "server" });
@@ -715,7 +714,6 @@ const jsonLd = buildJsonLd(seo.schemaOrg, title, description)
 ```
 
 </details>
-
 
 ### Vue 3 / Nuxt Integration
 
@@ -1043,7 +1041,6 @@ export async function useSanityPage(slug: string) {
 }
 ```
 
-
 ## GROQ Fragment & Types
 
 Copy and use this GROQ fragment to fetch all SEO fields from your documents:
@@ -1093,7 +1090,6 @@ const pageQuery = groq`*[_type == "page" && slug.current == $slug][0]{
 | `seoStatus`                 | `string`   | `draft` \| `review` \| `approved` |
 | `seoReviewNotes`            | `string`   | Reviewer notes                    |
 
-
 ## Free Features
 
 ### Readability Score
@@ -1108,7 +1104,6 @@ Calculates a Flesch-Kincaid Grade Level for your content and shows it with color
 | 13+   | Difficult — academic/specialist            |
 
 Green = Grade ≤ 8, Amber = 9–12, Red = 13+.
-
 
 ## Pro Features (Coming Soon)
 
@@ -1181,7 +1176,6 @@ Top-level tool that shows every document's review status in one place.
 
 Generate meta titles and descriptions for every page using your configured AI provider. Pick a target field in the SEO Optimizer, select pages, and let it run.
 
-
 ## Pro License Setup — Coming Soon
 
 > Not available yet. Watch the [npm package](https://www.npmjs.com/package/sanity-plugin-seo) for launch.
@@ -1204,7 +1198,6 @@ seoMetaFields({
 ```
 
 > Sanity Studio env vars must be prefixed with `SANITY_STUDIO_` to be included in the browser bundle.
-
 
 ## AI Provider Setup
 
@@ -1258,7 +1251,6 @@ seoMetaFields({
 
 > ⚠️ **Security Note:** API keys are bundled in the browser. Always use restricted API keys with minimal permissions, and prefix env vars with `SANITY_STUDIO_`.
 
-
 ## Upgrading from v1.3 to v1.4
 
 **Good news:** No schema migrations needed. All existing SEO fields continue to work. Just update your config.
@@ -1297,7 +1289,6 @@ These new schema fields are optional and automatically included:
 
 Existing documents work fine without these new fields — they're completely optional.
 
-
 ## Free Features Deep Dive
 
 Everything you need to optimize your content for search engines without leaving Sanity Studio.
@@ -1311,7 +1302,6 @@ Everything you need to optimize your content for search engines without leaving 
 - **hreflang / Multi-language** — Target alternate versions for different locales
 - **Additional Meta Tags** — Add custom meta tags for any use case
 - **Frontend Integration Guides** — Ready-to-use code for Next.js, Astro, Vue, and Nuxt
-
 
 ## TypeScript Types
 
@@ -1360,12 +1350,10 @@ interface SeoData {
 }
 ```
 
-
 ## Support & Community
 
 - **Bug Reports:** [GitHub Issues](https://github.com/bhargav-bkpatel/sanity-plugin-seo/issues)
 - **NPM Package:** [sanity-plugin-seo](https://www.npmjs.com/package/sanity-plugin-seo)
-
 
 ## Creator
 
