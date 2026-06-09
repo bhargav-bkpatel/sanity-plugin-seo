@@ -408,6 +408,7 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
               {faqItems.map((item, i) => (
                 // eslint-disable-next-line react/no-array-index-key
                 <div
+                  // eslint-disable-next-line react/no-array-index-key
                   key={i}
                   style={{ padding: 10, background: "var(--card-border-color)", borderRadius: 8 }}
                 >
