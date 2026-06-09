@@ -24,8 +24,8 @@ export function buildGEOChecklist(value: Record<string, any> | undefined): GEOIt
       description: "Optimal length for AI snippet extraction (100–160 chars)",
     },
     {
-      label: "Meta image present",
-      pass: Boolean(v.metaImage?.asset),
+      label: "OG image present",
+      pass: Boolean(v.openGraph?.image?.asset),
       description: "AI visual search and social sharing require an image",
     },
     {
