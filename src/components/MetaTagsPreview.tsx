@@ -76,6 +76,26 @@ function buildMetaTags(
     });
   }
 
+  // Additional Meta Tags
+  if (Array.isArray(v.additionalMetaTags)) {
+    v.additionalMetaTags.forEach((tag: any) => {
+      if (Array.isArray(tag.metaAttributes)) {
+        tag.metaAttributes.forEach((attr: any) => {
+          if (attr.attributeKey && attr.attributeValueString) {
+            lines.push(
+              `<meta name="${attr.attributeKey}" content="${attr.attributeValueString}" />`,
+            );
+          } else if (attr.attributeKey && attr.attributeValueImage?.asset) {
+            const imageUrl = getImageUrl(attr.attributeValueImage.asset, projectId, dataset);
+            if (imageUrl) {
+              lines.push(`<meta name="${attr.attributeKey}" content="${imageUrl}" />`);
+            }
+          }
+        });
+      }
+    });
+  }
+
   return lines.join("\n");
 }
 
