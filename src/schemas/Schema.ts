@@ -36,13 +36,6 @@ const schema = defineType({
       description: "Recommended: 100–160 characters",
     },
     {
-      name: "metaImage",
-      title: "Meta Image",
-      type: "image",
-      group: "basic",
-      description: "Used as fallback for Open Graph and Twitter images",
-    },
-    {
       name: "focusKeyword",
       title: "Focus Keyword",
       type: "string",

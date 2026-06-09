@@ -1,9 +1,35 @@
 import React, { useState } from "react";
+import { useWorkspace } from "sanity";
 import { Stack, Card, Flex, Text, Button, Code, Box } from "@sanity/ui";
-import { CodeBlockIcon, CopyIcon, LaunchIcon } from "@sanity/icons";
+import { CodeBlockIcon } from "@sanity/icons";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-function buildMetaTags(value: Record<string, any> | undefined): string {
+
+function getImageUrl(
+  asset: Record<string, any>,
+  projectId: string,
+  dataset: string,
+): string | null {
+  if (!asset) return null;
+  if (asset.url) return asset.url;
+
+  if (asset._ref && projectId && dataset) {
+    const ref = asset._ref;
+    const match = ref.match(/^image-([a-z0-9]+)-(\d+x\d+)-(.+)$/);
+    if (match) {
+      const [, id, dims, format] = match;
+      return `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dims}.${format}`;
+    }
+  }
+
+  return null;
+}
+
+function buildMetaTags(
+  value: Record<string, any> | undefined,
+  projectId: string,
+  dataset: string,
+): string {
   const v = value || {};
   const lines: string[] = [];
 
@@ -30,7 +56,11 @@ function buildMetaTags(value: Record<string, any> | undefined): string {
   if (og.title) lines.push(`<meta property="og:title" content="${og.title}" />`);
   if (og.description) lines.push(`<meta property="og:description" content="${og.description}" />`);
   if (og.siteName) lines.push(`<meta property="og:site_name" content="${og.siteName}" />`);
-  if (og.image?.asset) lines.push(`<meta property="og:image" content="[image url]" />`);
+
+  const ogImageUrl = og.image?.asset ? getImageUrl(og.image.asset, projectId, dataset) : null;
+  if (ogImageUrl) {
+    lines.push(`<meta property="og:image" content="${ogImageUrl}" />`);
+  }
 
   // Twitter
   const tw = v.twitter || {};
@@ -50,16 +80,9 @@ function buildMetaTags(value: Record<string, any> | undefined): string {
 }
 
 export default function MetaTagsPreview({ value }: { value: Record<string, any> | undefined }) {
+  const { projectId, dataset } = useWorkspace();
   const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const tags = buildMetaTags(value);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(tags).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
+  const tags = buildMetaTags(value, projectId, dataset);
 
   return (
     <Card padding={3} radius={2} shadow={1}>
@@ -82,51 +105,27 @@ export default function MetaTagsPreview({ value }: { value: Record<string, any> 
         </Flex>
 
         {open && (
-          <Stack space={2}>
-            <Box
+          <Box
+            style={{
+              background: "var(--card-code-bg-color)",
+              borderRadius: 6,
+              padding: 12,
+              overflow: "auto",
+              maxHeight: 320,
+            }}
+          >
+            <Code
+              language="html"
               style={{
-                background: "var(--card-code-bg-color)",
-                borderRadius: 6,
-                padding: 12,
-                overflow: "auto",
-                maxHeight: 320,
+                fontSize: 12,
+                color: "var(--card-code-fg-color)",
+                whiteSpace: "pre",
+                fontFamily: "monospace",
               }}
             >
-              <Code
-                language="html"
-                style={{
-                  fontSize: 12,
-                  color: "var(--card-code-fg-color)",
-                  whiteSpace: "pre",
-                  fontFamily: "monospace",
-                }}
-              >
-                {tags || "<!-- No SEO fields filled in yet -->"}
-              </Code>
-            </Box>
-            <Flex gap={2}>
-              <Button
-                mode="ghost"
-                padding={2}
-                icon={CopyIcon}
-                text={copied ? "Copied!" : "Copy"}
-                onClick={handleCopy}
-                fontSize={1}
-                tone={copied ? "positive" : "default"}
-              />
-              <Button
-                mode="ghost"
-                padding={2}
-                icon={LaunchIcon}
-                text="Rich Results Test"
-                as="a"
-                href="https://search.google.com/test/rich-results"
-                target="_blank"
-                rel="noopener noreferrer"
-                fontSize={1}
-              />
-            </Flex>
-          </Stack>
+              {tags || "<!-- No SEO fields filled in yet -->"}
+            </Code>
+          </Box>
         )}
       </Stack>
     </Card>
