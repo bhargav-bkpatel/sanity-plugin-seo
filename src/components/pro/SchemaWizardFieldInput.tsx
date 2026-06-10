@@ -65,12 +65,13 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
 export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputProps) {
   const { isPro } = useProEnabled();
   const schemaOrg = (value as Record<string, any>) || {};
+  const originalType = schemaOrg.schemaType || "";
   const [showPreview, setShowPreview] = useState(false);
+  const [selectedType, setSelectedType] = useState(originalType);
   const [faqItems, setFaqItems] = useState<{ question: string; answer: string }[]>(
     schemaOrg.faqItems || [{ question: "", answer: "" }],
   );
 
-  const selectedType = schemaOrg.schemaType || "";
   const fields = FIELDS_BY_TYPE[selectedType] || [];
   const filledCount = fields.filter((f) => schemaOrg[f.name]).length;
   const totalCount = fields.length;
@@ -81,8 +82,17 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = e.target.value;
-    onChange(PatchEvent.from(set({ schemaType: newType })));
-    setFaqItems([{ question: "", answer: "" }]);
+    setSelectedType(newType);
+    // Only emit change if type is different from original saved state
+    if (newType !== originalType) {
+      onChange(PatchEvent.from(set({ ...schemaOrg, schemaType: newType })));
+    }
+    // Keep FAQ items if switching to FAQPage, otherwise reset
+    if (newType !== "FAQPage") {
+      setFaqItems([{ question: "", answer: "" }]);
+    } else if (!Array.isArray(schemaOrg.faqItems)) {
+      setFaqItems([{ question: "", answer: "" }]);
+    }
   };
 
   const addFaq = () => setFaqItems((prev) => [...prev, { question: "", answer: "" }]);
@@ -229,28 +239,61 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
               FIELDS
             </div>
             <Stack space={3}>
-              {fields.map((field) => (
-                <div key={field.name}>
-                  <div
-                    style={{
-                      fontSize: 11,
-                      color: "var(--card-muted-fg-color)",
-                      marginBottom: 4,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {field.label}
-                    {schemaOrg[field.name] && (
-                      <span style={{ color: "#22c55e", marginLeft: 6 }}>✓</span>
+              {fields.map((field) => {
+                const isDate = field.type === "date";
+                const isDatetime = field.type === "datetime";
+                const inputStyle = {
+                  width: "100%",
+                  padding: "8px 10px",
+                  fontSize: 13,
+                  border: "1px solid var(--card-border-color)",
+                  borderRadius: 6,
+                  background: "var(--card-bg-color)",
+                  color: "var(--card-fg-color)",
+                  fontFamily: "inherit",
+                };
+
+                return (
+                  <div key={field.name}>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: "var(--card-muted-fg-color)",
+                        marginBottom: 4,
+                        fontWeight: 500,
+                      }}
+                    >
+                      {field.label}
+                      {schemaOrg[field.name] && (
+                        <span style={{ color: "#22c55e", marginLeft: 6 }}>✓</span>
+                      )}
+                    </div>
+                    {isDate && (
+                      <input
+                        type="date"
+                        value={schemaOrg[field.name] || ""}
+                        onChange={(e) => patch(field.name, e.target.value)}
+                        style={inputStyle as any}
+                      />
+                    )}
+                    {isDatetime && (
+                      <input
+                        type="datetime-local"
+                        value={schemaOrg[field.name] || ""}
+                        onChange={(e) => patch(field.name, e.target.value)}
+                        style={inputStyle as any}
+                      />
+                    )}
+                    {!isDate && !isDatetime && (
+                      <TextInput
+                        value={schemaOrg[field.name] || ""}
+                        onChange={(e) => patch(field.name, (e.target as HTMLInputElement).value)}
+                        placeholder={field.placeholder || ""}
+                      />
                     )}
                   </div>
-                  <TextInput
-                    value={schemaOrg[field.name] || ""}
-                    onChange={(e) => patch(field.name, (e.target as HTMLInputElement).value)}
-                    placeholder={field.placeholder || ""}
-                  />
-                </div>
-              ))}
+                );
+              })}
             </Stack>
           </div>
         )}

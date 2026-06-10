@@ -16,11 +16,12 @@ export default function SchemaWizard({
 }) {
   const { isPro } = useProEnabled();
   const schemaOrg = value?.schemaOrg || {};
+  const originalType = schemaOrg.schemaType || "";
+  const [selectedType, setSelectedType] = useState(originalType);
   const [faqItems, setFaqItems] = useState<{ question: string; answer: string }[]>(
     schemaOrg.faqItems || [{ question: "", answer: "" }],
   );
 
-  const selectedType = schemaOrg.schemaType || "";
   const fields = FIELDS_BY_TYPE[selectedType] || [];
 
   const patch = (fieldName: string, fieldValue: any) => {
@@ -29,8 +30,18 @@ export default function SchemaWizard({
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = e.target.value;
-    onChange(PatchEvent.from(set({ schemaType: newType }, ["schemaOrg"])));
-    setFaqItems([{ question: "", answer: "" }]);
+    setSelectedType(newType);
+    // Only emit change if type is different from original saved state
+    if (newType !== originalType) {
+      // Preserve all existing data, only change the type
+      onChange(PatchEvent.from(set({ ...schemaOrg, schemaType: newType }, ["schemaOrg"])));
+    }
+    // Keep FAQ items if switching to FAQPage, otherwise reset
+    if (newType !== "FAQPage") {
+      setFaqItems([{ question: "", answer: "" }]);
+    } else if (!Array.isArray(schemaOrg.faqItems)) {
+      setFaqItems([{ question: "", answer: "" }]);
+    }
   };
 
   const addFaq = () => setFaqItems((prev) => [...prev, { question: "", answer: "" }]);

@@ -35,13 +35,13 @@ export const SCHEMA_TYPES = [
 
 export const FIELDS_BY_TYPE: Record<
   string,
-  { name: string; label: string; placeholder?: string }[]
+  { name: string; label: string; placeholder?: string; type?: "date" | "datetime" }[]
 > = {
   Article: [
     { name: "name", label: "Article Title", placeholder: "How to Build a Website" },
     { name: "author", label: "Author Name", placeholder: "Jane Smith" },
-    { name: "datePublished", label: "Date Published", placeholder: "2026-01-15" },
-    { name: "dateModified", label: "Date Modified", placeholder: "2026-05-01" },
+    { name: "datePublished", label: "Date Published", type: "date" },
+    { name: "dateModified", label: "Date Modified", type: "date" },
     { name: "description", label: "Article Description" },
   ],
   Product: [
@@ -62,8 +62,8 @@ export const FIELDS_BY_TYPE: Record<
   Event: [
     { name: "name", label: "Event Name" },
     { name: "description", label: "Event Description" },
-    { name: "startDate", label: "Start Date", placeholder: "2026-06-01T09:00:00" },
-    { name: "endDate", label: "End Date", placeholder: "2026-06-01T17:00:00" },
+    { name: "startDate", label: "Start Date", type: "datetime" },
+    { name: "endDate", label: "End Date", type: "datetime" },
     { name: "location", label: "Location / URL" },
   ],
   Organization: [
@@ -80,13 +80,13 @@ export const FIELDS_BY_TYPE: Record<
     { name: "name", label: "Video Title" },
     { name: "description", label: "Video Description" },
     { name: "url", label: "Video URL" },
-    { name: "datePublished", label: "Upload Date", placeholder: "2026-01-15" },
+    { name: "datePublished", label: "Upload Date", type: "date" },
   ],
   Recipe: [
     { name: "name", label: "Recipe Name" },
     { name: "description", label: "Recipe Description" },
     { name: "author", label: "Author Name" },
-    { name: "datePublished", label: "Date Published" },
+    { name: "datePublished", label: "Date Published", type: "date" },
   ],
   Person: [
     { name: "name", label: "Full Name" },
@@ -103,7 +103,7 @@ export const FIELDS_BY_TYPE: Record<
     { name: "name", label: "Job Title" },
     { name: "description", label: "Job Description" },
     { name: "location", label: "Location" },
-    { name: "datePublished", label: "Date Posted", placeholder: "2026-05-01" },
+    { name: "datePublished", label: "Date Posted", type: "date" },
   ],
   BreadcrumbList: [
     { name: "name", label: "Page Name" },
@@ -113,22 +113,22 @@ export const FIELDS_BY_TYPE: Record<
   BlogPosting: [
     { name: "name", label: "Article Title", placeholder: "How to Build a Website" },
     { name: "author", label: "Author Name", placeholder: "Jane Smith" },
-    { name: "datePublished", label: "Date Published", placeholder: "2026-01-15" },
-    { name: "dateModified", label: "Date Modified", placeholder: "2026-05-01" },
+    { name: "datePublished", label: "Date Published", type: "date" },
+    { name: "dateModified", label: "Date Modified", type: "date" },
     { name: "description", label: "Article Description" },
   ],
   NewsArticle: [
     { name: "name", label: "Article Title", placeholder: "Breaking: Example Headline" },
     { name: "author", label: "Author Name", placeholder: "Jane Smith" },
-    { name: "datePublished", label: "Date Published", placeholder: "2026-01-15" },
-    { name: "dateModified", label: "Date Modified", placeholder: "2026-05-01" },
+    { name: "datePublished", label: "Date Published", type: "date" },
+    { name: "dateModified", label: "Date Modified", type: "date" },
     { name: "description", label: "Article Description" },
   ],
   HowTo: [
     { name: "name", label: "How-To Title" },
     { name: "description", label: "Description" },
     { name: "author", label: "Author Name" },
-    { name: "datePublished", label: "Date Published", placeholder: "2026-01-15" },
+    { name: "datePublished", label: "Date Published", type: "date" },
     { name: "url", label: "Page URL" },
   ],
   Review: [
@@ -136,7 +136,7 @@ export const FIELDS_BY_TYPE: Record<
     { name: "description", label: "Review Summary" },
     { name: "author", label: "Reviewer Name" },
     { name: "ratingValue", label: "Rating (0–5)", placeholder: "4.5" },
-    { name: "datePublished", label: "Date Published", placeholder: "2026-01-15" },
+    { name: "datePublished", label: "Date Published", type: "date" },
   ],
   SoftwareApplication: [
     { name: "name", label: "App Name" },
@@ -157,7 +157,7 @@ export const FIELDS_BY_TYPE: Record<
   Movie: [
     { name: "name", label: "Movie Title" },
     { name: "description", label: "Description" },
-    { name: "datePublished", label: "Release Date", placeholder: "2026-01-15" },
+    { name: "datePublished", label: "Release Date", type: "date" },
     { name: "url", label: "Movie URL" },
     { name: "director", label: "Director" },
   ],
@@ -193,7 +193,7 @@ export const FIELDS_BY_TYPE: Record<
   PodcastEpisode: [
     { name: "name", label: "Episode Title" },
     { name: "description", label: "Episode Description" },
-    { name: "datePublished", label: "Publish Date", placeholder: "2026-01-15" },
+    { name: "datePublished", label: "Publish Date", type: "date" },
     { name: "url", label: "Episode URL" },
     { name: "episodeNumber", label: "Episode Number" },
   ],
