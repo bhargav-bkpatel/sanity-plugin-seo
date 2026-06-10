@@ -163,12 +163,16 @@ export function computeSEOScore(value: Record<string, any> | undefined): SEOScor
 
   const score = checks.reduce((s, c) => s + c.points, 0);
 
+  const failedChecks = checks.filter((c) => c.pass === false).length;
+  const partialChecks = checks.filter((c) => c.pass === "partial").length;
+
   let color: "green" | "orange" | "red";
   let label: string;
-  if (score >= 80) {
+
+  if (failedChecks === 0 && partialChecks === 0) {
     color = "green";
-    label = "Good";
-  } else if (score >= 60) {
+    label = "Excellent";
+  } else if (failedChecks <= 2 && score >= 70) {
     color = "orange";
     label = "Needs Work";
   } else {
