@@ -29,15 +29,16 @@ export default function WorkflowDashboard() {
   const fetchDocs = useCallback(async () => {
     setLoading(true);
     try {
-      const results: any[] = await client.fetch(`
-        *[!(_id in path("drafts.**")) && defined(seo)] | order(_updatedAt desc) [0...300] {
+      const results: any[] = await client.fetch(
+        `*[!(_id in path("drafts.**")) && defined(seo)] | order(_updatedAt desc) [0...300] {
           _id, _type, _updatedAt,
           "docTitle": coalesce(title, name, slug.current, "Untitled"),
           "seoStatus": coalesce(seo.seoStatus, "draft"),
           "reviewNotes": coalesce(seo.seoReviewNotes, ""),
           "seo": seo
-        }
-      `);
+        }`,
+        { _ts: Date.now() },
+      );
       setDocs(
         results.map((d) => ({
           ...d,

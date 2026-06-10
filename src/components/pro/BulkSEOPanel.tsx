@@ -135,15 +135,16 @@ export default function BulkSEOPanel() {
       setCsvPreview([]);
       setCsvError(null);
       try {
-        const results: any[] = await client.fetch(`
-        *[!(_id in path("drafts.**")) && defined(seo)]
+        const results: any[] = await client.fetch(
+          `*[!(_id in path("drafts.**")) && defined(seo)]
           | order(_updatedAt desc) [0...200] {
           _id, _type,
           "docTitle": coalesce(title, name, slug.current, "Untitled"),
           "docSlug": slug.current,
           "seo": seo
-        }
-      `);
+        }`,
+          { _ts: Date.now() },
+        );
         const scored = results.map((d) => ({
           ...d,
           score: computeSEOScore(d.seo || undefined).score,
@@ -213,11 +214,12 @@ export default function BulkSEOPanel() {
       setRowEdits((prev) => ({ ...prev, [doc._id]: { ...prev[doc._id], saving: true } }));
       try {
         const patch: Record<string, any> = {};
-        if (edit.metaTitle) patch["seo.metaTitle"] = edit.metaTitle;
-        if (edit.metaDescription) patch["seo.metaDescription"] = edit.metaDescription;
-        if (edit.focusKeyword) patch["seo.focusKeyword"] = edit.focusKeyword;
-        if (edit.ogTitle) patch["seo.openGraph.title"] = edit.ogTitle;
-        if (edit.ogDescription) patch["seo.openGraph.description"] = edit.ogDescription;
+        if (edit.metaTitle !== undefined) patch["seo.metaTitle"] = edit.metaTitle;
+        if (edit.metaDescription !== undefined) patch["seo.metaDescription"] = edit.metaDescription;
+        if (edit.focusKeyword !== undefined) patch["seo.focusKeyword"] = edit.focusKeyword;
+        if (edit.ogTitle !== undefined) patch["seo.openGraph.title"] = edit.ogTitle;
+        if (edit.ogDescription !== undefined)
+          patch["seo.openGraph.description"] = edit.ogDescription;
         await client.patch(doc._id).set(patch).commit();
         setRowEdits((prev) => ({
           ...prev,
@@ -382,11 +384,11 @@ export default function BulkSEOPanel() {
     const results = await Promise.allSettled(
       toApply.map(async (row) => {
         const patch: Record<string, string> = {};
-        if (row.metaTitle) patch["seo.metaTitle"] = row.metaTitle;
-        if (row.metaDescription) patch["seo.metaDescription"] = row.metaDescription;
-        if (row.focusKeyword) patch["seo.focusKeyword"] = row.focusKeyword;
-        if (row.ogTitle) patch["seo.openGraph.title"] = row.ogTitle;
-        if (row.ogDescription) patch["seo.openGraph.description"] = row.ogDescription;
+        if (row.metaTitle !== undefined) patch["seo.metaTitle"] = row.metaTitle;
+        if (row.metaDescription !== undefined) patch["seo.metaDescription"] = row.metaDescription;
+        if (row.focusKeyword !== undefined) patch["seo.focusKeyword"] = row.focusKeyword;
+        if (row.ogTitle !== undefined) patch["seo.openGraph.title"] = row.ogTitle;
+        if (row.ogDescription !== undefined) patch["seo.openGraph.description"] = row.ogDescription;
         await client.patch(row._id).set(patch).commit();
         return { title: row.title };
       }),

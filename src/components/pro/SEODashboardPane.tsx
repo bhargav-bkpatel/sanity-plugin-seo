@@ -390,16 +390,15 @@ export default function SEODashboardPane() {
       }
       setLoading(true);
       try {
-        // Include ONLY published documents that have SEO configured
-        // Exclude non-content types: author, category, settings, etc.
-        const results: DocSEO[] = await client.fetch(`
-        *[!(_id in path("drafts.**")) && defined(seo)]
+        const results: DocSEO[] = await client.fetch(
+          `*[!(_id in path("drafts.**")) && defined(seo)]
           | order(_updatedAt desc) [0...200] {
           _id, _type, _updatedAt,
           "docTitle": coalesce(title, name, slug.current, _type, "Untitled"),
           "seo": seo
-        }
-      `);
+        }`,
+          { _ts: Date.now() },
+        );
 
         const initial = results.map((doc) => {
           const result = computeSEOScore(doc.seo || undefined);
