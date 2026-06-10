@@ -136,7 +136,7 @@ export default function BulkSEOPanel() {
       setCsvError(null);
       try {
         const results: any[] = await client.fetch(`
-        *[!(_id in path("drafts.**")) && (defined(seo) || defined(slug))]
+        *[!(_id in path("drafts.**")) && defined(seo)]
           | order(_updatedAt desc) [0...200] {
           _id, _type,
           "docTitle": coalesce(title, name, slug.current, "Untitled"),

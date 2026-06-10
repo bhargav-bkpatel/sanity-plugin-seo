@@ -101,7 +101,7 @@ function getIssues(seo: Record<string, any> | null): string[] {
   if (!seo.metaDescription) issues.push("Missing meta description");
   else if (seo.metaDescription.length < 100 || seo.metaDescription.length > 160)
     issues.push("Description length out of range");
-  if (!seo.metaImage?.asset) issues.push("Missing meta image");
+  if (!seo.openGraph?.image?.asset) issues.push("Missing OG image");
   if (!seo.focusKeyword) issues.push("No focus keyword");
   if (!seo.openGraph?.title) issues.push("Open Graph not configured");
   return issues;
@@ -390,13 +390,13 @@ export default function SEODashboardPane() {
       }
       setLoading(true);
       try {
-        // Include ANY published document that has a slug or seo field — catches
-        // content pages that haven't had their SEO tab touched yet (score = 0).
+        // Include ONLY published documents that have SEO configured
+        // Exclude non-content types: author, category, settings, etc.
         const results: DocSEO[] = await client.fetch(`
-        *[!(_id in path("drafts.**")) && (defined(seo) || defined(slug))]
+        *[!(_id in path("drafts.**")) && defined(seo)]
           | order(_updatedAt desc) [0...200] {
           _id, _type, _updatedAt,
-          "docTitle": coalesce(title, name, slug.current, "Untitled"),
+          "docTitle": coalesce(title, name, slug.current, _type, "Untitled"),
           "seo": seo
         }
       `);

@@ -52,7 +52,7 @@ export function buildIssues(seo: Record<string, any> | null): string[] {
   if (!seo.metaDescription) issues.push("Missing meta description");
   else if (seo.metaDescription.length < 100 || seo.metaDescription.length > 160)
     issues.push("Meta description length out of range (100–160 chars)");
-  if (!seo.metaImage?.asset) issues.push("No meta image");
+  if (!seo.openGraph?.image?.asset) issues.push("No OG image");
   if (!seo.focusKeyword) issues.push("No focus keyword");
   if (!seo.openGraph?.title) issues.push("No Open Graph title");
   return issues;
