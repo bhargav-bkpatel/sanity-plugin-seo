@@ -28,7 +28,9 @@ export default function SchemaWizard({
   };
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    patch("schemaType", e.target.value);
+    const newType = e.target.value;
+    onChange(PatchEvent.from(set({ schemaType: newType }, ["schemaOrg"])));
+    setFaqItems([{ question: "", answer: "" }]);
   };
 
   const addFaq = () => setFaqItems((prev) => [...prev, { question: "", answer: "" }]);

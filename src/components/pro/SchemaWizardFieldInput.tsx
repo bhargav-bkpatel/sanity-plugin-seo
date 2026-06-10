@@ -80,7 +80,9 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
   };
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    patch("schemaType", e.target.value);
+    const newType = e.target.value;
+    onChange(PatchEvent.from(set({ schemaType: newType })));
+    setFaqItems([{ question: "", answer: "" }]);
   };
 
   const addFaq = () => setFaqItems((prev) => [...prev, { question: "", answer: "" }]);
