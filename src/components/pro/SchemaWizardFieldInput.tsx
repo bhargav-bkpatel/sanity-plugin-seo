@@ -15,6 +15,7 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
     "@type": schemaOrg.schemaType,
   };
 
+  // Special handling for FAQPage
   if (schemaOrg.schemaType === "FAQPage" && Array.isArray(schemaOrg.faqItems)) {
     ld.mainEntity = schemaOrg.faqItems.map((item: { question: string; answer: string }) => ({
       "@type": "Question",
@@ -24,12 +25,21 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
     return ld;
   }
 
+  // Get allowed fields for this schema type
   const fields = FIELDS_BY_TYPE[schemaOrg.schemaType] || [];
+  const allowedFieldNames = new Set(fields.map((f) => f.name));
+
+  // Only add fields that are allowed for this type AND have values
   fields.forEach((f) => {
-    if (schemaOrg[f.name]) ld[f.name] = schemaOrg[f.name];
+    if (schemaOrg[f.name]) {
+      ld[f.name] = schemaOrg[f.name];
+    }
   });
 
-  if (schemaOrg.ratingValue || schemaOrg.ratingCount) {
+  // Only transform fields if they're allowed for this type
+  const typeAllowsRating =
+    allowedFieldNames.has("ratingValue") || allowedFieldNames.has("ratingCount");
+  if (typeAllowsRating && (schemaOrg.ratingValue || schemaOrg.ratingCount)) {
     ld.aggregateRating = {
       "@type": "AggregateRating",
       ...(schemaOrg.ratingValue ? { ratingValue: schemaOrg.ratingValue } : {}),
@@ -39,7 +49,11 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
     delete ld.ratingCount;
   }
 
-  if (schemaOrg.price || schemaOrg.priceCurrency) {
+  const typeAllowsPrice =
+    allowedFieldNames.has("price") ||
+    allowedFieldNames.has("priceCurrency") ||
+    allowedFieldNames.has("availability");
+  if (typeAllowsPrice && (schemaOrg.price || schemaOrg.priceCurrency)) {
     ld.offers = {
       "@type": "Offer",
       ...(schemaOrg.price ? { price: schemaOrg.price } : {}),
@@ -53,11 +67,20 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
     delete ld.availability;
   }
 
-  if (schemaOrg.author) {
-    ld.author = { "@type": "Person", name: schemaOrg.author };
-    delete ld.author;
+  // Only add author if this type allows it
+  const typeAllowsAuthor = allowedFieldNames.has("author");
+  if (typeAllowsAuthor && schemaOrg.author) {
     ld.author = { "@type": "Person", name: schemaOrg.author };
   }
+
+  // Clean up any remaining empty values
+  Object.keys(ld).forEach((key) => {
+    if (key !== "@context" && key !== "@type") {
+      if (!ld[key] || (typeof ld[key] === "string" && ld[key].trim() === "")) {
+        delete ld[key];
+      }
+    }
+  });
 
   return ld;
 }
