@@ -19,8 +19,7 @@ const seoMetaFields = definePlugin((config: PluginConfig = {}) => {
 
     const validateAndSetPro = async (): Promise<void> => {
       try {
-        const projectId = config.proFeature?.slice(0, 8) ?? "unknown";
-        const isValid = await licenseManager.isLicenseValid(config.proFeature!, projectId);
+        const isValid = await licenseManager.isLicenseValid(config.proFeature!);
         setProEnabled(isValid);
       } catch (error) {
         setProEnabled(false);

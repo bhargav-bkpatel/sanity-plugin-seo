@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import licenseManager from "./licenseManager";
 
-export default async function validateLicense(
-  licenseKey: string,
-  projectId: string,
-): Promise<boolean> {
-  return licenseManager.isLicenseValid(licenseKey, projectId);
+export default async function validateLicense(licenseKey: string): Promise<boolean> {
+  return licenseManager.isLicenseValid(licenseKey);
 }
 
 export function needsRevalidation(): boolean {
