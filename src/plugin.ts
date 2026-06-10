@@ -3,7 +3,7 @@ import { SparklesIcon, DocumentsIcon, ActivityIcon } from "@sanity/icons";
 import types from "./schemas/types";
 import { PluginConfig } from "./types/PluginConfig";
 import { setPluginConfig, setProEnabled, setLicenseValidating } from "./config";
-import validateLicense from "./utils/validateLicense";
+import licenseManager from "./utils/licenseManager";
 import SEODashboardPane from "./components/pro/SEODashboardPane";
 import BulkSEOPanel from "./components/pro/BulkSEOPanel";
 import WorkflowDashboard from "./components/pro/WorkflowDashboard";
@@ -16,23 +16,35 @@ const seoMetaFields = definePlugin((config: PluginConfig = {}) => {
 
   if (config.proFeature) {
     setLicenseValidating(true);
-    // Validate asynchronously — Pro features appear once validated
-    setTimeout(async () => {
+
+    const validateAndSetPro = async (): Promise<void> => {
       try {
-        // projectId is resolved at runtime from the client
         const projectId = config.proFeature?.slice(0, 8) ?? "unknown";
-        const valid = await validateLicense(config.proFeature!, projectId);
-        setProEnabled(valid);
-        if (valid && config.dashboard !== false) {
-          // Dashboard is registered at plugin init — shown when pro is active
-        }
+        const isValid = await licenseManager.isLicenseValid(config.proFeature!, projectId);
+        setProEnabled(isValid);
+      } catch (error) {
+        setProEnabled(false);
       } finally {
         setLicenseValidating(false);
       }
-    }, 0);
+    };
+
+    setTimeout(validateAndSetPro, 0);
+
+    const revalidationInterval = setInterval(() => {
+      if (licenseManager.needsRevalidation()) {
+        setLicenseValidating(true);
+        validateAndSetPro();
+      }
+    }, 60000);
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", () => {
+        clearInterval(revalidationInterval);
+      });
+    }
   }
 
-  // Register SEO Dashboard as a top-level Studio tool (always shown; gates internally for non-Pro)
   if (config.dashboard !== false) {
     tools.push({
       name: "seo-dashboard",
