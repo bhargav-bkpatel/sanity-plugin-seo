@@ -244,6 +244,7 @@ function MobileSERP({
 
   const cleanDomain = baseUrl.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0] || "example.com";
   const siteName = getSiteName(baseUrl);
+  const breadcrumb = getDomainAndPath(baseUrl, slug);
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -257,36 +258,33 @@ function MobileSERP({
     >
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
         <Favicon domain={cleanDomain} colors={colors} isDarkMode={isDarkMode} />
-        <span
-          style={{
-            fontSize: 12,
-            color: colors.siteName,
-            lineHeight: "18px",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-          }}
-        >
-          <span style={{ fontWeight: 400, fontSize: 14, color: colors.siteName }}>{siteName}</span>
-          {slug && (
-            <>
-              <span style={{ color: colors.domain, fontSize: 12 }}>›</span>
-              <span
-                style={{
-                  color: colors.domain,
-                  fontSize: 12,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {slug.split("/").filter(Boolean).join(" › ")}
-              </span>
-            </>
-          )}
-        </span>
+        <div style={{ display: "flex", flexDirection: "column", minWidth: 0, flexGrow: 1 }}>
+          <span
+            style={{
+              fontSize: 14,
+              fontWeight: 400,
+              color: colors.siteName,
+              lineHeight: "18px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {siteName}
+          </span>
+          <span
+            style={{
+              fontSize: 12,
+              color: colors.domain,
+              lineHeight: "16px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {breadcrumb}
+          </span>
+        </div>
       </div>
       <h3
         onMouseEnter={() => setHovered(true)}
