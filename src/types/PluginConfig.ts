@@ -26,4 +26,5 @@ export interface PluginConfig {
   automation?: AutomationConfig;
   workflow?: WorkflowConfig;
   documentTypes?: string[];
+  baseUrl?: string;
 }

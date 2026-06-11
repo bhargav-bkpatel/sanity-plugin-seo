@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Card, Stack, Text, Flex } from "@sanity/ui";
+import { EarthGlobeIcon } from "@sanity/icons";
+import { useFormValue } from "sanity";
+import { getPluginConfig } from "../../config";
 import useProEnabled from "../../hooks/useProEnabled";
 import ProGate from "./ProGate";
 
@@ -13,135 +16,307 @@ const MAX_DESC_PX = 920;
 const AVG_CHAR_WIDTH_DESKTOP = 8.5;
 const AVG_CHAR_WIDTH_MOBILE = 7.5;
 
-function pxWidth(text: string, charWidth: number) {
-  return text.length * charWidth;
-}
-
 function truncateByPx(text: string, maxPx: number, charWidth: number): string {
   const maxChars = Math.floor(maxPx / charWidth);
   return text.length > maxChars ? `${text.slice(0, maxChars)}…` : text;
 }
 
+const COLORS = {
+  light: {
+    iconBg: "#f1f3f4",
+    iconColor: "#70757a",
+    domain: "#4d5156",
+    siteName: "#202124",
+    title: "#1a0dab",
+    description: "#4d5156",
+    border: "#dadce0",
+    bg: "#ffffff",
+  },
+  dark: {
+    iconBg: "#303134",
+    iconColor: "#9aa0a6",
+    domain: "#bdc1c6",
+    siteName: "#e8eaed",
+    title: "#8ab4f8",
+    description: "#bdc1c6",
+    border: "#303134",
+    bg: "#202124",
+  },
+};
+
+function getDomainAndPath(baseUrl: string, slug: string): string {
+  let domain = baseUrl.replace(/^(https?:\/\/)?(www\.)?/, "").replace(/\/$/, "");
+  if (!domain) domain = "example.com";
+
+  if (!slug || slug === "/") {
+    return `https://${domain}`;
+  }
+
+  const parts = slug.split("/").filter(Boolean);
+  return [`https://${domain}`, ...parts].join(" › ");
+}
+
+function getSiteName(baseUrl: string): string {
+  const domain = baseUrl.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0];
+  if (!domain || domain === "example.com") return "Website";
+  const parts = domain.split(".");
+  const rawName = parts[0] || "Website";
+  return rawName.charAt(0).toUpperCase() + rawName.slice(1);
+}
+
+function Favicon({
+  domain,
+  colors,
+  isDarkMode,
+}: {
+  domain: string;
+  colors: any;
+  isDarkMode: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+  const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+  const containerSize = 28;
+  const iconSize = 18;
+  const fallbackFontSize = 18;
+
+  if (failed || !domain || domain === "example.com") {
+    return (
+      <div
+        style={{
+          width: containerSize,
+          height: containerSize,
+          borderRadius: "50%",
+          background: colors.iconBg,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: colors.iconColor,
+          flexShrink: 0,
+        }}
+      >
+        <EarthGlobeIcon style={{ fontSize: fallbackFontSize }} />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        width: containerSize,
+        height: containerSize,
+        borderRadius: "50%",
+        background: isDarkMode ? "#303134" : "#f1f3f4",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+      }}
+    >
+      <img
+        src={faviconUrl}
+        alt=""
+        onError={() => setFailed(true)}
+        style={{
+          width: iconSize,
+          height: iconSize,
+          borderRadius: "50%",
+          display: "block",
+        }}
+      />
+    </div>
+  );
+}
+
 function DesktopSERP({
   title,
   description,
-  url,
+  baseUrl,
+  slug,
 }: {
   title: string;
   description: string;
-  url: string;
+  baseUrl: string;
+  slug: string;
 }) {
+  const isDarkMode =
+    typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-theme") === "dark";
+  const colors = isDarkMode ? COLORS.dark : COLORS.light;
   const charWidth = AVG_CHAR_WIDTH_DESKTOP;
-  const titlePx = pxWidth(title, charWidth);
-  const descPx = pxWidth(description, charWidth);
   const truncTitle = truncateByPx(title, MAX_TITLE_PX, charWidth);
   const truncDesc = truncateByPx(description, MAX_DESC_PX, charWidth);
 
+  const cleanDomain = baseUrl.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0] || "example.com";
+  const siteName = getSiteName(baseUrl);
+  const breadcrumb = getDomainAndPath(baseUrl, slug);
+  const [hovered, setHovered] = useState(false);
+
   return (
-    <Stack space={2}>
-      <div style={{ maxWidth: 600, fontFamily: "arial, sans-serif" }}>
-        <div style={{ fontSize: 13, color: "#202124", marginBottom: 2 }}>
-          <span style={{ color: "#006621" }}>{url || "https://yoursite.com"}</span>
-        </div>
-        <div
-          style={{
-            fontSize: 20,
-            color: "#1a0dab",
-            fontWeight: 400,
-            lineHeight: "1.3",
-            marginBottom: 4,
-            textDecoration: "underline",
-            cursor: "pointer",
-          }}
-        >
-          {truncTitle || "No title set"}
-        </div>
-        <div style={{ fontSize: 14, color: "#4d5156", lineHeight: "1.58" }}>
-          {truncDesc || "No description set — search engines will auto-generate one."}
+    <div
+      style={{
+        background: colors.bg,
+        fontFamily: "Arial, sans-serif",
+        width: "100%",
+        textAlign: "left",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+        <Favicon domain={cleanDomain} colors={colors} isDarkMode={isDarkMode} />
+        <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+          <span
+            style={{
+              fontSize: 14,
+              fontWeight: 400,
+              color: colors.siteName,
+              lineHeight: "18px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {siteName}
+          </span>
+          <span
+            style={{
+              fontSize: 12,
+              color: colors.domain,
+              lineHeight: "16px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {breadcrumb}
+          </span>
         </div>
       </div>
-      <Stack space={1}>
-        <PixelBar label="Title" px={titlePx} max={MAX_TITLE_PX} />
-        <PixelBar label="Description" px={descPx} max={MAX_DESC_PX} />
-      </Stack>
-    </Stack>
+      <h3
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          fontSize: 20,
+          fontWeight: 400,
+          lineHeight: "26px",
+          margin: "0 0 4px 0",
+          color: colors.title,
+          cursor: "pointer",
+          textDecoration: hovered ? "underline" : "none",
+          wordBreak: "break-word",
+        }}
+      >
+        {truncTitle || "Your page title will appear here"}
+      </h3>
+
+      <div
+        style={{
+          fontSize: 14,
+          color: colors.description,
+          lineHeight: "22px",
+          margin: 0,
+          wordBreak: "break-word",
+        }}
+      >
+        {truncDesc ||
+          "Your meta description will appear here to tell searchers what your page is about."}
+      </div>
+    </div>
   );
 }
 
 function MobileSERP({
   title,
   description,
-  url,
+  baseUrl,
+  slug,
 }: {
   title: string;
   description: string;
-  url: string;
+  baseUrl: string;
+  slug: string;
 }) {
+  const isDarkMode =
+    typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-theme") === "dark";
+  const colors = isDarkMode ? COLORS.dark : COLORS.light;
   const charWidth = AVG_CHAR_WIDTH_MOBILE;
-  const truncTitle = truncateByPx(title, 400, charWidth);
-  const truncDesc = truncateByPx(description, 660, charWidth);
+  const truncTitle = truncateByPx(title, 480, charWidth);
+  const truncDesc = truncateByPx(description, 580, charWidth);
+
+  const cleanDomain = baseUrl.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0] || "example.com";
+  const siteName = getSiteName(baseUrl);
+  const [hovered, setHovered] = useState(false);
 
   return (
     <div
       style={{
-        maxWidth: 360,
-        border: "1px solid var(--card-border-color)",
-        borderRadius: 12,
-        padding: 16,
-        fontFamily: "arial, sans-serif",
-        background: "var(--card-bg-color)",
+        background: colors.bg,
+        fontFamily: "Arial, sans-serif",
+        width: "100%",
+        textAlign: "left",
       }}
     >
-      <div style={{ fontSize: 11, color: "#70757a", marginBottom: 4 }}>
-        {url || "https://yoursite.com"}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+        <Favicon domain={cleanDomain} colors={colors} isDarkMode={isDarkMode} />
+        <span
+          style={{
+            fontSize: 12,
+            color: colors.siteName,
+            lineHeight: "18px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            display: "flex",
+            alignItems: "center",
+            gap: 4,
+          }}
+        >
+          <span style={{ fontWeight: 400, fontSize: 14, color: colors.siteName }}>{siteName}</span>
+          {slug && (
+            <>
+              <span style={{ color: colors.domain, fontSize: 12 }}>›</span>
+              <span
+                style={{
+                  color: colors.domain,
+                  fontSize: 12,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {slug.split("/").filter(Boolean).join(" › ")}
+              </span>
+            </>
+          )}
+        </span>
       </div>
-      <div
+      <h3
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         style={{
-          fontSize: 18,
-          color: "#1558d6",
+          fontSize: 20,
           fontWeight: 400,
-          marginBottom: 6,
+          lineHeight: "26px",
+          margin: "0 0 6px 0",
+          color: colors.title,
+          cursor: "pointer",
+          textDecoration: hovered ? "underline" : "none",
+          wordBreak: "break-word",
         }}
       >
-        {truncTitle || "No title set"}
-      </div>
-      <div style={{ fontSize: 13, color: "#3c4043", lineHeight: "1.57" }}>
-        {truncDesc || "No description set."}
+        {truncTitle || "Your page title will appear here"}
+      </h3>
+
+      <div
+        style={{
+          fontSize: 14,
+          color: colors.description,
+          lineHeight: "20px",
+          margin: 0,
+          wordBreak: "break-word",
+        }}
+      >
+        {truncDesc || "Your meta description will appear here."}
       </div>
     </div>
-  );
-}
-
-function PixelBar({ label, px, max }: { label: string; px: number; max: number }) {
-  const pct = Math.min(100, (px / max) * 100);
-  const over = px > max;
-  return (
-    <Flex align="center" gap={2}>
-      <Text size={1} muted style={{ minWidth: 80 }}>
-        {label} ({Math.round(px)}px)
-      </Text>
-      <div
-        style={{
-          flex: 1,
-          height: 6,
-          background: "var(--card-border-color)",
-          borderRadius: 3,
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            height: "100%",
-            width: `${pct}%`,
-            background: over ? "#ef4444" : "#43d675",
-            borderRadius: 3,
-          }}
-        />
-      </div>
-      <Text size={1} muted style={{ minWidth: 40 }}>
-        {over ? "Over" : "OK"}
-      </Text>
-    </Flex>
   );
 }
 
@@ -159,9 +334,21 @@ const TAB_STYLE = (active: boolean) => ({
 export default function SERPPreview({ value }: Props) {
   const [mode, setMode] = useState<"desktop" | "mobile">("desktop");
   const { isPro } = useProEnabled();
+
+  const config = getPluginConfig();
+  const baseUrl = config.baseUrl || "https://example.com";
+  const slugField = config.slugField || "slug";
+
+  const slugVal = useFormValue([slugField]) as { current?: string } | string | undefined;
+  const slug = typeof slugVal === "string" ? slugVal : slugVal?.current || "";
+
   const title = value?.metaTitle || "";
   const description = value?.metaDescription || "";
-  const url = "";
+
+  const isDarkMode =
+    typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-theme") === "dark";
+  const colors = isDarkMode ? COLORS.dark : COLORS.light;
 
   return (
     <ProGate feature="Advanced SERP Preview" isPro={isPro}>
@@ -188,20 +375,54 @@ export default function SERPPreview({ value }: Props) {
               </button>
             </div>
           </Flex>
-          <Card
-            padding={3}
-            radius={2}
+          <div
             style={{
               background: "var(--card-bg-color)",
               border: "1px solid var(--card-border-color)",
+              borderRadius: 8,
+              padding: "24px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: 180,
             }}
           >
             {mode === "desktop" ? (
-              <DesktopSERP title={title} description={description} url={url} />
+              <div
+                style={{
+                  width: "100%",
+                  maxWidth: 652,
+                  background: colors.bg,
+                  border: `1px solid ${colors.border}`,
+                  borderRadius: 12,
+                  padding: "20px 24px",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+                  transition: "background-color 0.2s, border-color 0.2s",
+                }}
+              >
+                <DesktopSERP
+                  title={title}
+                  description={description}
+                  baseUrl={baseUrl}
+                  slug={slug}
+                />
+              </div>
             ) : (
-              <MobileSERP title={title} description={description} url={url} />
+              <div
+                style={{
+                  width: 375,
+                  background: colors.bg,
+                  border: `1px solid ${colors.border}`,
+                  borderRadius: 16,
+                  padding: "16px",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.08)",
+                  transition: "background-color 0.2s, border-color 0.2s",
+                }}
+              >
+                <MobileSERP title={title} description={description} baseUrl={baseUrl} slug={slug} />
+              </div>
             )}
-          </Card>
+          </div>
         </Stack>
       </Card>
     </ProGate>
