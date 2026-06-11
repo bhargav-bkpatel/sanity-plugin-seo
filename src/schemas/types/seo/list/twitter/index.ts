@@ -5,8 +5,17 @@ export default {
   fields: [
     {
       name: "cardType",
-      title: "CardType",
+      title: "Card Type",
       type: "string",
+      initialValue: "summary_large_image",
+      options: {
+        list: [
+          { title: "Summary (Small Image)", value: "summary" },
+          { title: "Summary with Large Image", value: "summary_large_image" },
+          { title: "App Card", value: "app" },
+          { title: "Player Card", value: "player" },
+        ],
+      },
     },
     {
       name: "creator",
