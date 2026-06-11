@@ -156,7 +156,7 @@ export default defineConfig({
     seoMetaFields({
       // AI provider (OpenAI, Anthropic, or Groq)
       aiFeature: {
-        provider: "openai",
+        provider: "openai", // 'openai' | 'anthropic' | 'groq'
         apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
         model: "gpt-4o-mini",
       },
