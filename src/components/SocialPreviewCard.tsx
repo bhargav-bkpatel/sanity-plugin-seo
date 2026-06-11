@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useWorkspace } from "sanity";
+import { getPluginConfig } from "../config";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
@@ -56,9 +57,15 @@ function ImageSlot({ url }: { url: string | null }) {
   );
 }
 
-function TwitterCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
-  const domain = og?.siteName || "yoursite.com";
-
+function TwitterCard({
+  og,
+  imageUrl,
+  domain,
+}: {
+  og: any;
+  imageUrl: string | null;
+  domain: string;
+}) {
   return (
     <div
       style={{
@@ -107,7 +114,15 @@ function TwitterCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
   );
 }
 
-function FacebookCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
+function FacebookCard({
+  og,
+  imageUrl,
+  domain,
+}: {
+  og: any;
+  imageUrl: string | null;
+  domain: string;
+}) {
   return (
     <div
       style={{
@@ -129,7 +144,7 @@ function FacebookCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
             marginBottom: 4,
           }}
         >
-          {og?.siteName || "yoursite.com"}
+          {domain}
         </div>
         <div
           style={{
@@ -164,7 +179,15 @@ function FacebookCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
   );
 }
 
-function LinkedInCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
+function LinkedInCard({
+  og,
+  imageUrl,
+  domain,
+}: {
+  og: any;
+  imageUrl: string | null;
+  domain: string;
+}) {
   return (
     <div
       style={{
@@ -193,13 +216,21 @@ function LinkedInCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
         >
           {og?.title || "Page title"}
         </div>
-        <div style={{ fontSize: 12, color: "#666" }}>{og?.siteName || "yoursite.com"}</div>
+        <div style={{ fontSize: 12, color: "#666" }}>{domain}</div>
       </div>
     </div>
   );
 }
 
-function WhatsAppCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
+function WhatsAppCard({
+  og,
+  imageUrl,
+  domain,
+}: {
+  og: any;
+  imageUrl: string | null;
+  domain: string;
+}) {
   return (
     <div style={{ maxWidth: 380 }}>
       <div
@@ -238,9 +269,7 @@ function WhatsAppCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
           >
             {og?.description || "No description"}
           </div>
-          <div style={{ fontSize: 12, color: "#00a884", fontWeight: 500 }}>
-            {og?.siteName || "yoursite.com"}
-          </div>
+          <div style={{ fontSize: 12, color: "#00a884", fontWeight: 500 }}>{domain}</div>
         </div>
       </div>
     </div>
@@ -257,6 +286,10 @@ const PLATFORMS = [
 export default function SocialPreviewCard({ value: og }: Props) {
   const [activeTab, setActiveTab] = useState(0);
   const { projectId, dataset } = useWorkspace();
+
+  const config = getPluginConfig();
+  const baseUrl = config.baseUrl || "https://example.com";
+  const domain = baseUrl.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0] || "example.com";
 
   const imageUrl = og?.image?.asset ? getImageUrl(og.image.asset, projectId, dataset) : null;
 
@@ -338,10 +371,10 @@ export default function SocialPreviewCard({ value: og }: Props) {
 
       {/* Preview */}
       <div style={{ padding: 20, background: "var(--card-bg-color)" }}>
-        {activeTab === 0 && <TwitterCard og={og} imageUrl={imageUrl} />}
-        {activeTab === 1 && <FacebookCard og={og} imageUrl={imageUrl} />}
-        {activeTab === 2 && <LinkedInCard og={og} imageUrl={imageUrl} />}
-        {activeTab === 3 && <WhatsAppCard og={og} imageUrl={imageUrl} />}
+        {activeTab === 0 && <TwitterCard og={og} imageUrl={imageUrl} domain={domain} />}
+        {activeTab === 1 && <FacebookCard og={og} imageUrl={imageUrl} domain={domain} />}
+        {activeTab === 2 && <LinkedInCard og={og} imageUrl={imageUrl} domain={domain} />}
+        {activeTab === 3 && <WhatsAppCard og={og} imageUrl={imageUrl} domain={domain} />}
       </div>
 
       {/* Footer */}
