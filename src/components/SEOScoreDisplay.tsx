@@ -1,106 +1,105 @@
 import React from "react";
-import { Stack, Card, Flex, Text, Box } from "@sanity/ui";
+import { Stack, Card, Flex, Text, Box, useTheme, Badge } from "@sanity/ui";
 import { SEOScoreResult } from "../utils/seoScore";
+import CheckCircleIcon from "./icons/CheckCircleIcon";
+import AlertCircleIcon from "./icons/AlertCircleIcon";
+import ErrorCircleIcon from "./icons/ErrorCircleIcon";
+import ProgressRing from "./icons/ProgressRing";
 
 const DOT_COLORS: Record<string, string> = {
-  green: "#43d675",
-  orange: "#f59e0b",
-  red: "#ef4444",
+  green: "#10b981", // Emerald 500
+  orange: "#f59e0b", // Amber 500
+  red: "#ef4444", // Rose 500
 };
 
 interface Props {
   result: SEOScoreResult;
 }
 
-function dotColor(pass: boolean | "partial"): string {
-  if (pass === true) return "green";
-  if (pass === "partial") return "orange";
-  return "#94a3b8";
-}
-
-const CheckRow = ({ check }: { check: SEOScoreResult["checks"][0] }) => {
-  const color = dotColor(check.pass);
+const CheckRow = ({
+  check,
+  isDarkMode,
+}: {
+  check: SEOScoreResult["checks"][0];
+  isDarkMode: boolean;
+}) => {
+  let Icon = <ErrorCircleIcon isDarkMode={isDarkMode} style={{ marginTop: 2 }} />;
+  if (check.pass === true) {
+    Icon = <CheckCircleIcon isDarkMode={isDarkMode} style={{ marginTop: 2 }} />;
+  } else if (check.pass === "partial") {
+    Icon = <AlertCircleIcon isDarkMode={isDarkMode} style={{ marginTop: 2 }} />;
+  }
 
   return (
-    <Flex align="center" gap={2}>
-      <div
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: "50%",
-          backgroundColor: color,
-          flexShrink: 0,
-        }}
-      />
-      <Text size={1} muted>
-        {check.name}: {check.hint}
-      </Text>
+    <Flex align="flex-start" gap={3} style={{ padding: "6px 0" }}>
+      {Icon}
+      <Flex direction="column" gap={1}>
+        <Text size={1} weight="semibold" style={{ color: "var(--card-fg-color)" }}>
+          {check.name}
+        </Text>
+        <Text size={1} muted style={{ color: "var(--card-muted-fg-color)", marginTop: 2 }}>
+          {check.hint}
+        </Text>
+      </Flex>
     </Flex>
   );
 };
 
-function cardTone(color: string): "positive" | "caution" | "critical" {
-  if (color === "green") return "positive";
-  if (color === "orange") return "caution";
-  return "critical";
-}
-
 export default function SEOScoreDisplay({ result }: Props) {
   const { score, color, label, checks } = result;
+  const theme = useTheme();
+  const isDarkMode =
+    theme.sanity.v2?.color._dark ??
+    (theme.sanity as unknown as { color: { dark: boolean } }).color.dark;
+
   const barColor = DOT_COLORS[color];
 
+  let badgeTone: "positive" | "caution" | "critical" = "critical";
+  if (color === "green") {
+    badgeTone = "positive";
+  } else if (color === "orange") {
+    badgeTone = "caution";
+  }
+
   return (
-    <Card padding={3} radius={2} shadow={1} tone={cardTone(color)}>
-      <Stack space={3}>
-        <Flex align="center" justify="space-between">
-          <Text size={2} weight="semibold">
-            SEO Score
-          </Text>
-          <Flex align="center" gap={2}>
-            <Text size={4} weight="bold" style={{ color: barColor }}>
-              {score}
+    <Card
+      padding={4}
+      radius={3}
+      style={{
+        background: "var(--card-bg-color)",
+        borderWidth: "1px 1px 1px 4px",
+        borderStyle: "solid",
+        borderColor: `var(--card-border-color) var(--card-border-color) var(--card-border-color) ${barColor}`,
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+      }}
+    >
+      <Stack space={4}>
+        <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
+          {/* Progress Ring (Graphical Representation) */}
+          <ProgressRing
+            value={score}
+            total={100}
+            color={barColor}
+            isDarkMode={isDarkMode}
+            text={String(score)}
+            fontSize="18px"
+          />
+
+          <Stack space={3} style={{ flexGrow: 1 }}>
+            <Text size={2} weight="bold" style={{ color: "var(--card-fg-color)" }}>
+              SEO Score
             </Text>
-            <Text size={1} muted>
-              / 100
-            </Text>
-            <Box
-              style={{
-                background: "#e2e8f0",
-                borderRadius: 100,
-                padding: "6px 8px",
-                backgroundColor: `${barColor}22`,
-              }}
-            >
-              <Text weight="semibold" style={{ color: barColor }}>
+            <Box style={{ alignSelf: "flex-start" }}>
+              <Badge tone={badgeTone} fontSize={1} padding={2}>
                 {label}
-              </Text>
+              </Badge>
             </Box>
-          </Flex>
+          </Stack>
         </Flex>
 
-        {/* Progress bar */}
-        <div
-          style={{
-            height: 6,
-            background: "#e2e8f0",
-            borderRadius: 3,
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              height: "100%",
-              width: `${score}%`,
-              background: barColor,
-              borderRadius: 3,
-              transition: "width 0.4s ease",
-            }}
-          />
-        </div>
-
-        <Stack space={4}>
+        <Stack space={3} style={{ marginTop: 4 }}>
           {checks.map((c) => (
-            <CheckRow key={c.name} check={c} />
+            <CheckRow key={c.name} check={c} isDarkMode={isDarkMode} />
           ))}
         </Stack>
       </Stack>
