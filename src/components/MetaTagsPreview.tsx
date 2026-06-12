@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useWorkspace } from "sanity";
-import { Stack, Card, Flex, Text, Button, Code, Box } from "@sanity/ui";
+import { Stack, Card, Flex, Text, Button, Code, Box, useTheme } from "@sanity/ui";
 import { CodeBlockIcon } from "@sanity/icons";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -103,14 +103,28 @@ export default function MetaTagsPreview({ value }: { value: Record<string, any> 
   const { projectId, dataset } = useWorkspace();
   const [open, setOpen] = useState(false);
   const tags = buildMetaTags(value, projectId, dataset);
+  const theme = useTheme();
+  const isDarkMode =
+    theme.sanity.v2?.color._dark ??
+    (theme.sanity as unknown as { color: { dark: boolean } }).color.dark;
 
   return (
-    <Card padding={3} radius={2} shadow={1}>
-      <Stack space={3}>
+    <Card
+      padding={4}
+      radius={3}
+      style={{
+        background: "var(--card-bg-color)",
+        borderWidth: "1px 1px 1px 4px",
+        borderStyle: "solid",
+        borderColor: `var(--card-border-color) var(--card-border-color) var(--card-border-color) #64748b`,
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+      }}
+    >
+      <Stack space={4}>
         <Flex align="center" justify="space-between">
-          <Flex align="center" gap={2}>
-            <CodeBlockIcon style={{ color: "#64748b" }} />
-            <Text size={2} weight="semibold">
+          <Flex align="center" gap={3}>
+            <CodeBlockIcon style={{ color: "#64748b", fontSize: 20 }} />
+            <Text size={2} weight="bold" style={{ color: "var(--card-fg-color)" }}>
               Meta Tags Preview
             </Text>
           </Flex>
@@ -121,15 +135,17 @@ export default function MetaTagsPreview({ value }: { value: Record<string, any> 
             text={open ? "Hide" : "Show code"}
             onClick={() => setOpen(!open)}
             fontSize={1}
+            style={{ borderRadius: 6 }}
           />
         </Flex>
 
         {open && (
           <Box
             style={{
-              background: "var(--card-code-bg-color)",
-              borderRadius: 6,
-              padding: 12,
+              background: isDarkMode ? "rgba(0, 0, 0, 0.15)" : "#f8fafc",
+              border: "1px solid var(--card-border-color)",
+              borderRadius: 8,
+              padding: "14px 16px",
               overflow: "auto",
               maxHeight: 320,
             }}
@@ -141,6 +157,7 @@ export default function MetaTagsPreview({ value }: { value: Record<string, any> 
                 color: "var(--card-code-fg-color)",
                 whiteSpace: "pre",
                 fontFamily: "monospace",
+                lineHeight: 1.5,
               }}
             >
               {tags || "<!-- No SEO fields filled in yet -->"}

@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useClient, useFormValue, PatchEvent, set } from "sanity";
-import { CheckmarkCircleIcon, WarningOutlineIcon } from "@sanity/icons";
+import { Stack, Card, Flex, Text, Box, useTheme, Badge, Button } from "@sanity/ui";
 import useProEnabled from "../../hooks/useProEnabled";
 import ProGate from "./ProGate";
+import CheckCircleIcon from "../icons/CheckCircleIcon";
+import AlertCircleIcon from "../icons/AlertCircleIcon";
+import ProgressRing from "../icons/ProgressRing";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -16,98 +19,96 @@ interface CheckResult {
   fixHint?: string;
 }
 
-function CheckRow({ check, justFixed }: { check: CheckResult; justFixed: boolean }) {
-  const passColor = "#22c55e";
-  const warnColor = "#f59e0b";
-  const color = check.pass || justFixed ? passColor : warnColor;
-  const Icon = check.pass || justFixed ? CheckmarkCircleIcon : WarningOutlineIcon;
+const CheckRow = ({
+  check,
+  justFixed,
+  isDarkMode,
+}: {
+  check: CheckResult;
+  justFixed: boolean;
+  isDarkMode: boolean;
+}) => {
+  const passColor = "#10b981"; // Green
+
+  const hasDescription = !check.pass && !justFixed && (check.description || check.fixHint);
+  const showFixButton = !check.pass && !justFixed && check.onFix && check.fixLabel;
+  const hasSecondary = hasDescription || showFixButton;
+
+  let Icon = (
+    <AlertCircleIcon isDarkMode={isDarkMode} style={hasSecondary ? { marginTop: 2 } : undefined} />
+  );
+  if (check.pass || justFixed) {
+    Icon = (
+      <CheckCircleIcon
+        isDarkMode={isDarkMode}
+        style={hasSecondary ? { marginTop: 2 } : undefined}
+      />
+    );
+  }
 
   return (
-    <div
+    <Flex
+      align={hasSecondary ? "flex-start" : "center"}
+      gap={3}
       style={{
-        display: "flex",
-        alignItems: "flex-start",
-        gap: 10,
-        padding: "8px 0",
+        padding: "10px 0",
         borderBottom: "1px solid var(--card-border-color)",
       }}
     >
-      <Icon style={{ fontSize: 16, color, flexShrink: 0, marginTop: 2 }} />
-      <div style={{ flex: 1 }}>
-        <div
-          style={{
-            fontSize: 12,
-            fontWeight: 600,
-            color: justFixed ? passColor : "var(--card-fg-color)",
-          }}
-        >
-          {check.label}
-          {justFixed && (
-            <span
-              style={{
-                marginLeft: 8,
-                fontSize: 10,
-                fontWeight: 700,
-                color: passColor,
-                background: "rgba(34, 197, 94, 0.15)",
-                padding: "1px 7px",
-                borderRadius: 99,
-              }}
-            >
-              Fixed!
-            </span>
-          )}
-        </div>
-        {!check.pass && !justFixed && check.description && (
-          <div
+      {Icon}
+      <Flex direction="column" gap={1} style={{ flexGrow: 1 }}>
+        <Flex align="center" gap={2}>
+          <Text
+            size={1}
+            weight="semibold"
             style={{
-              fontSize: 11,
-              color: "var(--card-muted-fg-color)",
-              marginTop: 2,
-              lineHeight: 1.5,
+              color: justFixed ? passColor : "var(--card-fg-color)",
             }}
           >
+            {check.label}
+          </Text>
+          {justFixed && (
+            <Badge tone="positive" fontSize={0}>
+              Fixed!
+            </Badge>
+          )}
+        </Flex>
+
+        {!check.pass && !justFixed && check.description && (
+          <Text size={1} muted style={{ color: "var(--card-muted-fg-color)", marginTop: 2 }}>
             {check.description}
-          </div>
+          </Text>
         )}
+
         {!check.pass && !justFixed && check.fixHint && (
-          <div
+          <Text
+            size={1}
+            muted
             style={{
-              fontSize: 11,
               color: "var(--card-muted-fg-color)",
               marginTop: 4,
               fontStyle: "italic",
-              lineHeight: 1.5,
             }}
           >
             {check.fixHint}
-          </div>
+          </Text>
         )}
-      </div>
+      </Flex>
+
       {!check.pass && !justFixed && check.onFix && check.fixLabel && (
-        <button
-          type="button"
+        <Button
           onClick={check.onFix}
-          style={{
-            padding: "6px 14px",
-            background: "linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)",
-            border: "none",
-            borderRadius: 7,
-            color: "#fff",
-            fontSize: 12,
-            fontWeight: 700,
-            cursor: "pointer",
-            whiteSpace: "nowrap",
-            flexShrink: 0,
-            boxShadow: "0 2px 8px #1d4ed840",
-          }}
-        >
-          {check.fixLabel}
-        </button>
+          text={check.fixLabel}
+          mode="default"
+          tone="primary"
+          fontSize={1}
+          padding={2}
+          style={{ borderRadius: 6, flexShrink: 0 }}
+        />
       )}
-    </div>
+    </Flex>
   );
-}
+};
 
 interface Props {
   value: Record<string, any> | undefined;
@@ -120,6 +121,11 @@ export default function AdvancedValidation({ value, onChange }: Props) {
   const docId: string = (useFormValue(["_id"]) as string) || "";
   const [checks, setChecks] = useState<CheckResult[]>([]);
   const [justFixed, setJustFixed] = useState<Record<string, boolean>>({});
+
+  const theme = useTheme();
+  const isDarkMode =
+    theme.sanity.v2?.color._dark ??
+    (theme.sanity as unknown as { color: { dark: boolean } }).color.dark;
 
   const markFixed = useCallback((key: string) => {
     setJustFixed((prev) => ({ ...prev, [key]: true }));
@@ -239,100 +245,67 @@ export default function AdvancedValidation({ value, onChange }: Props) {
   const pct = checks.length > 0 ? Math.round((passCount / checks.length) * 100) : 0;
 
   let barColor = "#ef4444";
-  if (allClear) barColor = "#22c55e";
+  if (allClear) barColor = "#10b981";
   else if (pct >= 60) barColor = "#f59e0b";
+
+  let badgeTone: "positive" | "caution" | "critical" = "critical";
+  let badgeLabel = `${issueCount} issues`;
+  if (allClear) {
+    badgeTone = "positive";
+    badgeLabel = "All clear";
+  } else if (issueCount <= 2) {
+    badgeTone = "caution";
+    badgeLabel = `${issueCount} issue${issueCount !== 1 ? "s" : ""}`;
+  } else {
+    badgeLabel = `${issueCount} issue${issueCount !== 1 ? "s" : ""}`;
+  }
 
   const fixableChecks = checks.filter((c) => !c.pass && c.onFix);
 
   return (
     <ProGate feature="Advanced Validation" isPro={isPro}>
-      <div
+      <Card
+        padding={4}
+        radius={3}
         style={{
           background: "var(--card-bg-color)",
-          border: "1px solid var(--card-border-color)",
-          borderRadius: 12,
-          overflow: "hidden",
+          borderWidth: "1px 1px 1px 4px",
+          borderStyle: "solid",
+          borderColor: `var(--card-border-color) var(--card-border-color) var(--card-border-color) ${barColor}`,
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
         }}
       >
-        {/* Header */}
-        <div
-          style={{
-            padding: "12px 16px",
-            borderBottom: "1px solid var(--card-border-color)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 8,
-            }}
-          >
-            <div style={{ fontSize: 13, fontWeight: 700, color: "var(--card-fg-color)" }}>
-              Advanced Validation
-            </div>
+        <Stack space={4}>
+          {/* Header */}
+          <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
             {checks.length > 0 && (
-              <div
-                style={{
-                  padding: "3px 10px",
-                  borderRadius: 99,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  // eslint-disable-next-line no-nested-ternary
-                  background: allClear
-                    ? "rgba(34, 197, 94, 0.15)"
-                    : issueCount <= 2
-                    ? "rgba(245, 158, 11, 0.15)"
-                    : "rgba(239, 68, 68, 0.15)",
-                  // eslint-disable-next-line no-nested-ternary
-                  color: allClear ? "#22c55e" : issueCount <= 2 ? "#f59e0b" : "#ef4444",
-                }}
-              >
-                {allClear ? "All clear" : `${issueCount} issue${issueCount !== 1 ? "s" : ""}`}
-              </div>
+              <ProgressRing
+                value={passCount}
+                total={checks.length}
+                color={barColor}
+                isDarkMode={isDarkMode}
+                text={`${passCount}/${checks.length}`}
+                fontSize="14px"
+              />
             )}
-          </div>
 
-          {/* Progress bar */}
-          {checks.length > 0 && (
-            <div>
-              <div
-                style={{
-                  height: 5,
-                  background: "var(--card-border-color)",
-                  borderRadius: 99,
-                  overflow: "hidden",
-                  marginBottom: 4,
-                }}
-              >
-                <div
-                  style={{
-                    height: "100%",
-                    width: `${pct}%`,
-                    background: barColor,
-                    borderRadius: 99,
-                    transition: "width 0.4s ease",
-                  }}
-                />
-              </div>
-              <div
-                style={{
-                  fontSize: 11,
-                  color: "var(--card-muted-fg-color)",
-                  fontFamily: "monospace",
-                }}
-              >
-                {passCount}/{checks.length} checks passing
-              </div>
-            </div>
-          )}
-        </div>
+            <Stack space={3} style={{ flexGrow: 1 }}>
+              <Text size={2} weight="bold" style={{ color: "var(--card-fg-color)" }}>
+                Advanced Validation
+              </Text>
+              {checks.length > 0 && (
+                <Box style={{ alignSelf: "flex-start" }}>
+                  <Badge tone={badgeTone} fontSize={1} padding={2}>
+                    {badgeLabel}
+                  </Badge>
+                </Box>
+              )}
+            </Stack>
+          </Flex>
 
-        {/* Fix all button */}
-        {fixableChecks.length > 0 && (
-          <div style={{ padding: "8px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
-            <button
+          {/* Fix all button */}
+          {fixableChecks.length > 0 && (
+            <Button
               type="button"
               onClick={() => {
                 fixableChecks.forEach((c) => {
@@ -340,49 +313,44 @@ export default function AdvancedValidation({ value, onChange }: Props) {
                   markFixed(c.key);
                 });
               }}
-              style={{
-                width: "100%",
-                padding: "8px 0",
-                background: "linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%)",
-                border: "none",
-                borderRadius: 8,
-                color: "#fff",
-                fontSize: 12,
-                fontWeight: 700,
-                cursor: "pointer",
-                boxShadow: "0 2px 12px #1d4ed840",
-              }}
-            >
-              Fix {fixableChecks.length} issue{fixableChecks.length !== 1 ? "s" : ""} automatically
-            </button>
-          </div>
-        )}
-
-        {/* Checks */}
-        <div style={{ padding: "4px 16px 8px" }}>
-          {checks.length === 0 ? (
-            <div style={{ fontSize: 12, color: "var(--card-muted-fg-color)", padding: "12px 0" }}>
-              Running checks…
-            </div>
-          ) : (
-            checks.map((check) => (
-              <CheckRow
-                key={check.key}
-                check={{
-                  ...check,
-                  onFix: check.onFix
-                    ? () => {
-                        check.onFix?.();
-                        markFixed(check.key);
-                      }
-                    : undefined,
-                }}
-                justFixed={justFixed[check.key] || false}
-              />
-            ))
+              text={`Fix ${fixableChecks.length} issue${
+                fixableChecks.length !== 1 ? "s" : ""
+              } automatically`}
+              mode="default"
+              tone="primary"
+              fontSize={1}
+              padding={3}
+              style={{ width: "100%", borderRadius: 8 }}
+            />
           )}
-        </div>
-      </div>
+
+          {/* Checks list */}
+          <Stack space={1} style={{ marginTop: 2 }}>
+            {checks.length === 0 ? (
+              <Text size={1} muted style={{ padding: "12px 0" }}>
+                Running checks…
+              </Text>
+            ) : (
+              checks.map((check) => (
+                <CheckRow
+                  key={check.key}
+                  check={{
+                    ...check,
+                    onFix: check.onFix
+                      ? () => {
+                          check.onFix?.();
+                          markFixed(check.key);
+                        }
+                      : undefined,
+                  }}
+                  justFixed={justFixed[check.key] || false}
+                  isDarkMode={isDarkMode}
+                />
+              ))
+            )}
+          </Stack>
+        </Stack>
+      </Card>
     </ProGate>
   );
 }

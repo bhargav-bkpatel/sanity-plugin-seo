@@ -107,14 +107,26 @@ export default function GEOChecklist({ value }: { value: Record<string, any> | u
 
         <Stack space={3} style={{ marginTop: 4 }}>
           {items.map((item) => {
+            const hasDescription = !item.pass && item.description;
             const Icon = item.pass ? (
-              <CheckCircleIcon isDarkMode={isDarkMode} style={{ marginTop: 2 }} />
+              <CheckCircleIcon
+                isDarkMode={isDarkMode}
+                style={hasDescription ? { marginTop: 2 } : undefined}
+              />
             ) : (
-              <EmptyCircleIcon isDarkMode={isDarkMode} style={{ marginTop: 2 }} />
+              <EmptyCircleIcon
+                isDarkMode={isDarkMode}
+                style={hasDescription ? { marginTop: 2 } : undefined}
+              />
             );
 
             return (
-              <Flex key={item.label} align="flex-start" gap={3} style={{ padding: "6px 0" }}>
+              <Flex
+                key={item.label}
+                align={hasDescription ? "flex-start" : "center"}
+                gap={3}
+                style={{ padding: "6px 0" }}
+              >
                 {Icon}
                 <Flex direction="column" gap={1}>
                   <Text
@@ -124,7 +136,7 @@ export default function GEOChecklist({ value }: { value: Record<string, any> | u
                   >
                     {item.label}
                   </Text>
-                  {!item.pass && (
+                  {hasDescription && (
                     <Text
                       size={1}
                       muted

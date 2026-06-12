@@ -23,23 +23,41 @@ const CheckRow = ({
   check: SEOScoreResult["checks"][0];
   isDarkMode: boolean;
 }) => {
-  let Icon = <ErrorCircleIcon isDarkMode={isDarkMode} style={{ marginTop: 2 }} />;
+  const hasDescription = Boolean(check.hint);
+  let Icon = (
+    <ErrorCircleIcon
+      isDarkMode={isDarkMode}
+      style={hasDescription ? { marginTop: 2 } : undefined}
+    />
+  );
   if (check.pass === true) {
-    Icon = <CheckCircleIcon isDarkMode={isDarkMode} style={{ marginTop: 2 }} />;
+    Icon = (
+      <CheckCircleIcon
+        isDarkMode={isDarkMode}
+        style={hasDescription ? { marginTop: 2 } : undefined}
+      />
+    );
   } else if (check.pass === "partial") {
-    Icon = <AlertCircleIcon isDarkMode={isDarkMode} style={{ marginTop: 2 }} />;
+    Icon = (
+      <AlertCircleIcon
+        isDarkMode={isDarkMode}
+        style={hasDescription ? { marginTop: 2 } : undefined}
+      />
+    );
   }
 
   return (
-    <Flex align="flex-start" gap={3} style={{ padding: "6px 0" }}>
+    <Flex align={hasDescription ? "flex-start" : "center"} gap={3} style={{ padding: "6px 0" }}>
       {Icon}
       <Flex direction="column" gap={1}>
         <Text size={1} weight="semibold" style={{ color: "var(--card-fg-color)" }}>
           {check.name}
         </Text>
-        <Text size={1} muted style={{ color: "var(--card-muted-fg-color)", marginTop: 2 }}>
-          {check.hint}
-        </Text>
+        {hasDescription && (
+          <Text size={1} muted style={{ color: "var(--card-muted-fg-color)", marginTop: 2 }}>
+            {check.hint}
+          </Text>
+        )}
       </Flex>
     </Flex>
   );
