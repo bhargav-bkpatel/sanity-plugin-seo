@@ -54,7 +54,6 @@ export default function TeamWorkflowPanel({
           overflow: "hidden",
         }}
       >
-        {/* Header */}
         <div
           style={{
             padding: "12px 16px",
@@ -85,12 +84,10 @@ export default function TeamWorkflowPanel({
           </div>
         </div>
 
-        {/* Status description */}
         <div style={{ padding: "10px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
           <div style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>{cfg.description}</div>
         </div>
 
-        {/* Status steps */}
         <div
           style={{
             padding: "10px 16px",
@@ -183,7 +180,6 @@ export default function TeamWorkflowPanel({
           })}
         </div>
 
-        {/* Quick action buttons */}
         <div style={{ padding: "10px 16px", display: "flex", gap: 8 }}>
           {status !== "review" && status !== "approved" && (
             <button

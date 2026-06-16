@@ -18,17 +18,20 @@ function StatCard({
     <div
       style={{
         background: loaded ? "var(--card-bg-color)" : "var(--card-border-color)",
-        border: `1px solid ${loaded ? `${accent}40` : "var(--card-border-color)"}`,
-        borderTop: `3px solid ${loaded ? accent : "var(--card-border-color)"}`,
+        borderWidth: "1px 1px 1px 4px",
+        borderStyle: "solid",
+        borderColor: loaded
+          ? `var(--card-border-color) var(--card-border-color) var(--card-border-color) ${accent}`
+          : "var(--card-border-color)",
         borderRadius: 12,
         padding: "20px 24px",
         flex: 1,
         transition: "all 0.3s ease",
         position: "relative",
         overflow: "hidden",
+        boxShadow: loaded ? "0 4px 12px rgba(0, 0, 0, 0.04)" : "none",
       }}
     >
-      {/* Glow behind number */}
       {loaded && (
         <div
           style={{

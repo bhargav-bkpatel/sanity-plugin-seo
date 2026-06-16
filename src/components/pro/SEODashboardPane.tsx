@@ -2,10 +2,11 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useClient } from "sanity";
 import { IntentLink } from "sanity/router";
 import { Stack, Text, Flex, Spinner, Box } from "@sanity/ui";
-import { RefreshIcon, ActivityIcon, ChevronLeftIcon, ChevronRightIcon } from "@sanity/icons";
+import { RefreshIcon, ActivityIcon } from "@sanity/icons";
 import useProEnabled from "../../hooks/useProEnabled";
 import { computeSEOScore } from "../../utils/seoScore";
 import ProGate from "./ProGate";
+import Pagination from "./Pagination";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -166,16 +167,17 @@ function StatCard({
     <div
       style={{
         background: "var(--card-bg-color)",
-        border: `1px solid ${accent}40`,
-        borderTop: `3px solid ${accent}`,
+        borderWidth: "1px 1px 1px 4px",
+        borderStyle: "solid",
+        borderColor: `var(--card-border-color) var(--card-border-color) var(--card-border-color) ${accent}`,
         borderRadius: 12,
         padding: "20px 24px",
         flex: 1,
         position: "relative",
         overflow: "hidden",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)",
       }}
     >
-      {/* Glow behind number */}
       <div
         style={{
           position: "absolute",
@@ -255,104 +257,126 @@ function DistributionStrip({
   );
 }
 
-function Pagination({
-  page,
-  total,
-  pageSize,
-  onPage,
-}: {
-  page: number;
-  total: number;
-  pageSize: number;
-  onPage: (n: number) => void;
-}) {
-  const totalPages = Math.ceil(total / pageSize);
-  if (totalPages <= 1) return null;
-  const isFirst = page === 0;
-  const isLast = page >= totalPages - 1;
-
-  const navStyle = (disabled: boolean): React.CSSProperties => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    border: `1px solid var(--card-border-color)`,
-    background: "var(--card-bg-color)",
-    color: "var(--card-link-color)",
-    cursor: disabled ? "not-allowed" : "pointer",
-    transition: "all 0.15s",
-    flexShrink: 0,
-    opacity: disabled ? "0.5" : "",
-  });
-
+function DashboardRow({ doc }: { doc: ScoredDoc }) {
+  const [hovered, setHovered] = useState(false);
   return (
     <div
       style={{
-        display: "flex",
+        display: "grid",
+        gridTemplateColumns: "140px 1fr 80px 220px 60px",
+        gap: 16,
         alignItems: "center",
-        justifyContent: "space-between",
-        marginTop: 20,
-        padding: "12px 16px",
+        padding: "14px 16px",
         background: "var(--card-bg-color)",
-        border: "1px solid var(--card-border-color)",
-        borderRadius: 12,
+        border: `1px solid ${hovered ? "var(--card-link-color)" : "var(--card-border-color)"}`,
+        borderRadius: 10,
+        boxShadow: hovered ? "0 4px 12px rgba(0, 0, 0, 0.04)" : "none",
+        transform: hovered ? "translateY(-1px)" : "none",
+        transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      <span style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>
-        <span style={{ color: "var(--card-link-color)", fontWeight: 600 }}>
-          {Math.min(page * pageSize + 1, total)}–{Math.min((page + 1) * pageSize, total)}
-        </span>{" "}
-        of <span style={{ color: "var(--card-fg-color)" }}>{total}</span> pages
-      </span>
+      <ScoreBar score={doc.score} />
 
-      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-        <button
-          type="button"
-          onClick={() => onPage(Math.max(0, page - 1))}
-          disabled={isFirst}
-          style={navStyle(isFirst)}
+      <div>
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: "var(--card-fg-color)",
+            lineHeight: 1.4,
+            marginBottom: 3,
+          }}
         >
-          <ChevronLeftIcon style={{ fontSize: 18 }} />
-        </button>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {Array.from({ length: totalPages }).map((_, i) => (
-            <button
-              // eslint-disable-next-line react/no-array-index-key
-              key={i}
-              type="button"
-              onClick={() => onPage(i)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 36,
-                height: 36,
-                borderRadius: 10,
-                border: page === i ? "none" : "1px solid var(--card-border-color)",
-                background: page === i ? "var(--card-link-color)" : "var(--card-bg-color)",
-                color: page === i ? "#fff" : "var(--card-muted-fg-color)",
-                fontSize: 13,
-                fontWeight: page === i ? 700 : 400,
-                cursor: "pointer",
-                boxShadow: page === i ? "0 0 12px #2563eb50" : "none",
-                transition: "all 0.15s",
-              }}
-            >
-              {i + 1}
-            </button>
-          ))}
+          {doc.docTitle}
         </div>
+        <div style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
+          Updated {new Date(doc._updatedAt).toLocaleDateString()}
+        </div>
+      </div>
 
-        <button
-          type="button"
-          onClick={() => onPage(Math.min(totalPages - 1, page + 1))}
-          disabled={isLast}
-          style={navStyle(isLast)}
+      <div
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          padding: "3px 10px",
+          background: "var(--card-border-color)",
+          border: "1px solid var(--card-border-color)",
+          borderRadius: 99,
+          fontSize: 11,
+          color: "var(--card-link-color)",
+          fontWeight: 500,
+          width: "fit-content",
+        }}
+      >
+        {doc._type}
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        {doc.issues.length === 0 ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "#22c55e",
+                flexShrink: 0,
+              }}
+            />
+            <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>
+              All checks passed
+            </span>
+          </div>
+        ) : (
+          doc.issues.map((issue) => (
+            <div key={issue} style={{ display: "flex", alignItems: "flex-start", gap: 6 }}>
+              <div
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  background: doc.score === 0 ? "var(--card-muted-fg-color)" : "#ef4444",
+                  flexShrink: 0,
+                  marginTop: 3,
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 11,
+                  color: "var(--card-fg-color)",
+                  lineHeight: 1.5,
+                }}
+              >
+                {issue}
+              </span>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <IntentLink
+          intent="edit"
+          params={{ id: doc._id, type: doc._type }}
+          style={{
+            color: hovered ? "#fff" : "var(--card-link-color)",
+            fontSize: 12,
+            fontWeight: 600,
+            textDecoration: "none",
+            padding: "5px 12px",
+            border: hovered ? "none" : "1px solid var(--card-border-color)",
+            borderRadius: 6,
+            background: hovered ? "var(--card-link-color)" : "var(--card-bg-color)",
+            whiteSpace: "nowrap",
+            display: "inline-block",
+            transition: "all 0.2s ease",
+            boxShadow: hovered ? "0 2px 6px rgba(0, 0, 0, 0.15)" : "none",
+          }}
         >
-          <ChevronRightIcon style={{ fontSize: 18 }} />
-        </button>
+          Open →
+        </IntentLink>
       </div>
     </div>
   );
@@ -374,8 +398,9 @@ export default function SEODashboardPane() {
   const [filter, setFilter] = useState<"all" | "poor" | "ok" | "good">("all");
   const [issueFilter, setIssueFilter] = useState<string>("all");
   const [page, setPage] = useState(0);
-  const PAGE_SIZE = 5;
+  const [pageSize, setPageSize] = useState(5);
   const { isPro } = useProEnabled();
+  const [refreshHovered, setRefreshHovered] = useState(false);
 
   const fetchDocs = useCallback(
     async (bust = false) => {
@@ -464,11 +489,11 @@ export default function SEODashboardPane() {
     <Box style={{ minHeight: "100vh", background: "var(--card-bg-color)", padding: "32px 40px" }}>
       <div style={{ maxWidth: 1040, margin: "0 auto" }}>
         <Stack space={5}>
-          {/* Header — analytics / monitoring identity */}
           <div
             style={{
               background: "var(--card-bg-color)",
               border: "1px solid var(--card-border-color)",
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
               borderRadius: 16,
               padding: "28px 32px",
               display: "flex",
@@ -537,26 +562,29 @@ export default function SEODashboardPane() {
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                padding: "10px 20px",
-                background: loading ? "var(--card-border-color)" : "var(--card-link-color)",
-                border: "none",
+                padding: "12px 24px",
+                background: loading ? "var(--card-border-color)" : "var(--card-bg-color)",
+                border: "1px solid var(--card-border-color)",
                 borderRadius: 10,
-                color: loading ? "var(--card-muted-fg-color)" : "#fff",
-                fontSize: 13,
-                fontWeight: 600,
+                color: loading ? "var(--card-muted-fg-color)" : "var(--card-link-color)",
+                fontSize: 14,
+                fontWeight: 700,
                 cursor: loading ? "not-allowed" : "pointer",
                 whiteSpace: "nowrap",
-                transition: "all 0.2s",
+                transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                 flexShrink: 0,
                 marginTop: 4,
+                boxShadow: refreshHovered && !loading ? "0 4px 12px rgba(0, 0, 0, 0.08)" : "none",
+                transform: refreshHovered && !loading ? "translateY(-1px)" : "none",
               }}
+              onMouseEnter={() => setRefreshHovered(true)}
+              onMouseLeave={() => setRefreshHovered(false)}
             >
               <RefreshIcon style={{ fontSize: 15 }} />
               {loading ? "Loading…" : "Refresh"}
             </button>
           </div>
 
-          {/* Stat cards */}
           <div style={{ display: "flex", gap: 12 }}>
             <StatCard
               value={totalDocs}
@@ -585,9 +613,7 @@ export default function SEODashboardPane() {
             />
           </div>
 
-          {/* Filters — uniform 36px height for tabs and dropdown */}
           <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            {/* Tab group */}
             <div
               style={{
                 display: "flex",
@@ -629,7 +655,6 @@ export default function SEODashboardPane() {
               ))}
             </div>
 
-            {/* Issue dropdown — same 36px height */}
             <div
               style={{
                 height: 36,
@@ -673,14 +698,12 @@ export default function SEODashboardPane() {
             </div>
           </div>
 
-          {/* Table */}
           {loading ? (
             <Flex justify="center" padding={8}>
               <Spinner />
             </Flex>
           ) : (
             <div>
-              {/* Column headers */}
               <div
                 style={{
                   display: "grid",
@@ -723,133 +746,17 @@ export default function SEODashboardPane() {
                   </div>
                 )}
 
-                {filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((doc) => (
-                  <div
-                    key={doc._id}
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "140px 1fr 80px 220px 60px",
-                      gap: 16,
-                      alignItems: "center",
-                      padding: "14px 16px",
-                      background: "var(--card-bg-color)",
-                      border: "1px solid var(--card-border-color)",
-                      borderRadius: 10,
-                    }}
-                  >
-                    <ScoreBar score={doc.score} />
-
-                    <div>
-                      <div
-                        style={{
-                          fontSize: 13,
-                          fontWeight: 600,
-                          color: "var(--card-fg-color)",
-                          lineHeight: 1.4,
-                          marginBottom: 3,
-                        }}
-                      >
-                        {doc.docTitle}
-                      </div>
-                      <div style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
-                        Updated {new Date(doc._updatedAt).toLocaleDateString()}
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        padding: "3px 10px",
-                        background: "var(--card-border-color)",
-                        border: "1px solid var(--card-border-color)",
-                        borderRadius: 99,
-                        fontSize: 11,
-                        color: "var(--card-link-color)",
-                        fontWeight: 500,
-                        width: "fit-content",
-                      }}
-                    >
-                      {doc._type}
-                    </div>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                      {doc.issues.length === 0 ? (
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                          <div
-                            style={{
-                              width: 6,
-                              height: 6,
-                              borderRadius: "50%",
-                              background: "#22c55e",
-                              flexShrink: 0,
-                            }}
-                          />
-                          <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>
-                            All checks passed
-                          </span>
-                        </div>
-                      ) : (
-                        doc.issues.map((issue) => (
-                          <div
-                            key={issue}
-                            style={{ display: "flex", alignItems: "flex-start", gap: 6 }}
-                          >
-                            <div
-                              style={{
-                                width: 6,
-                                height: 6,
-                                borderRadius: "50%",
-                                background:
-                                  doc.score === 0 ? "var(--card-muted-fg-color)" : "#ef4444",
-                                flexShrink: 0,
-                                marginTop: 3,
-                              }}
-                            />
-                            <span
-                              style={{
-                                fontSize: 11,
-                                color: "var(--card-fg-color)",
-                                lineHeight: 1.5,
-                              }}
-                            >
-                              {issue}
-                            </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <IntentLink
-                        intent="edit"
-                        params={{ id: doc._id, type: doc._type }}
-                        style={{
-                          color: "var(--card-link-color)",
-                          fontSize: 12,
-                          fontWeight: 600,
-                          textDecoration: "none",
-                          padding: "4px 10px",
-                          border: "1px solid var(--card-border-color)",
-                          borderRadius: 6,
-                          background: "var(--card-bg-color)",
-                          whiteSpace: "nowrap",
-                          display: "inline-block",
-                        }}
-                      >
-                        Open →
-                      </IntentLink>
-                    </div>
-                  </div>
+                {filtered.slice(page * pageSize, (page + 1) * pageSize).map((doc) => (
+                  <DashboardRow doc={doc} key={doc._id} />
                 ))}
               </Stack>
 
-              {/* Pagination */}
               <Pagination
                 page={page}
                 total={filtered.length}
-                pageSize={PAGE_SIZE}
+                pageSize={pageSize}
                 onPage={setPage}
+                onPageSizeChange={setPageSize}
               />
             </div>
           )}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -21,14 +21,28 @@ export default function WorkflowStatCard({
   icon: Icon,
   onClick,
 }: Props) {
+  const [hovered, setHovered] = useState(false);
+
+  let shadow = "0 4px 12px rgba(0, 0, 0, 0.04)";
+  if (hovered) {
+    shadow = `0 8px 20px rgba(0, 0, 0, 0.1), 0 0 10px ${accent}20`;
+  } else if (active) {
+    shadow = `0 4px 12px ${accent}15`;
+  }
+
   return (
     <button
       type="button"
       onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
-        background: active ? `${accent}18` : "var(--card-bg-color)",
-        border: `1px solid ${active ? `${accent}60` : `${accent}30`}`,
-        borderTop: `3px solid ${active ? accent : `${accent}60`}`,
+        background: active
+          ? `linear-gradient(135deg, ${accent}12, ${accent}08)`
+          : "var(--card-bg-color)",
+        borderWidth: "1px 1px 1px 4px",
+        borderStyle: "solid",
+        borderColor: `var(--card-border-color) var(--card-border-color) var(--card-border-color) ${accent}`,
         borderRadius: 12,
         padding: "20px 24px",
         flex: 1,
@@ -36,11 +50,12 @@ export default function WorkflowStatCard({
         textAlign: "left",
         position: "relative",
         overflow: "hidden",
-        transition: "all 0.2s",
         outline: "none",
+        transform: hovered ? "translateY(-3px)" : "none",
+        boxShadow: shadow,
+        transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
-      {/* Glow */}
       <div
         style={{
           position: "absolute",
@@ -54,7 +69,6 @@ export default function WorkflowStatCard({
         }}
       />
 
-      {/* Status icon */}
       {Icon && (
         <div style={{ marginBottom: 10 }}>
           <Icon style={{ fontSize: 22, color: active ? accent : `${accent}90` }} />

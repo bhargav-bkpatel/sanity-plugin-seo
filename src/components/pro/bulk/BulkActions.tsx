@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { DownloadIcon, UploadIcon } from "@sanity/icons";
-import { BulkTab, FIELD_LABEL } from "./types";
+import { BulkTab } from "./types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -27,12 +27,9 @@ interface Props {
   csvPreview: CsvRow[];
   csvError: string | null;
   csvApplying: boolean;
-  onCSVFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onCSVFile: (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => void;
   onApplyCSV: () => void;
-
-  /** Log entries from the last bulk operation — rendered inside the panel */
   log: LogEntry[];
-  /** How many selected pages have no meta title (OG sync will skip them) */
   selectedMissingTitle: number;
 }
 
@@ -68,7 +65,6 @@ export default function BulkActions({
         overflow: "hidden",
       }}
     >
-      {/* Header + tabs */}
       <div
         style={{
           padding: "10px 16px",
@@ -132,12 +128,9 @@ export default function BulkActions({
         </div>
       </div>
 
-      {/* Tab body */}
       <div style={{ padding: "16px 20px" }}>
-        {/* Sync Open Graph */}
         {bulkTab === "og" && (
           <div>
-            {/* Pre-warning: selected pages with no meta title will be skipped */}
             {selectedMissingTitle > 0 && (
               <div
                 style={{
@@ -161,7 +154,7 @@ export default function BulkActions({
                 </span>
               </div>
             )}
-            {/* Why this matters */}
+
             <div
               style={{
                 fontSize: 12,
@@ -177,7 +170,6 @@ export default function BulkActions({
               title. If OG is empty, social platforms guess a title which often looks broken.
             </div>
 
-            {/* Visual: what this does */}
             <div
               style={{
                 display: "grid",
@@ -187,7 +179,6 @@ export default function BulkActions({
                 marginBottom: 12,
               }}
             >
-              {/* Before */}
               <div
                 style={{
                   padding: "10px 12px",
@@ -218,7 +209,6 @@ export default function BulkActions({
                 <div style={{ fontSize: 11, color: "#ef4444" }}>✗ OG Description (empty)</div>
               </div>
 
-              {/* Arrow */}
               <div
                 style={{
                   textAlign: "center",
@@ -230,7 +220,6 @@ export default function BulkActions({
                 →
               </div>
 
-              {/* After */}
               <div
                 style={{
                   padding: "10px 12px",
@@ -264,14 +253,12 @@ export default function BulkActions({
               </div>
             </div>
 
-            {/* Footer note */}
             <div style={{ fontSize: 11, color: "var(--card-muted-fg-color)", fontStyle: "italic" }}>
               Each page gets its own values — pages without a meta title are skipped.
             </div>
           </div>
         )}
 
-        {/* CSV Import */}
         {bulkTab === "csv" && (
           <CsvImportTab
             csvFileRef={csvFileRef}
@@ -283,7 +270,6 @@ export default function BulkActions({
           />
         )}
 
-        {/* Apply button — only for non-CSV tabs */}
         {bulkTab !== "csv" && (
           <div style={{ marginTop: 14, display: "flex", justifyContent: "flex-end" }}>
             <button
@@ -308,7 +294,6 @@ export default function BulkActions({
           </div>
         )}
 
-        {/* Inline operation log */}
         {log.length > 0 && (
           <div
             style={{
@@ -369,15 +354,34 @@ function CsvImportTab({
   csvPreview: CsvRow[];
   csvError: string | null;
   csvApplying: boolean;
-  onCSVFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onCSVFile: (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => void;
   onApplyCSV: () => void;
 }) {
   const matched = csvPreview.filter((r) => r.found).length;
   const unmatched = csvPreview.filter((r) => !r.found).length;
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setIsDragging(true);
+    } else if (e.type === "dragleave") {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      onCSVFile(e.dataTransfer.files[0]);
+    }
+  };
 
   return (
     <>
-      {/* Instructions */}
       <div
         style={{
           background: "var(--card-bg-color)",
@@ -406,29 +410,55 @@ function CsvImportTab({
         </div>
       </div>
 
-      {/* File picker */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <span style={FIELD_LABEL}>CSV File</span>
-        <button
-          type="button"
-          onClick={() => csvFileRef.current?.click()}
+      <button
+        type="button"
+        onDragEnter={handleDrag}
+        onDragOver={handleDrag}
+        onDragLeave={handleDrag}
+        onDrop={handleDrop}
+        onClick={() => csvFileRef.current?.click()}
+        style={{
+          border: isDragging
+            ? "2px dashed var(--card-link-color)"
+            : "2px dashed var(--card-border-color)",
+          borderRadius: 10,
+          background: isDragging ? "rgba(59, 130, 246, 0.05)" : "var(--card-bg-color)",
+          padding: "30px 20px",
+          textAlign: "center",
+          cursor: "pointer",
+          transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 10,
+          marginBottom: 14,
+          width: "100%",
+          boxSizing: "border-box",
+          fontFamily: "inherit",
+          outline: "none",
+        }}
+      >
+        <UploadIcon
           style={{
-            padding: "7px 14px",
-            background: "var(--card-bg-color)",
-            border: "1px solid var(--card-border-color)",
-            borderRadius: 6,
-            color: "var(--card-link-color)",
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
+            fontSize: 28,
+            color: isDragging ? "var(--card-link-color)" : "var(--card-muted-fg-color)",
+            transition: "color 0.2s",
           }}
-        >
-          <UploadIcon style={{ fontSize: 14 }} />
-          Choose File
-        </button>
+        />
+        <div>
+          <span style={{ fontSize: 13, fontWeight: 600, color: "var(--card-link-color)" }}>
+            Choose a file
+          </span>
+          <span style={{ fontSize: 13, color: "var(--card-muted-fg-color)" }}>
+            {" "}
+            or drag and drop it here
+          </span>
+        </div>
+        <span style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
+          CSV template files supported
+        </span>
+
         <input
           ref={csvFileRef}
           type="file"
@@ -437,12 +467,28 @@ function CsvImportTab({
           style={{ display: "none" }}
           aria-hidden="true"
         />
-        <span style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
-          {csvPreview.length > 0 ? `${csvPreview.length} rows parsed` : "No file selected"}
-        </span>
-      </div>
+      </button>
 
-      {/* Error */}
+      {csvPreview.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "8px 12px",
+            background: "rgba(34, 197, 94, 0.1)",
+            border: "1px solid rgba(34, 197, 94, 0.2)",
+            borderRadius: 8,
+            fontSize: 12,
+            color: "#22c55e",
+            fontWeight: 600,
+            marginBottom: 14,
+          }}
+        >
+          <span>✓</span>
+          <span>{csvPreview.length} rows parsed successfully from file</span>
+        </div>
+      )}
       {csvError && (
         <div
           style={{
@@ -458,8 +504,6 @@ function CsvImportTab({
           {csvError}
         </div>
       )}
-
-      {/* Preview table */}
       {csvPreview.length > 0 && (
         <div style={{ marginTop: 14 }}>
           <div

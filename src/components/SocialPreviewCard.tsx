@@ -302,7 +302,6 @@ export default function SocialPreviewCard({ value: og }: Props) {
         overflow: "hidden",
       }}
     >
-      {/* Header */}
       <div
         style={{
           padding: "10px 16px",
@@ -336,7 +335,6 @@ export default function SocialPreviewCard({ value: og }: Props) {
         </span>
       </div>
 
-      {/* Tabs */}
       <div
         style={{
           display: "flex",
@@ -369,7 +367,6 @@ export default function SocialPreviewCard({ value: og }: Props) {
         ))}
       </div>
 
-      {/* Preview */}
       <div style={{ padding: 20, background: "var(--card-bg-color)" }}>
         {activeTab === 0 && <TwitterCard og={og} imageUrl={imageUrl} domain={domain} />}
         {activeTab === 1 && <FacebookCard og={og} imageUrl={imageUrl} domain={domain} />}
@@ -377,7 +374,6 @@ export default function SocialPreviewCard({ value: og }: Props) {
         {activeTab === 3 && <WhatsAppCard og={og} imageUrl={imageUrl} domain={domain} />}
       </div>
 
-      {/* Footer */}
       <div
         style={{
           padding: "7px 16px",

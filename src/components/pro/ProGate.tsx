@@ -30,7 +30,6 @@ function PageGate({ feature }: { feature: string }) {
       }}
     >
       <div style={{ maxWidth: 680, width: "100%" }}>
-        {/* Card */}
         <div
           style={{
             background: "var(--card-bg-color)",
@@ -44,7 +43,6 @@ function PageGate({ feature }: { feature: string }) {
           }}
         >
           <div style={{ padding: "40px 48px 38px" }}>
-            {/* Icon + badges row */}
             <div
               style={{
                 display: "flex",
@@ -53,7 +51,6 @@ function PageGate({ feature }: { feature: string }) {
                 marginBottom: 28,
               }}
             >
-              {/* Scale lock badge to match full page layout */}
               <div
                 style={{
                   width: 76,
@@ -111,7 +108,6 @@ function PageGate({ feature }: { feature: string }) {
               </div>
             </div>
 
-            {/* Title */}
             <div
               style={{
                 fontSize: 32,
@@ -125,7 +121,6 @@ function PageGate({ feature }: { feature: string }) {
               {feature}
             </div>
 
-            {/* Subtitle */}
             <div
               style={{
                 fontSize: 15,
@@ -142,7 +137,6 @@ function PageGate({ feature }: { feature: string }) {
               . We&apos;re working on making it available — add your license key below when ready.
             </div>
 
-            {/* Two-column feature list */}
             <div
               style={{
                 background: "rgba(124, 58, 237, 0.02)",
@@ -174,7 +168,6 @@ function PageGate({ feature }: { feature: string }) {
                   key={item.label}
                   style={{ display: "flex", alignItems: "flex-start", gap: 12 }}
                 >
-                  {/* Purple theme checklist check icon */}
                   <svg
                     width="18"
                     height="18"
@@ -225,7 +218,6 @@ function PageGate({ feature }: { feature: string }) {
               ))}
             </div>
 
-            {/* License key hint */}
             <div
               style={{
                 background: "var(--card-bg-color)",
@@ -295,7 +287,6 @@ function CardGate({ feature }: { feature: string }) {
           gap: 20,
         }}
       >
-        {/* Left Column: Lock Badge */}
         <div
           style={{
             width: 68,
@@ -314,9 +305,7 @@ function CardGate({ feature }: { feature: string }) {
           <LockIcon style={{ fontSize: 24, color: "#a78bfa" }} />
         </div>
 
-        {/* Right Column: Title + Badges + Description */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
-          {/* Header Row: Title & Badges */}
           <div
             style={{
               display: "flex",
@@ -374,7 +363,6 @@ function CardGate({ feature }: { feature: string }) {
             </div>
           </div>
 
-          {/* Description */}
           <div
             style={{
               fontSize: 13,

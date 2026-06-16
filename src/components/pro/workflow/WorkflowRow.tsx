@@ -33,6 +33,7 @@ export default function WorkflowRow({
   const issueCount = doc.issues.length;
   const scoreCol = scoreColor(doc.score);
 
+  const [hovered, setHovered] = React.useState(false);
   const [notes, setNotes] = React.useState(doc.reviewNotes || "");
   const [savingNotes, setSavingNotes] = React.useState(false);
   const [notesSaved, setNotesSaved] = React.useState(false);
@@ -50,13 +51,16 @@ export default function WorkflowRow({
     <div
       style={{
         background: "var(--card-bg-color)",
-        border: `1px solid var(--card-border-color)`,
+        border: `1px solid ${hovered ? "var(--card-link-color)" : "var(--card-border-color)"}`,
         borderRadius: 10,
         overflow: "hidden",
-        transition: "border-color 0.15s",
+        boxShadow: hovered ? "0 4px 12px rgba(0, 0, 0, 0.04)" : "none",
+        transform: hovered ? "translateY(-1px)" : "none",
+        transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      {/* ── Collapsed summary row ── */}
       <div
         role="button"
         tabIndex={0}
@@ -71,7 +75,6 @@ export default function WorkflowRow({
           cursor: "pointer",
         }}
       >
-        {/* Score bar */}
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div
@@ -99,7 +102,6 @@ export default function WorkflowRow({
           </div>
         </div>
 
-        {/* Title + date + issue count */}
         <div style={{ minWidth: 0 }}>
           <div
             style={{
@@ -163,7 +165,6 @@ export default function WorkflowRow({
           </div>
         </div>
 
-        {/* Type badge */}
         <span
           style={{
             padding: "4px 15px",
@@ -181,7 +182,6 @@ export default function WorkflowRow({
           {doc._type}
         </span>
 
-        {/* Status badge */}
         <div
           style={{
             display: "inline-flex",
@@ -199,7 +199,6 @@ export default function WorkflowRow({
           <span style={{ fontSize: 11, fontWeight: 700, color: cfg.color }}>{cfg.label}</span>
         </div>
 
-        {/* Chevron */}
         <div
           style={{
             color: "var(--card-muted-fg-color)",
@@ -213,7 +212,6 @@ export default function WorkflowRow({
         </div>
       </div>
 
-      {/* ── Expanded panel ── */}
       {isOpen && (
         <div
           style={{
@@ -221,10 +219,8 @@ export default function WorkflowRow({
             background: "var(--card-bg-color)",
           }}
         >
-          {/* SEO issues */}
           <IssuesSection issues={doc.issues} />
 
-          {/* Review notes */}
           <NotesSection
             notes={notes}
             seoStatus={doc.seoStatus}
@@ -235,7 +231,6 @@ export default function WorkflowRow({
             onSaveNotes={handleSaveNotes}
           />
 
-          {/* Workflow actions */}
           <ActionsSection doc={doc} patching={patching} onPatch={onPatch} />
         </div>
       )}
@@ -448,7 +443,6 @@ function ActionsSection({
         background: "var(--card-bg-color)",
       }}
     >
-      {/* Context hint */}
       <div style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>
         {doc.seoStatus === "draft" && "Submit this document for SEO review when ready."}
         {doc.seoStatus === "review" && (
@@ -466,7 +460,6 @@ function ActionsSection({
         )}
       </div>
 
-      {/* Buttons */}
       <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
         {patching ? (
           <Spinner muted />

@@ -85,7 +85,6 @@ export default function GEOChecklist({ value }: { value: Record<string, any> | u
     >
       <Stack space={4}>
         <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
-          {/* Progress Ring (Graphical Representation) */}
           <ProgressRing
             value={passCount}
             total={total}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChevronDownIcon, CheckmarkCircleIcon, EditIcon } from "@sanity/icons";
 import { BulkDoc, RowEdit, scoreColor } from "./types";
 import ScoreBar from "./ScoreBar";
@@ -108,6 +108,7 @@ export default function BulkDocRow({
   onFieldChange,
   onSave,
 }: Props) {
+  const [hovered, setHovered] = useState(false);
   const handleChange =
     (field: keyof Omit<RowEdit, "saving" | "saved">) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -121,13 +122,16 @@ export default function BulkDocRow({
     <div
       style={{
         background: "var(--card-bg-color)",
-        border: `1px solid var(--card-border-color)`,
+        border: `1px solid ${hovered ? "var(--card-link-color)" : "var(--card-border-color)"}`,
         borderRadius: 10,
         overflow: "hidden",
-        transition: "background 0.1s, border-color 0.1s",
+        boxShadow: hovered ? "0 4px 12px rgba(0, 0, 0, 0.04)" : "none",
+        transform: hovered ? "translateY(-1px)" : "none",
+        transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      {/* Summary row — fixed height, always uniform */}
       <div
         role="row"
         tabIndex={0}
@@ -142,7 +146,6 @@ export default function BulkDocRow({
           cursor: "pointer",
         }}
       >
-        {/* Checkbox */}
         <div style={{ display: "flex", alignItems: "center" }}>
           <input
             type="checkbox"
@@ -153,10 +156,8 @@ export default function BulkDocRow({
           />
         </div>
 
-        {/* Score */}
         <ScoreBar score={doc.score} />
 
-        {/* Page title + meta title */}
         <div style={{ minWidth: 0 }}>
           <div
             style={{
@@ -187,7 +188,6 @@ export default function BulkDocRow({
           )}
         </div>
 
-        {/* Type badge */}
         <div
           style={{
             padding: "3px 10px",
@@ -203,7 +203,6 @@ export default function BulkDocRow({
           {doc._type}
         </div>
 
-        {/* Issue count badge */}
         <div
           style={{
             display: "flex",
@@ -236,7 +235,6 @@ export default function BulkDocRow({
           </span>
         </div>
 
-        {/* Chevron */}
         <div
           style={{
             color: "var(--card-muted-fg-color)",
@@ -251,7 +249,6 @@ export default function BulkDocRow({
         </div>
       </div>
 
-      {/* Expanded panel */}
       {isOpen && (
         <div
           style={{
@@ -259,7 +256,6 @@ export default function BulkDocRow({
             background: "var(--card-bg-color)",
           }}
         >
-          {/* Issue list */}
           {issueCount > 0 && (
             <div
               style={{
@@ -289,9 +285,7 @@ export default function BulkDocRow({
             </div>
           )}
 
-          {/* Edit fields */}
           <div style={{ padding: "20px 20px 22px" }}>
-            {/* Panel header */}
             <div
               style={{
                 display: "flex",
@@ -326,7 +320,6 @@ export default function BulkDocRow({
               </span>
             </div>
 
-            {/* Core SEO */}
             <div style={SECTION_HEADER}>
               <div
                 style={{
@@ -400,7 +393,6 @@ export default function BulkDocRow({
               </div>
             </div>
 
-            {/* Social Preview */}
             <div style={{ ...SECTION_HEADER, marginTop: 20 }}>
               <div
                 style={{
@@ -436,7 +428,6 @@ export default function BulkDocRow({
               </FieldBlock>
             </div>
 
-            {/* Footer */}
             <div
               style={{
                 marginTop: 20,

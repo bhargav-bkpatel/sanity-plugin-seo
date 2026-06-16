@@ -93,7 +93,6 @@ export default function SEOScoreDisplay({ result }: Props) {
     >
       <Stack space={4}>
         <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
-          {/* Progress Ring (Graphical Representation) */}
           <ProgressRing
             value={score}
             total={100}

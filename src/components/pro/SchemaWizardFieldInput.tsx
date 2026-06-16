@@ -139,7 +139,6 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
           overflow: "hidden",
         }}
       >
-        {/* Header */}
         <div
           style={{
             padding: "12px 16px",
@@ -179,7 +178,6 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
           )}
         </div>
 
-        {/* Type selector */}
         <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
           <div
             style={{
@@ -200,7 +198,6 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
           </Select>
         </div>
 
-        {/* FAQ items */}
         {selectedType === "FAQPage" && (
           <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
             <div
@@ -248,7 +245,6 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
           </div>
         )}
 
-        {/* Dynamic fields */}
         {fields.length > 0 && (
           <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
             <div
@@ -321,7 +317,6 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
           </div>
         )}
 
-        {/* JSON-LD Preview */}
         {jsonLdStr && (
           <div style={{ padding: "12px 16px" }}>
             <button

@@ -276,7 +276,6 @@ export default function AdvancedValidation({ value, onChange }: Props) {
         }}
       >
         <Stack space={4}>
-          {/* Header */}
           <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
             {checks.length > 0 && (
               <ProgressRing
@@ -303,7 +302,6 @@ export default function AdvancedValidation({ value, onChange }: Props) {
             </Stack>
           </Flex>
 
-          {/* Fix all button */}
           {fixableChecks.length > 0 && (
             <Button
               type="button"
@@ -324,7 +322,6 @@ export default function AdvancedValidation({ value, onChange }: Props) {
             />
           )}
 
-          {/* Checks list */}
           <Stack space={1} style={{ marginTop: 2 }}>
             {checks.length === 0 ? (
               <Text size={1} muted style={{ padding: "12px 0" }}>
