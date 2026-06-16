@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import { ObjectInputProps, PatchEvent, set } from "sanity";
+import { ObjectInputProps, PatchEvent, set, MemberField } from "sanity";
 import { Stack, Box } from "@sanity/ui";
 import AIKeywordsSection from "./AIKeywordsSection";
 import { computeSEOScore } from "../utils/seoScore";
@@ -47,6 +47,9 @@ const SEOMetaFieldsWrapper = ({
 
   const props = { value: rawValue, onChange, renderDefault, ...rest };
 
+  const nofollowMember = props.members.find((m: any) => m.name === "nofollowAttributes");
+  const filteredMembers = props.members.filter((m: any) => m.name !== "nofollowAttributes");
+
   return (
     <Stack space={4}>
       <SEOScoreDisplay result={scoreResult} />
@@ -56,14 +59,29 @@ const SEOMetaFieldsWrapper = ({
 
       <HR />
 
-      {renderDefault(props)}
+      {renderDefault({ ...props, members: filteredMembers })}
 
-      {(isAllFields || activeGroup === "advanced") && (
+      {(isAllFields || activeGroup === "basic") && (
         <>
           <HR />
           <AIKeywordsSection value={value} onChange={handleKeywordsChange} />
         </>
       )}
+
+      {nofollowMember &&
+        nofollowMember.kind === "field" &&
+        (isAllFields || activeGroup === "basic") && (
+          <>
+            <HR />
+            <MemberField
+              member={nofollowMember}
+              renderInput={props.renderInput}
+              renderField={props.renderField}
+              renderItem={props.renderItem}
+              renderPreview={props.renderPreview}
+            />
+          </>
+        )}
 
       {(isAllFields || activeGroup === "advanced") && (
         <>
