@@ -23,8 +23,18 @@ const SEOMetaFieldsWrapper = ({
 }: ObjectInputProps) => {
   const value = rawValue as Record<string, any> | undefined;
 
-  // Detect which tab/group is currently active
-  const activeGroup: string = (rest as any).groups?.find((g: any) => g.selected)?.name ?? "basic";
+  const { groups } = rest as any;
+  const hasGroups = Array.isArray(groups) && groups.length > 0;
+  const selectedGroup = hasGroups ? groups.find((g: any) => g.selected) : undefined;
+
+  const DEFINED_GROUPS = ["basic", "social", "advanced", "schema"];
+  const isAllFields =
+    !hasGroups ||
+    !selectedGroup ||
+    !selectedGroup.name ||
+    !DEFINED_GROUPS.includes(selectedGroup.name);
+
+  const activeGroup = selectedGroup?.name;
 
   const scoreResult = useMemo(() => computeSEOScore(value), [value]);
 
@@ -39,38 +49,30 @@ const SEOMetaFieldsWrapper = ({
 
   return (
     <Stack space={4}>
-      {/* SEO Score — always visible */}
       <SEOScoreDisplay result={scoreResult} />
 
-      {/* GEO Checklist — Basic tab only */}
-      {activeGroup === "basic" && <GEOChecklist value={value} />}
-
-      {/* SERP Preview — Basic tab */}
-      {activeGroup === "basic" && <SERPPreview value={value} />}
+      {(isAllFields || activeGroup === "social") && <GEOChecklist value={value} />}
+      {(isAllFields || activeGroup === "advanced") && <SERPPreview value={value} />}
 
       <HR />
 
-      {/* All standard fields rendered by Sanity (tab bar + active group fields) */}
       {renderDefault(props)}
 
-      {/* AI Keyword Suggestions — Basic tab only */}
-      {activeGroup === "basic" && (
+      {(isAllFields || activeGroup === "advanced") && (
         <>
           <HR />
           <AIKeywordsSection value={value} onChange={handleKeywordsChange} />
         </>
       )}
 
-      {/* Advanced Validation — Advanced tab */}
-      {activeGroup === "advanced" && (
+      {(isAllFields || activeGroup === "advanced") && (
         <>
           <HR />
           <AdvancedValidation value={value} onChange={onChange} />
         </>
       )}
 
-      {/* Meta Tags Preview — Basic and Advanced tabs */}
-      {(activeGroup === "basic" || activeGroup === "advanced") && (
+      {(isAllFields || activeGroup === "social" || activeGroup === "advanced") && (
         <>
           <HR />
           <MetaTagsPreview value={value} />
