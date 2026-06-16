@@ -24,16 +24,11 @@ interface ScoredDoc extends DocSEO {
   issues: string[];
 }
 
-// ---------------------------------------------------------------------------
-// Two-layer cache:
-//   1. Module-level variable  — zero-cost on navigation (no JSON parse)
-//   2. localStorage           — survives full page reloads
-// ---------------------------------------------------------------------------
 interface ScanCache {
   docs: ScoredDoc[];
   timestamp: number;
 }
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL_MS = 5 * 60 * 1000;
 const DASHBOARD_LS_KEY = "seo-plugin__dashboard-scan";
 let scanCache: ScanCache | null = null;
 
@@ -91,7 +86,6 @@ function getCacheAge(): string | null {
   const mins = Math.floor(secs / 60);
   return `${mins} minute${mins !== 1 ? "s" : ""} ago`;
 }
-// ---------------------------------------------------------------------------
 
 function getIssues(seo: Record<string, any> | null): string[] {
   if (!seo) return ["No SEO data — open this document and fill in SEO fields"];
@@ -118,6 +112,12 @@ function scoreLabel(score: number): string {
   if (score >= 80) return "Good";
   if (score >= 50) return "Needs Work";
   return "Poor";
+}
+
+function getDocColor(score: number): "green" | "orange" | "red" {
+  if (score >= 80) return "green";
+  if (score >= 50) return "orange";
+  return "red";
 }
 
 function ScoreBar({ score }: { score: number }) {
@@ -209,7 +209,6 @@ function StatCard({
   );
 }
 
-// Score distribution strip — shows proportion of good / needs work / poor
 function DistributionStrip({
   good,
   ok,
@@ -391,7 +390,6 @@ const FILTER_TABS = [
 
 export default function SEODashboardPane() {
   const client = useClient({ apiVersion: "2024-01-01" });
-  // Initialise directly from cache — no loading flash when navigating back
   const [docs, setDocs] = useState<ScoredDoc[]>(() => getCached() ?? []);
   const [loading, setLoading] = useState(() => getCached() === null);
   const [cacheAge, setCacheAge] = useState<string | null>(() => getCacheAge());
@@ -405,7 +403,6 @@ export default function SEODashboardPane() {
   const fetchDocs = useCallback(
     async (bust = false) => {
       if (bust) clearDashboardCache();
-      // If valid cache exists and this is not a forced refresh, skip the network call
       const cached = getCached();
       if (cached) {
         setDocs(cached);
@@ -427,10 +424,15 @@ export default function SEODashboardPane() {
 
         const initial = results.map((doc) => {
           const result = computeSEOScore(doc.seo || undefined);
-          return { ...doc, score: result.score, color: result.color, issues: getIssues(doc.seo) };
+          let color: "green" | "orange" | "red" = "red";
+          if (result.score >= 80) {
+            color = "green";
+          } else if (result.score >= 50) {
+            color = "orange";
+          }
+          return { ...doc, score: result.score, color, issues: getIssues(doc.seo) };
         });
 
-        // Flag duplicate meta titles
         const titleCounts: Record<string, number> = {};
         results.forEach((doc) => {
           if (doc.seo?.metaTitle) {
@@ -460,20 +462,20 @@ export default function SEODashboardPane() {
   const allIssueTypes = Array.from(new Set(docs.flatMap((d) => d.issues))).sort();
 
   const filtered = docs.filter((d) => {
-    if (filter === "poor" && d.color !== "red") return false;
-    if (filter === "ok" && d.color !== "orange") return false;
-    if (filter === "good" && d.color !== "green") return false;
+    const docColor = getDocColor(d.score);
+    if (filter === "poor" && docColor !== "red") return false;
+    if (filter === "ok" && docColor !== "orange") return false;
+    if (filter === "good" && docColor !== "green") return false;
     if (issueFilter !== "all" && !d.issues.includes(issueFilter)) return false;
     return true;
   });
 
   const totalDocs = docs.length;
-  const goodCount = docs.filter((d) => d.color === "green").length;
-  const okCount = docs.filter((d) => d.color === "orange").length;
-  const poorCount = docs.filter((d) => d.color === "red").length;
+  const goodCount = docs.filter((d) => getDocColor(d.score) === "green").length;
+  const okCount = docs.filter((d) => getDocColor(d.score) === "orange").length;
+  const poorCount = docs.filter((d) => getDocColor(d.score) === "red").length;
   const avgScore =
     totalDocs > 0 ? Math.round(docs.reduce((s, d) => s + d.score, 0) / totalDocs) : 0;
-  // Health-specific: coverage metrics across ALL pages (not just problem pages)
   const duplicateTitles = docs.filter((d) => d.issues.includes("Duplicate meta title")).length;
   const noOpenGraph = docs.filter((d) => d.issues.includes("Open Graph not configured")).length;
 
