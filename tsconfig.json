@@ -28,6 +28,6 @@
     },
     "incremental": true
   },
-  "include": ["./src", "./package.config.ts", "./.eslintrc.js", "./test"],
+  "include": ["./src", "./package.config.ts", "./.eslintrc.js", "./test", "./api"],
   "exclude": ["node_modules"]
 }

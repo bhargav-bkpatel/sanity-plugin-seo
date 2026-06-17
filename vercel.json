@@ -1,0 +1,8 @@
+{
+  "installCommand": "npm install --include=dev",
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "nodejs20.x"
+    }
+  }
+}

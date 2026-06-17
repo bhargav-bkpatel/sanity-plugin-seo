@@ -15,6 +15,13 @@ const seoMetaFields = definePlugin((config: PluginConfig = {}) => {
   const tools: any[] = [];
 
   if (config.proFeature) {
+    if (config.validateUrl && config.projectId) {
+      licenseManager.configure({
+        validateUrl: config.validateUrl,
+        projectId: config.projectId,
+      });
+    }
+
     setLicenseValidating(true);
 
     const validateAndSetPro = async (): Promise<void> => {
