@@ -139,7 +139,7 @@ export default defineConfig({
 
 Unlock team workflows, bulk optimization, and advanced schema management.
 
-```ts
+```
 seoMetaFields({
   proFeature: process.env.SANITY_STUDIO_SEO_LICENSE!,
   projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
@@ -1197,7 +1197,7 @@ SANITY_STUDIO_PROJECT_ID=your-sanity-project-id
 
 3. Pass them to the plugin in a single config object:
 
-```ts
+```
 // sanity.config.ts
 import { defineConfig } from "sanity";
 import { seoMetaFields } from "sanity-plugin-seo";
