@@ -27,17 +27,20 @@ function pick<T>(arr: T[]): T {
 }
 
 function buildPrompt(field: AIField, content: string, keyword: string): string {
-  const keywordLine = keyword ? `Focus keyword: "${keyword}"` : "";
   const snippet = content.slice(0, 2000);
 
   if (field === "title") {
     const angle = pick(TITLE_ANGLES);
+    const keywordRequirement = keyword
+      ? `- You MUST naturally include the focus keyword "${keyword}" (case-insensitive) in the title.`
+      : "- Make it compelling and clear.";
+
     return `You are an SEO expert. Generate one SEO-optimized meta title using this specific angle: ${angle}.
 Requirements:
-- Exactly 50–60 characters (count carefully)
-- ${keywordLine || "Make it compelling and clear"}
+- Ensure the character length is strictly between 50 and 60 characters (count the characters carefully before outputting).
+- ${keywordRequirement}
 - Apply the angle: ${angle}
-- Return ONLY the title text, no quotes, no explanation, no character count
+- Return ONLY the title text, no quotes, no explanation, no character count.
 
 Page content:
 ${snippet}`;
@@ -45,12 +48,17 @@ ${snippet}`;
 
   if (field === "description") {
     const angle = pick(DESC_ANGLES);
+    const keywordRequirement = keyword
+      ? `- You MUST naturally include the focus keyword "${keyword}" (case-insensitive) in the description text.`
+      : "- Include a clear call to action.";
+
     return `You are an SEO expert. Generate one SEO-optimized meta description using this specific angle: ${angle}.
 Requirements:
-- Exactly 100–160 characters (count carefully)
-- ${keywordLine || "Include a clear call to action"}
+- Ensure the character length is strictly between 100 and 160 characters (count the characters carefully before outputting).
+- ${keywordRequirement}
+- Keep it highly readable and simple (use short sentences, clear plain language, and avoid passive voice or complex jargon). It must score very easy to read.
 - Apply the angle: ${angle}
-- Return ONLY the description text, no quotes, no explanation, no character count
+- Return ONLY the description text, no quotes, no explanation, no character count.
 
 Page content:
 ${snippet}`;
