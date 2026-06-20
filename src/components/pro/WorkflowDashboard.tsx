@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useClient } from "sanity";
 import { Box, Stack, Text, Spinner } from "@sanity/ui";
 import { RefreshIcon, ActivityIcon, EditIcon, ClockIcon, CheckmarkCircleIcon } from "@sanity/icons";
@@ -6,6 +6,7 @@ import useProEnabled from "../../hooks/useProEnabled";
 import { computeSEOScore } from "../../utils/seoScore";
 import { scoreColor } from "./bulk/types";
 import ProGate from "./ProGate";
+import Pagination from "./Pagination";
 import WorkflowStatCard from "./workflow/WorkflowStatCard";
 import WorkflowRow from "./workflow/WorkflowRow";
 import { WorkflowDoc, WorkflowStatus, STATUS_CFG, buildIssues } from "./workflow/types";
@@ -24,20 +25,19 @@ export default function WorkflowDashboard() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [patching, setPatching] = useState<Record<string, boolean>>({});
 
-  // ── Data fetching ───────────────────────────────────────────────────────────
-
   const fetchDocs = useCallback(async () => {
     setLoading(true);
     try {
-      const results: any[] = await client.fetch(`
-        *[!(_id in path("drafts.**")) && defined(seo)] | order(_updatedAt desc) [0...300] {
+      const results: any[] = await client.fetch(
+        `*[!(_id in path("drafts.**")) && defined(seo)] | order(_updatedAt desc) [0...300] {
           _id, _type, _updatedAt,
           "docTitle": coalesce(title, name, slug.current, "Untitled"),
           "seoStatus": coalesce(seo.seoStatus, "draft"),
           "reviewNotes": coalesce(seo.seoReviewNotes, ""),
           "seo": seo
-        }
-      `);
+        }`,
+        { _ts: Date.now() },
+      );
       setDocs(
         results.map((d) => ({
           ...d,
@@ -55,8 +55,6 @@ export default function WorkflowDashboard() {
   useEffect(() => {
     fetchDocs();
   }, [fetchDocs]);
-
-  // ── Mutations ───────────────────────────────────────────────────────────────
 
   const patchStatus = useCallback(
     async (doc: WorkflowDoc, newStatus: WorkflowStatus) => {
@@ -81,8 +79,6 @@ export default function WorkflowDashboard() {
     [client],
   );
 
-  // ── Derived values ──────────────────────────────────────────────────────────
-
   const draftCount = docs.filter((d) => d.seoStatus === "draft").length;
   const reviewCount = docs.filter((d) => d.seoStatus === "review").length;
   const approvedCount = docs.filter((d) => d.seoStatus === "approved").length;
@@ -97,7 +93,16 @@ export default function WorkflowDashboard() {
     return true;
   });
 
-  // ── Render ──────────────────────────────────────────────────────────────────
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(5);
+
+  useEffect(() => {
+    setPage(0);
+  }, [filter, typeFilter]);
+
+  const paginatedDocs = useMemo(() => {
+    return visible.slice(page * pageSize, (page + 1) * pageSize);
+  }, [visible, page, pageSize]);
 
   return (
     <ProGate feature="SEO Workflow Dashboard" isPro={isPro} variant="page">
@@ -112,7 +117,6 @@ export default function WorkflowDashboard() {
               onRefresh={fetchDocs}
             />
 
-            {/* Stat cards */}
             <div style={{ display: "flex", gap: 14 }}>
               <WorkflowStatCard
                 value={docs.length}
@@ -152,7 +156,6 @@ export default function WorkflowDashboard() {
               />
             </div>
 
-            {/* Loading state */}
             {loading && !loaded && (
               <div style={{ textAlign: "center", padding: "60px 0" }}>
                 <Spinner muted />
@@ -162,7 +165,6 @@ export default function WorkflowDashboard() {
               </div>
             )}
 
-            {/* Document list */}
             {loaded && (
               <div>
                 <FilterBar
@@ -178,7 +180,7 @@ export default function WorkflowDashboard() {
                 {visible.length === 0 && <EmptyState filter={filter} />}
 
                 <Stack space={3}>
-                  {visible.map((doc) => (
+                  {paginatedDocs.map((doc) => (
                     <WorkflowRow
                       key={doc._id}
                       doc={doc}
@@ -190,6 +192,14 @@ export default function WorkflowDashboard() {
                     />
                   ))}
                 </Stack>
+
+                <Pagination
+                  page={page}
+                  total={visible.length}
+                  pageSize={pageSize}
+                  onPage={setPage}
+                  onPageSizeChange={setPageSize}
+                />
 
                 {visible.length > 0 && (
                   <div style={{ marginTop: 14 }}>
@@ -209,8 +219,6 @@ export default function WorkflowDashboard() {
   );
 }
 
-// ── Local layout components ──────────────────────────────────────────────────
-
 function Header({
   loading,
   loaded,
@@ -224,11 +232,13 @@ function Header({
   avgScore: number;
   onRefresh: () => void;
 }) {
+  const [refreshHovered, setRefreshHovered] = useState(false);
   return (
     <div
       style={{
         background: "var(--card-bg-color)",
         border: "1px solid var(--card-border-color)",
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
         borderRadius: 16,
         padding: "28px 32px",
         display: "flex",
@@ -282,10 +292,13 @@ function Header({
           fontWeight: 700,
           cursor: loading ? "not-allowed" : "pointer",
           whiteSpace: "nowrap",
-          boxShadow: "none",
-          transition: "all 0.2s",
+          boxShadow: refreshHovered && !loading ? "0 4px 12px rgba(0, 0, 0, 0.08)" : "none",
+          transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
           flexShrink: 0,
+          transform: refreshHovered && !loading ? "translateY(-1px)" : "none",
         }}
+        onMouseEnter={() => setRefreshHovered(true)}
+        onMouseLeave={() => setRefreshHovered(false)}
       >
         <RefreshIcon style={{ fontSize: 16 }} />
         {loading ? "Loading…" : "Refresh"}
@@ -322,7 +335,6 @@ function FilterBar({
         flexWrap: "wrap",
       }}
     >
-      {/* Status filter tabs */}
       <div style={{ display: "flex", gap: 4 }}>
         {(["all", "draft", "review", "approved"] as const).map((f) => {
           const isActive = filter === f;
@@ -367,7 +379,6 @@ function FilterBar({
         })}
       </div>
 
-      {/* Document type dropdown */}
       {docTypes.length > 1 && (
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span

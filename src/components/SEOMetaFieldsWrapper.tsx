@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import { ObjectInputProps, PatchEvent, set } from "sanity";
+import { ObjectInputProps, PatchEvent, set, MemberField } from "sanity";
 import { Stack, Box } from "@sanity/ui";
 import AIKeywordsSection from "./AIKeywordsSection";
 import { computeSEOScore } from "../utils/seoScore";
@@ -23,8 +23,18 @@ const SEOMetaFieldsWrapper = ({
 }: ObjectInputProps) => {
   const value = rawValue as Record<string, any> | undefined;
 
-  // Detect which tab/group is currently active
-  const activeGroup: string = (rest as any).groups?.find((g: any) => g.selected)?.name ?? "basic";
+  const { groups } = rest as any;
+  const hasGroups = Array.isArray(groups) && groups.length > 0;
+  const selectedGroup = hasGroups ? groups.find((g: any) => g.selected) : undefined;
+
+  const DEFINED_GROUPS = ["basic", "social", "advanced", "schema"];
+  const isAllFields =
+    !hasGroups ||
+    !selectedGroup ||
+    !selectedGroup.name ||
+    !DEFINED_GROUPS.includes(selectedGroup.name);
+
+  const activeGroup = selectedGroup?.name;
 
   const scoreResult = useMemo(() => computeSEOScore(value), [value]);
 
@@ -37,40 +47,50 @@ const SEOMetaFieldsWrapper = ({
 
   const props = { value: rawValue, onChange, renderDefault, ...rest };
 
+  const nofollowMember = props.members.find((m: any) => m.name === "nofollowAttributes");
+  const filteredMembers = props.members.filter((m: any) => m.name !== "nofollowAttributes");
+
   return (
     <Stack space={4}>
-      {/* SEO Score — always visible */}
       <SEOScoreDisplay result={scoreResult} />
 
-      {/* GEO Checklist — Basic tab only */}
-      {activeGroup === "basic" && <GEOChecklist value={value} />}
-
-      {/* SERP Preview — Basic tab */}
-      {activeGroup === "basic" && <SERPPreview value={value} />}
+      {(isAllFields || activeGroup === "social") && <GEOChecklist value={value} />}
+      {(isAllFields || activeGroup === "advanced") && <SERPPreview value={value} />}
 
       <HR />
 
-      {/* All standard fields rendered by Sanity (tab bar + active group fields) */}
-      {renderDefault(props)}
+      {renderDefault({ ...props, members: filteredMembers })}
 
-      {/* AI Keyword Suggestions — Basic tab only */}
-      {activeGroup === "basic" && (
+      {(isAllFields || activeGroup === "basic") && (
         <>
           <HR />
           <AIKeywordsSection value={value} onChange={handleKeywordsChange} />
         </>
       )}
 
-      {/* Advanced Validation — Advanced tab */}
-      {activeGroup === "advanced" && (
+      {nofollowMember &&
+        nofollowMember.kind === "field" &&
+        (isAllFields || activeGroup === "basic") && (
+          <>
+            <HR />
+            <MemberField
+              member={nofollowMember}
+              renderInput={props.renderInput}
+              renderField={props.renderField}
+              renderItem={props.renderItem}
+              renderPreview={props.renderPreview}
+            />
+          </>
+        )}
+
+      {(isAllFields || activeGroup === "advanced") && (
         <>
           <HR />
           <AdvancedValidation value={value} onChange={onChange} />
         </>
       )}
 
-      {/* Meta Tags Preview — Basic and Advanced tabs */}
-      {(activeGroup === "basic" || activeGroup === "advanced") && (
+      {(isAllFields || activeGroup === "social" || activeGroup === "advanced") && (
         <>
           <HR />
           <MetaTagsPreview value={value} />

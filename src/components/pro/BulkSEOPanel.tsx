@@ -1,10 +1,11 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Stack, Text, Box } from "@sanity/ui";
 import { RefreshIcon, SearchIcon, DownloadIcon } from "@sanity/icons";
 import { useClient } from "sanity";
 import useProEnabled from "../../hooks/useProEnabled";
 import { computeSEOScore } from "../../utils/seoScore";
 import ProGate from "./ProGate";
+import Pagination from "./Pagination";
 import BulkStatCards from "./bulk/BulkStatCards";
 import BulkActions from "./bulk/BulkActions";
 import { BulkDoc, RowEdit, BulkTab, getIssues } from "./bulk/types";
@@ -12,17 +13,12 @@ import BulkDocRow from "./bulk/BulkDocRow";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-// ---------------------------------------------------------------------------
-// Two-layer cache:
-//   1. Module-level variable  — zero-cost on navigation (no JSON parse)
-//   2. localStorage           — survives full page reloads
-// ---------------------------------------------------------------------------
 interface BulkScanCache {
   docs: BulkDoc[];
   rowEdits: Record<string, RowEdit>;
   timestamp: number;
 }
-const BULK_CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+const BULK_CACHE_TTL_MS = 10 * 60 * 1000;
 const BULK_LS_KEY = "seo-plugin__bulk-scan";
 let bulkScanCache: BulkScanCache | null = null;
 
@@ -87,7 +83,6 @@ function getBulkCacheAge(): string | null {
   const mins = Math.floor(secs / 60);
   return `${mins} minute${mins !== 1 ? "s" : ""} ago`;
 }
-// ---------------------------------------------------------------------------
 
 interface CsvRow {
   _id: string;
@@ -112,19 +107,16 @@ export default function BulkSEOPanel() {
     () => getBulkCached()?.rowEdits ?? {},
   );
 
-  // Bulk action state
   const [bulkTab, setBulkTab] = useState<BulkTab>("og");
   const [bulkProcessing, setBulkProcessing] = useState(false);
 
-  // CSV state
   const [csvPreview, setCsvPreview] = useState<CsvRow[]>([]);
   const [csvError, setCsvError] = useState<string | null>(null);
   const [csvApplying, setCsvApplying] = useState(false);
 
-  // Operation log
   const [log, setLog] = useState<{ msg: string; ok: boolean }[]>([]);
-
-  // ─── Scan ────────────────────────────────────────────────────────────────────
+  const [scanHovered, setScanHovered] = useState(false);
+  const [exportHovered, setExportHovered] = useState(false);
 
   const fetchDocs = useCallback(
     async (bust = false) => {
@@ -135,15 +127,16 @@ export default function BulkSEOPanel() {
       setCsvPreview([]);
       setCsvError(null);
       try {
-        const results: any[] = await client.fetch(`
-        *[!(_id in path("drafts.**")) && (defined(seo) || defined(slug))]
+        const results: any[] = await client.fetch(
+          `*[!(_id in path("drafts.**")) && defined(seo)]
           | order(_updatedAt desc) [0...200] {
           _id, _type,
           "docTitle": coalesce(title, name, slug.current, "Untitled"),
           "docSlug": slug.current,
           "seo": seo
-        }
-      `);
+        }`,
+          { _ts: Date.now() },
+        );
         const scored = results.map((d) => ({
           ...d,
           score: computeSEOScore(d.seo || undefined).score,
@@ -177,8 +170,6 @@ export default function BulkSEOPanel() {
     [client],
   );
 
-  // ─── Row selection ───────────────────────────────────────────────────────────
-
   const toggleAll = () => {
     const visibleIds = new Set(visibleDocs.map((d) => d._id));
     const allSelected = visibleDocs.every((d) => d.selected);
@@ -196,8 +187,6 @@ export default function BulkSEOPanel() {
     setExpandedId((prev) => (prev === id ? null : id));
   };
 
-  // ─── Per-row field editing ───────────────────────────────────────────────────
-
   const onFieldChange = (
     id: string,
     field: keyof Omit<RowEdit, "saving" | "saved">,
@@ -213,11 +202,12 @@ export default function BulkSEOPanel() {
       setRowEdits((prev) => ({ ...prev, [doc._id]: { ...prev[doc._id], saving: true } }));
       try {
         const patch: Record<string, any> = {};
-        if (edit.metaTitle) patch["seo.metaTitle"] = edit.metaTitle;
-        if (edit.metaDescription) patch["seo.metaDescription"] = edit.metaDescription;
-        if (edit.focusKeyword) patch["seo.focusKeyword"] = edit.focusKeyword;
-        if (edit.ogTitle) patch["seo.openGraph.title"] = edit.ogTitle;
-        if (edit.ogDescription) patch["seo.openGraph.description"] = edit.ogDescription;
+        if (edit.metaTitle !== undefined) patch["seo.metaTitle"] = edit.metaTitle;
+        if (edit.metaDescription !== undefined) patch["seo.metaDescription"] = edit.metaDescription;
+        if (edit.focusKeyword !== undefined) patch["seo.focusKeyword"] = edit.focusKeyword;
+        if (edit.ogTitle !== undefined) patch["seo.openGraph.title"] = edit.ogTitle;
+        if (edit.ogDescription !== undefined)
+          patch["seo.openGraph.description"] = edit.ogDescription;
         await client.patch(doc._id).set(patch).commit();
         setRowEdits((prev) => ({
           ...prev,
@@ -231,8 +221,6 @@ export default function BulkSEOPanel() {
     },
     [client, rowEdits, fetchDocs],
   );
-
-  // ─── Bulk apply ──────────────────────────────────────────────────────────────
 
   const runBulk = useCallback(async () => {
     const selected = docs.filter((d) => d.selected);
@@ -268,10 +256,9 @@ export default function BulkSEOPanel() {
     newLog.push({ msg: `Done — ${ok} of ${selected.length} updated.`, ok: true });
     setLog(newLog);
     setBulkProcessing(false);
+    setDocs((prev) => prev.map((d) => (d.selected ? { ...d, selected: false } : d)));
     fetchDocs();
   }, [docs, client, fetchDocs]);
-
-  // ─── CSV export ──────────────────────────────────────────────────────────────
 
   const exportCSV = useCallback(() => {
     const header = "_id,title,type,metaTitle,metaDescription,focusKeyword,ogTitle,ogDescription";
@@ -298,8 +285,6 @@ export default function BulkSEOPanel() {
     URL.revokeObjectURL(url);
   }, [docs]);
 
-  // ─── CSV import ──────────────────────────────────────────────────────────────
-
   const parseCSVLine = (line: string): string[] => {
     const result: string[] = [];
     let current = "";
@@ -325,10 +310,10 @@ export default function BulkSEOPanel() {
   };
 
   const handleCSVFile = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (fileOrEvent: File | React.ChangeEvent<HTMLInputElement>) => {
       setCsvError(null);
       setCsvPreview([]);
-      const file = e.target.files?.[0];
+      const file = fileOrEvent instanceof File ? fileOrEvent : fileOrEvent.target.files?.[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = (evt) => {
@@ -368,7 +353,10 @@ export default function BulkSEOPanel() {
         setCsvPreview(preview);
       };
       reader.readAsText(file);
-      e.target.value = "";
+      if (!(fileOrEvent instanceof File)) {
+        const inputElement = fileOrEvent.target;
+        inputElement.value = "";
+      }
     },
     [docs],
   );
@@ -382,11 +370,11 @@ export default function BulkSEOPanel() {
     const results = await Promise.allSettled(
       toApply.map(async (row) => {
         const patch: Record<string, string> = {};
-        if (row.metaTitle) patch["seo.metaTitle"] = row.metaTitle;
-        if (row.metaDescription) patch["seo.metaDescription"] = row.metaDescription;
-        if (row.focusKeyword) patch["seo.focusKeyword"] = row.focusKeyword;
-        if (row.ogTitle) patch["seo.openGraph.title"] = row.ogTitle;
-        if (row.ogDescription) patch["seo.openGraph.description"] = row.ogDescription;
+        if (row.metaTitle !== undefined) patch["seo.metaTitle"] = row.metaTitle;
+        if (row.metaDescription !== undefined) patch["seo.metaDescription"] = row.metaDescription;
+        if (row.focusKeyword !== undefined) patch["seo.focusKeyword"] = row.focusKeyword;
+        if (row.ogTitle !== undefined) patch["seo.openGraph.title"] = row.ogTitle;
+        if (row.ogDescription !== undefined) patch["seo.openGraph.description"] = row.ogDescription;
         await client.patch(row._id).set(patch).commit();
         return { title: row.title };
       }),
@@ -408,8 +396,6 @@ export default function BulkSEOPanel() {
     fetchDocs();
   }, [csvPreview, client, fetchDocs]);
 
-  // ─── Type filter ─────────────────────────────────────────────────────────────
-
   const [typeFilter, setTypeFilter] = useState<string>("all");
 
   const docTypes = useMemo(() => Array.from(new Set(docs.map((d) => d._type))).sort(), [docs]);
@@ -419,7 +405,16 @@ export default function BulkSEOPanel() {
     [docs, typeFilter],
   );
 
-  // ─── Derived stats ───────────────────────────────────────────────────────────
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(5);
+
+  useEffect(() => {
+    setPage(0);
+  }, [typeFilter]);
+
+  const paginatedDocs = useMemo(() => {
+    return visibleDocs.slice(page * pageSize, (page + 1) * pageSize);
+  }, [visibleDocs, page, pageSize]);
 
   const selectedCount = docs.filter((d) => d.selected).length;
   const totalIssues = docs.reduce((sum, d) => sum + d.issues.length, 0);
@@ -431,18 +426,16 @@ export default function BulkSEOPanel() {
   const { isPro } = useProEnabled();
   const scanLabel = loaded ? "Re-scan Pages" : "Scan Pages";
 
-  // ─── Render ──────────────────────────────────────────────────────────────────
-
   return (
     <ProGate feature="SEO Optimizer" isPro={isPro} variant="page">
       <Box style={{ minHeight: "100vh", background: "var(--card-bg-color)", padding: "32px 40px" }}>
         <div style={{ maxWidth: 1040, margin: "0 auto" }}>
           <Stack space={5}>
-            {/* Header */}
             <div
               style={{
                 background: "var(--card-bg-color)",
                 border: "1px solid var(--card-border-color)",
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
                 borderRadius: 16,
                 padding: "28px 32px",
                 display: "flex",
@@ -530,10 +523,13 @@ export default function BulkSEOPanel() {
                   fontWeight: 700,
                   cursor: loading ? "not-allowed" : "pointer",
                   whiteSpace: "nowrap",
-                  boxShadow: "none",
-                  transition: "all 0.2s",
+                  boxShadow: scanHovered && !loading ? "0 4px 12px rgba(0, 0, 0, 0.08)" : "none",
+                  transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                   flexShrink: 0,
+                  transform: scanHovered && !loading ? "translateY(-1px)" : "none",
                 }}
+                onMouseEnter={() => setScanHovered(true)}
+                onMouseLeave={() => setScanHovered(false)}
               >
                 {loading ? (
                   <RefreshIcon style={{ fontSize: 16 }} />
@@ -544,7 +540,6 @@ export default function BulkSEOPanel() {
               </button>
             </div>
 
-            {/* Stat cards */}
             <BulkStatCards
               avgScore={avgScore}
               pagesWithIssues={docs.length}
@@ -554,7 +549,6 @@ export default function BulkSEOPanel() {
               loaded={loaded}
             />
 
-            {/* All clear */}
             {loaded && docs.length === 0 && (
               <div
                 style={{
@@ -582,7 +576,6 @@ export default function BulkSEOPanel() {
               </div>
             )}
 
-            {/* Document table */}
             {docs.length > 0 && (
               <div>
                 {docTypes.length > 1 && (
@@ -636,7 +629,6 @@ export default function BulkSEOPanel() {
                   </div>
                 )}
 
-                {/* Column headers */}
                 <div
                   style={{
                     display: "grid",
@@ -673,7 +665,7 @@ export default function BulkSEOPanel() {
                 </div>
 
                 <Stack space={3}>
-                  {visibleDocs.map((doc) => (
+                  {paginatedDocs.map((doc) => (
                     <BulkDocRow
                       key={doc._id}
                       doc={doc}
@@ -698,7 +690,14 @@ export default function BulkSEOPanel() {
                   ))}
                 </Stack>
 
-                {/* Footer row: count + export */}
+                <Pagination
+                  page={page}
+                  total={visibleDocs.length}
+                  pageSize={pageSize}
+                  onPage={setPage}
+                  onPageSizeChange={setPageSize}
+                />
+
                 <div
                   style={{
                     display: "flex",
@@ -720,15 +719,22 @@ export default function BulkSEOPanel() {
                       display: "flex",
                       alignItems: "center",
                       gap: 6,
-                      padding: "6px 14px",
+                      padding: "8px 16px",
                       background: "var(--card-bg-color)",
-                      border: "1px solid var(--card-border-color)",
+                      border: exportHovered
+                        ? "1px solid var(--card-link-color)"
+                        : "1px solid var(--card-border-color)",
                       borderRadius: 8,
-                      color: "var(--card-muted-fg-color)",
+                      color: "var(--card-link-color)",
                       fontSize: 12,
-                      fontWeight: 500,
+                      fontWeight: 600,
                       cursor: "pointer",
+                      transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                      boxShadow: exportHovered ? "0 4px 12px rgba(0, 0, 0, 0.08)" : "none",
+                      transform: exportHovered ? "translateY(-1px)" : "none",
                     }}
+                    onMouseEnter={() => setExportHovered(true)}
+                    onMouseLeave={() => setExportHovered(false)}
                   >
                     <DownloadIcon style={{ fontSize: 14 }} />
                     Export CSV
@@ -737,7 +743,6 @@ export default function BulkSEOPanel() {
               </div>
             )}
 
-            {/* Bulk actions */}
             {selectedCount > 0 && (
               <BulkActions
                 selectedCount={selectedCount}
@@ -757,7 +762,6 @@ export default function BulkSEOPanel() {
               />
             )}
 
-            {/* Initial empty state */}
             {!loaded && !loading && (
               <div
                 style={{

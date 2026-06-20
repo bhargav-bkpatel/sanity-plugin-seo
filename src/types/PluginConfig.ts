@@ -18,6 +18,8 @@ export interface WorkflowConfig {
 
 export interface PluginConfig {
   proFeature?: string;
+  projectId?: string;
+  validateUrl?: string;
   aiFeature?: AIConfig;
   bodyField?: string;
   slugField?: string;
@@ -26,4 +28,5 @@ export interface PluginConfig {
   automation?: AutomationConfig;
   workflow?: WorkflowConfig;
   documentTypes?: string[];
+  baseUrl?: string;
 }

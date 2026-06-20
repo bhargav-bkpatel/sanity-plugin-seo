@@ -1,17 +1,30 @@
 import React, { useState } from "react";
-import { useClient } from "sanity";
+import { useWorkspace } from "sanity";
+import { getPluginConfig } from "../config";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
   value: Record<string, any> | undefined;
 }
 
-function refToUrl(ref: string, projectId: string, dataset: string): string {
-  const parts = ref.replace(/^image-/, "").split("-");
-  const ext = parts.pop();
-  const dimensions = parts.pop();
-  const id = parts.join("-");
-  return `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dimensions}.${ext}`;
+function getImageUrl(
+  asset: Record<string, any>,
+  projectId: string,
+  dataset: string,
+): string | null {
+  if (!asset) return null;
+  if (asset.url) return asset.url;
+
+  if (asset._ref && projectId && dataset) {
+    const ref = asset._ref;
+    const match = ref.match(/^image-([a-z0-9]+)-(\d+x\d+)-(.+)$/);
+    if (match) {
+      const [, id, dims, format] = match;
+      return `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dims}.${format}`;
+    }
+  }
+
+  return null;
 }
 
 function ImageSlot({ url }: { url: string | null }) {
@@ -19,8 +32,8 @@ function ImageSlot({ url }: { url: string | null }) {
     <div
       style={{
         width: "100%",
-        height: 220,
-        background: "var(--card-bg-color)",
+        height: 180,
+        background: "#e0e0e0",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -31,131 +44,127 @@ function ImageSlot({ url }: { url: string | null }) {
         <img
           src={url}
           alt="preview"
-          style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", display: "block" }}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          <svg
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--card-muted-fg-color)"
-            strokeWidth="1.5"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <circle cx="8.5" cy="8.5" r="1.5" />
-            <path d="m21 15-5-5L5 21" />
-          </svg>
-          <span style={{ fontSize: 11, color: "var(--card-muted-fg-color)" }}>
-            No image uploaded
-          </span>
-        </div>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+          <path d="m21 15-5-5L5 21" />
+        </svg>
       )}
     </div>
   );
 }
 
-function TwitterCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
-  const siteName = og?.siteName ? `${og.siteName.toLowerCase().replace(/\s/g, "")}.com` : null;
-  let domain = "yoursite.com";
-  if (siteName) domain = siteName;
-
+function TwitterCard({
+  og,
+  imageUrl,
+  domain,
+}: {
+  og: any;
+  imageUrl: string | null;
+  domain: string;
+}) {
   return (
     <div
       style={{
-        border: "1px solid var(--card-border-color)",
-        borderRadius: 16,
+        border: "1px solid #ccc",
+        borderRadius: 12,
         overflow: "hidden",
-        background: "var(--card-bg-color)",
-        maxWidth: 504,
-        fontFamily: "TwitterChirp, -apple-system, BlinkMacSystemFont, sans-serif",
+        background: "#fff",
+        maxWidth: 500,
+        fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
       }}
     >
       <ImageSlot url={imageUrl} />
-      <div style={{ padding: "12px 14px 14px" }}>
-        <div style={{ fontSize: 13, color: "var(--card-muted-fg-color)", marginBottom: 2 }}>
+      <div style={{ padding: "12px 16px" }}>
+        <div style={{ fontSize: 12, color: "#666", marginBottom: 4 }}>{domain}</div>
+        <div
+          style={{
+            fontSize: 15,
+            fontWeight: 700,
+            color: "#000",
+            lineHeight: 1.4,
+            marginBottom: 4,
+            overflow: "hidden",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+          }}
+        >
+          {og?.title || "Page title"}
+        </div>
+        <div
+          style={{
+            fontSize: 13,
+            color: "#666",
+            lineHeight: 1.4,
+            overflow: "hidden",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+          }}
+        >
+          {og?.description || "Page description"}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FacebookCard({
+  og,
+  imageUrl,
+  domain,
+}: {
+  og: any;
+  imageUrl: string | null;
+  domain: string;
+}) {
+  return (
+    <div
+      style={{
+        border: "1px solid #ddd",
+        borderRadius: 8,
+        overflow: "hidden",
+        background: "#fff",
+        maxWidth: 500,
+        fontFamily: "Helvetica, Arial, sans-serif",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+      }}
+    >
+      <ImageSlot url={imageUrl} />
+      <div style={{ padding: "12px" }}>
+        <div
+          style={{
+            fontSize: 11,
+            color: "#999",
+            marginBottom: 4,
+          }}
+        >
           {domain}
         </div>
         <div
           style={{
             fontSize: 15,
-            fontWeight: 700,
-            color: "var(--card-fg-color)",
-            lineHeight: 1.3,
-            marginBottom: 2,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {og?.title || "Page title not set"}
-        </div>
-        <div
-          style={{
-            fontSize: 13,
-            color: "var(--card-muted-fg-color)",
-            lineHeight: 1.4,
-            overflow: "hidden",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-          }}
-        >
-          {og?.description || "No description set"}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FacebookCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
-  return (
-    <div
-      style={{
-        border: "1px solid var(--card-border-color)",
-        borderRadius: 8,
-        overflow: "hidden",
-        background: "var(--card-bg-color)",
-        maxWidth: 504,
-        fontFamily: "Helvetica, Arial, sans-serif",
-      }}
-    >
-      <ImageSlot url={imageUrl} />
-      <div style={{ padding: "10px 12px 14px" }}>
-        <div
-          style={{
-            fontSize: 11,
-            color: "var(--card-muted-fg-color)",
-            textTransform: "uppercase",
-            letterSpacing: 0.8,
-            marginBottom: 4,
-          }}
-        >
-          {og?.siteName || "yoursite.com"}
-        </div>
-        <div
-          style={{
-            fontSize: 16,
             fontWeight: 600,
-            color: "var(--card-fg-color)",
-            lineHeight: 1.3,
+            color: "#000",
+            lineHeight: 1.4,
             marginBottom: 4,
+            overflow: "hidden",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
           }}
         >
-          {og?.title || "Page title not set"}
+          {og?.title || "Page title"}
         </div>
         <div
           style={{
             fontSize: 13,
-            color: "var(--card-muted-fg-color)",
+            color: "#666",
             lineHeight: 1.4,
             overflow: "hidden",
             display: "-webkit-box",
@@ -163,62 +172,65 @@ function FacebookCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
             WebkitBoxOrient: "vertical",
           }}
         >
-          {og?.description || "No description set"}
+          {og?.description || "Page description"}
         </div>
       </div>
     </div>
   );
 }
 
-function LinkedInCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
+function LinkedInCard({
+  og,
+  imageUrl,
+  domain,
+}: {
+  og: any;
+  imageUrl: string | null;
+  domain: string;
+}) {
   return (
     <div
       style={{
         borderRadius: 8,
         overflow: "hidden",
-        background: "var(--card-bg-color)",
-        border: "1px solid var(--card-border-color)",
-        maxWidth: 504,
+        background: "#fff",
+        border: "1px solid #ddd",
+        maxWidth: 500,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
       }}
     >
       <ImageSlot url={imageUrl} />
-      <div style={{ padding: "12px 16px 14px" }}>
+      <div style={{ padding: "12px 16px" }}>
         <div
           style={{
             fontSize: 14,
             fontWeight: 600,
-            color: "var(--card-fg-color)",
+            color: "#000",
             lineHeight: 1.4,
-            marginBottom: 6,
+            marginBottom: 4,
+            overflow: "hidden",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
           }}
         >
-          {og?.title || "Page title not set"}
+          {og?.title || "Page title"}
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div
-            style={{
-              width: 16,
-              height: 16,
-              borderRadius: 2,
-              background: "#0a66c2",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            <span style={{ fontSize: 9, color: "#fff", fontWeight: 800 }}>in</span>
-          </div>
-          <span style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>
-            {og?.siteName || "yoursite.com"}
-          </span>
-        </div>
+        <div style={{ fontSize: 12, color: "#666" }}>{domain}</div>
       </div>
     </div>
   );
 }
 
-function WhatsAppCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
+function WhatsAppCard({
+  og,
+  imageUrl,
+  domain,
+}: {
+  og: any;
+  imageUrl: string | null;
+  domain: string;
+}) {
   return (
     <div style={{ maxWidth: 380 }}>
       <div
@@ -257,9 +269,7 @@ function WhatsAppCard({ og, imageUrl }: { og: any; imageUrl: string | null }) {
           >
             {og?.description || "No description"}
           </div>
-          <div style={{ fontSize: 12, color: "#00a884", fontWeight: 500 }}>
-            {og?.siteName || "yoursite.com"}
-          </div>
+          <div style={{ fontSize: 12, color: "#00a884", fontWeight: 500 }}>{domain}</div>
         </div>
       </div>
     </div>
@@ -275,11 +285,13 @@ const PLATFORMS = [
 
 export default function SocialPreviewCard({ value: og }: Props) {
   const [activeTab, setActiveTab] = useState(0);
-  const client = useClient({ apiVersion: "2024-01-01" });
-  const { projectId, dataset } = client.config();
+  const { projectId, dataset } = useWorkspace();
 
-  const imageRef = og?.image?.asset?._ref;
-  const imageUrl = imageRef && projectId && dataset ? refToUrl(imageRef, projectId, dataset) : null;
+  const config = getPluginConfig();
+  const baseUrl = config.baseUrl || "https://example.com";
+  const domain = baseUrl.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0] || "example.com";
+
+  const imageUrl = og?.image?.asset ? getImageUrl(og.image.asset, projectId, dataset) : null;
 
   return (
     <div
@@ -290,7 +302,6 @@ export default function SocialPreviewCard({ value: og }: Props) {
         overflow: "hidden",
       }}
     >
-      {/* Header */}
       <div
         style={{
           padding: "10px 16px",
@@ -324,7 +335,6 @@ export default function SocialPreviewCard({ value: og }: Props) {
         </span>
       </div>
 
-      {/* Tabs */}
       <div
         style={{
           display: "flex",
@@ -357,15 +367,13 @@ export default function SocialPreviewCard({ value: og }: Props) {
         ))}
       </div>
 
-      {/* Preview */}
       <div style={{ padding: 20, background: "var(--card-bg-color)" }}>
-        {activeTab === 0 && <TwitterCard og={og} imageUrl={imageUrl} />}
-        {activeTab === 1 && <FacebookCard og={og} imageUrl={imageUrl} />}
-        {activeTab === 2 && <LinkedInCard og={og} imageUrl={imageUrl} />}
-        {activeTab === 3 && <WhatsAppCard og={og} imageUrl={imageUrl} />}
+        {activeTab === 0 && <TwitterCard og={og} imageUrl={imageUrl} domain={domain} />}
+        {activeTab === 1 && <FacebookCard og={og} imageUrl={imageUrl} domain={domain} />}
+        {activeTab === 2 && <LinkedInCard og={og} imageUrl={imageUrl} domain={domain} />}
+        {activeTab === 3 && <WhatsAppCard og={og} imageUrl={imageUrl} domain={domain} />}
       </div>
 
-      {/* Footer */}
       <div
         style={{
           padding: "7px 16px",

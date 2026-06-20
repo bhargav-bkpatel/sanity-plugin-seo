@@ -18,7 +18,6 @@ const schema = defineType({
     { name: "schema", title: "Schema.org" },
   ],
   fields: [
-    // ── Basic SEO ──────────────────────────────────────────
     {
       name: "metaTitle",
       title: "Meta Title",
@@ -36,13 +35,6 @@ const schema = defineType({
       description: "Recommended: 100–160 characters",
     },
     {
-      name: "metaImage",
-      title: "Meta Image",
-      type: "image",
-      group: "basic",
-      description: "Used as fallback for Open Graph and Twitter images",
-    },
-    {
       name: "focusKeyword",
       title: "Focus Keyword",
       type: "string",
@@ -57,7 +49,6 @@ const schema = defineType({
       of: [{ type: "string" }],
       options: { layout: "tags" },
     },
-    // ── Robots ────────────────────────────────────────────
     {
       name: "nofollowAttributes",
       title: "Noindex",
@@ -87,7 +78,6 @@ const schema = defineType({
         layout: "grid",
       },
     },
-    // ── Social ────────────────────────────────────────────
     {
       name: "openGraph",
       title: "Open Graph",
@@ -100,7 +90,6 @@ const schema = defineType({
       type: "twitter",
       group: "social",
     },
-    // ── hreflang ─────────────────────────────────────────
     {
       name: "hreflang",
       title: "Multi-Language (hreflang)",
@@ -109,7 +98,6 @@ const schema = defineType({
       of: [{ type: "hreflangEntry" }],
       description: "Add alternate language versions of this page for international SEO",
     },
-    // ── Additional meta tags ──────────────────────────────
     {
       name: "additionalMetaTags",
       title: "Additional Meta Tags",
@@ -117,7 +105,6 @@ const schema = defineType({
       group: "advanced",
       of: [{ type: "metaTag" }],
     },
-    // ── Schema.org ────────────────────────────────────────
     {
       name: "schemaOrg",
       title: "Schema.org Structured Data",
@@ -148,7 +135,6 @@ const schema = defineType({
             ],
           },
         },
-        // Universal fields — shown for all types once a type is selected
         {
           name: "name",
           title: "Name",
@@ -168,7 +154,6 @@ const schema = defineType({
           hidden: ({ parent }: { parent: Record<string, string> }) =>
             !parent?.schemaType || parent.schemaType === "FAQPage",
         },
-        // Article / Blog / Video / Recipe / Course / Job fields
         {
           name: "author",
           title: "Author",
@@ -194,7 +179,6 @@ const schema = defineType({
           hidden: ({ parent }: { parent: Record<string, string> }) =>
             !["Article", "VideoObject"].includes(parent?.schemaType),
         },
-        // Product / App fields
         {
           name: "price",
           title: "Price",
@@ -226,7 +210,6 @@ const schema = defineType({
           hidden: ({ parent }: { parent: Record<string, string> }) =>
             parent?.schemaType !== "Product",
         },
-        // Rating fields — Product, App, Recipe, Course
         {
           name: "ratingValue",
           title: "Rating (0–5)",
@@ -243,7 +226,6 @@ const schema = defineType({
           hidden: ({ parent }: { parent: Record<string, string> }) =>
             !["Product", "SoftwareApplication", "Recipe", "Course"].includes(parent?.schemaType),
         },
-        // Event / Course date fields
         {
           name: "startDate",
           title: "Start Date",
@@ -260,7 +242,6 @@ const schema = defineType({
           hidden: ({ parent }: { parent: Record<string, string> }) =>
             !["Event", "Course"].includes(parent?.schemaType),
         },
-        // Location — Event, LocalBusiness, JobPosting
         {
           name: "location",
           title: "Location / Address",
@@ -269,7 +250,6 @@ const schema = defineType({
           hidden: ({ parent }: { parent: Record<string, string> }) =>
             !["Event", "LocalBusiness", "JobPosting"].includes(parent?.schemaType),
         },
-        // FAQ items — FAQPage only
         {
           name: "faqItems",
           title: "FAQ Items",
@@ -288,7 +268,6 @@ const schema = defineType({
         },
       ],
     },
-    // ── Workflow status (managed from Workflow Dashboard, hidden in document editor) ──
     {
       name: "seoStatus",
       title: "SEO Status",

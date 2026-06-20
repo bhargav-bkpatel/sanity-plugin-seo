@@ -1,236 +1,44 @@
 import React, { useState } from "react";
 import { ObjectInputProps, PatchEvent, set } from "sanity";
-import { Select, Button, TextInput, Stack, Text } from "@sanity/ui";
+import { Select, Button, Stack } from "@sanity/ui";
 import useProEnabled from "../../hooks/useProEnabled";
 import ProGate from "./ProGate";
+import { SCHEMA_TYPES, FIELDS_BY_TYPE } from "../../constants/schemaTypes";
+
+import CalendarIcon from "../icons/CalendarIcon";
+import TrashIcon from "../icons/TrashIcon";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const SCHEMA_TYPES = [
-  { value: "", title: "— Select schema type —" },
-  { value: "Article", title: "Article / Blog Post" },
-  { value: "Product", title: "Product" },
-  { value: "FAQPage", title: "FAQ Page" },
-  { value: "LocalBusiness", title: "Local Business" },
-  { value: "Event", title: "Event" },
-  { value: "Organization", title: "Organization" },
-  { value: "WebPage", title: "Web Page" },
-  { value: "VideoObject", title: "Video" },
-  { value: "Recipe", title: "Recipe" },
-  { value: "Person", title: "Person / Author" },
-  { value: "Course", title: "Course" },
-  { value: "JobPosting", title: "Job Posting" },
-  { value: "BreadcrumbList", title: "Breadcrumb" },
-  { value: "BlogPosting", title: "Blog Post" },
-  { value: "NewsArticle", title: "News Article" },
-  { value: "HowTo", title: "How-To Guide" },
-  { value: "Review", title: "Review" },
-  { value: "SoftwareApplication", title: "Software / App" },
-  { value: "Book", title: "Book" },
-  { value: "Movie", title: "Movie / Film" },
-  { value: "Service", title: "Service" },
-  { value: "ProfessionalService", title: "Professional Service" },
-  { value: "MedicalCondition", title: "Medical Condition" },
-  { value: "Dataset", title: "Dataset" },
-  { value: "Podcast", title: "Podcast" },
-  { value: "PodcastEpisode", title: "Podcast Episode" },
-  { value: "TouristAttraction", title: "Tourist Attraction" },
-  { value: "Accommodation", title: "Accommodation / Hotel" },
-  { value: "SportsTeam", title: "Sports Team" },
-  { value: "CollectionPage", title: "Collection Page" },
-  { value: "AboutPage", title: "About Page" },
-];
+const FIELD_INPUT: React.CSSProperties = {
+  width: "100%",
+  padding: "9px 12px",
+  background: "var(--card-bg-color)",
+  border: "1px solid var(--card-border-color)",
+  borderRadius: 8,
+  color: "var(--card-fg-color)",
+  fontSize: 13,
+  outline: "none",
+  fontFamily: "inherit",
+  boxSizing: "border-box",
+  transition: "border-color 0.15s, box-shadow 0.15s",
+};
 
-const FIELDS_BY_TYPE: Record<string, { name: string; label: string; placeholder?: string }[]> = {
-  Article: [
-    { name: "name", label: "Article Title", placeholder: "How to Build a Website" },
-    { name: "author", label: "Author Name", placeholder: "Jane Smith" },
-    { name: "datePublished", label: "Date Published", placeholder: "2026-01-15" },
-    { name: "dateModified", label: "Date Modified", placeholder: "2026-05-01" },
-    { name: "description", label: "Article Description" },
-  ],
-  Product: [
-    { name: "name", label: "Product Name" },
-    { name: "description", label: "Product Description" },
-    { name: "price", label: "Price", placeholder: "29.99" },
-    { name: "priceCurrency", label: "Currency", placeholder: "USD" },
-    { name: "availability", label: "Availability", placeholder: "InStock" },
-    { name: "ratingValue", label: "Rating (0–5)", placeholder: "4.8" },
-    { name: "ratingCount", label: "Review Count", placeholder: "124" },
-  ],
-  LocalBusiness: [
-    { name: "name", label: "Business Name" },
-    { name: "description", label: "Description" },
-    { name: "location", label: "Address", placeholder: "123 Main St, City, Country" },
-    { name: "url", label: "Website URL" },
-  ],
-  Event: [
-    { name: "name", label: "Event Name" },
-    { name: "description", label: "Event Description" },
-    { name: "startDate", label: "Start Date", placeholder: "2026-06-01T09:00:00" },
-    { name: "endDate", label: "End Date", placeholder: "2026-06-01T17:00:00" },
-    { name: "location", label: "Location / URL" },
-  ],
-  Organization: [
-    { name: "name", label: "Organization Name" },
-    { name: "description", label: "Description" },
-    { name: "url", label: "Website URL" },
-  ],
-  WebPage: [
-    { name: "name", label: "Page Name" },
-    { name: "description", label: "Page Description" },
-    { name: "url", label: "Page URL" },
-  ],
-  VideoObject: [
-    { name: "name", label: "Video Title" },
-    { name: "description", label: "Video Description" },
-    { name: "url", label: "Video URL" },
-    { name: "datePublished", label: "Upload Date", placeholder: "2026-01-15" },
-  ],
-  Recipe: [
-    { name: "name", label: "Recipe Name" },
-    { name: "description", label: "Recipe Description" },
-    { name: "author", label: "Author Name" },
-    { name: "datePublished", label: "Date Published" },
-  ],
-  Person: [
-    { name: "name", label: "Full Name" },
-    { name: "description", label: "Bio / Description" },
-    { name: "url", label: "Profile URL" },
-  ],
-  Course: [
-    { name: "name", label: "Course Name" },
-    { name: "description", label: "Course Description" },
-    { name: "author", label: "Provider / Instructor" },
-    { name: "url", label: "Course URL" },
-  ],
-  JobPosting: [
-    { name: "name", label: "Job Title" },
-    { name: "description", label: "Job Description" },
-    { name: "location", label: "Location" },
-    { name: "datePublished", label: "Date Posted", placeholder: "2026-05-01" },
-  ],
-  BreadcrumbList: [
-    { name: "name", label: "Page Name" },
-    { name: "url", label: "Page URL" },
-  ],
-  FAQPage: [],
-  BlogPosting: [
-    { name: "name", label: "Article Title", placeholder: "How to Build a Website" },
-    { name: "author", label: "Author Name", placeholder: "Jane Smith" },
-    { name: "datePublished", label: "Date Published", placeholder: "2026-01-15" },
-    { name: "dateModified", label: "Date Modified", placeholder: "2026-05-01" },
-    { name: "description", label: "Article Description" },
-  ],
-  NewsArticle: [
-    { name: "name", label: "Article Title", placeholder: "Breaking: Example Headline" },
-    { name: "author", label: "Author Name", placeholder: "Jane Smith" },
-    { name: "datePublished", label: "Date Published", placeholder: "2026-01-15" },
-    { name: "dateModified", label: "Date Modified", placeholder: "2026-05-01" },
-    { name: "description", label: "Article Description" },
-  ],
-  HowTo: [
-    { name: "name", label: "How-To Title" },
-    { name: "description", label: "Description" },
-    { name: "author", label: "Author Name" },
-    { name: "datePublished", label: "Date Published", placeholder: "2026-01-15" },
-    { name: "url", label: "Page URL" },
-  ],
-  Review: [
-    { name: "name", label: "Item Being Reviewed" },
-    { name: "description", label: "Review Summary" },
-    { name: "author", label: "Reviewer Name" },
-    { name: "ratingValue", label: "Rating (0–5)", placeholder: "4.5" },
-    { name: "datePublished", label: "Date Published", placeholder: "2026-01-15" },
-  ],
-  SoftwareApplication: [
-    { name: "name", label: "App Name" },
-    { name: "description", label: "App Description" },
-    { name: "url", label: "App URL" },
-    { name: "operatingSystem", label: "Operating System", placeholder: "Windows, macOS, iOS" },
-    { name: "applicationCategory", label: "Category", placeholder: "GameApplication" },
-    { name: "ratingValue", label: "Rating (0–5)", placeholder: "4.8" },
-    { name: "ratingCount", label: "Review Count", placeholder: "124" },
-  ],
-  Book: [
-    { name: "name", label: "Book Title" },
-    { name: "description", label: "Description" },
-    { name: "author", label: "Author Name" },
-    { name: "url", label: "Book URL" },
-    { name: "isbn", label: "ISBN" },
-  ],
-  Movie: [
-    { name: "name", label: "Movie Title" },
-    { name: "description", label: "Description" },
-    { name: "datePublished", label: "Release Date", placeholder: "2026-01-15" },
-    { name: "url", label: "Movie URL" },
-    { name: "director", label: "Director" },
-  ],
-  Service: [
-    { name: "name", label: "Service Name" },
-    { name: "description", label: "Service Description" },
-    { name: "url", label: "Service URL" },
-    { name: "areaServed", label: "Area Served", placeholder: "United States" },
-  ],
-  ProfessionalService: [
-    { name: "name", label: "Business Name" },
-    { name: "description", label: "Description" },
-    { name: "url", label: "Website URL" },
-    { name: "location", label: "Address", placeholder: "123 Main St, City, Country" },
-  ],
-  MedicalCondition: [
-    { name: "name", label: "Condition Name" },
-    { name: "description", label: "Description" },
-    { name: "url", label: "Page URL" },
-  ],
-  Dataset: [
-    { name: "name", label: "Dataset Name" },
-    { name: "description", label: "Description" },
-    { name: "url", label: "Dataset URL" },
-    { name: "license", label: "License URL" },
-  ],
-  Podcast: [
-    { name: "name", label: "Podcast Name" },
-    { name: "description", label: "Description" },
-    { name: "url", label: "Podcast URL" },
-    { name: "author", label: "Host / Creator" },
-  ],
-  PodcastEpisode: [
-    { name: "name", label: "Episode Title" },
-    { name: "description", label: "Episode Description" },
-    { name: "datePublished", label: "Publish Date", placeholder: "2026-01-15" },
-    { name: "url", label: "Episode URL" },
-    { name: "episodeNumber", label: "Episode Number" },
-  ],
-  TouristAttraction: [
-    { name: "name", label: "Attraction Name" },
-    { name: "description", label: "Description" },
-    { name: "location", label: "Address", placeholder: "123 Main St, City, Country" },
-    { name: "url", label: "Website URL" },
-  ],
-  Accommodation: [
-    { name: "name", label: "Property Name" },
-    { name: "description", label: "Description" },
-    { name: "location", label: "Address", placeholder: "123 Main St, City, Country" },
-    { name: "url", label: "Website URL" },
-    { name: "numberOfRooms", label: "Number of Rooms" },
-  ],
-  SportsTeam: [
-    { name: "name", label: "Team Name" },
-    { name: "description", label: "Description" },
-    { name: "url", label: "Team URL" },
-    { name: "location", label: "Home City / Venue" },
-  ],
-  CollectionPage: [
-    { name: "name", label: "Collection Name" },
-    { name: "description", label: "Description" },
-    { name: "url", label: "Page URL" },
-  ],
-  AboutPage: [
-    { name: "name", label: "Page Name" },
-    { name: "description", label: "Description" },
-    { name: "url", label: "Page URL" },
-  ],
+const isFullWidthField = (fieldName: string) => {
+  return [
+    "name",
+    "description",
+    "reviewBody",
+    "image",
+    "thumbnailUrl",
+    "url",
+    "sameAs",
+    "location",
+    "license",
+    "provider",
+    "hiringOrganization",
+    "headline",
+  ].includes(fieldName);
 };
 
 function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null {
@@ -251,11 +59,17 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
   }
 
   const fields = FIELDS_BY_TYPE[schemaOrg.schemaType] || [];
+  const allowedFieldNames = new Set(fields.map((f) => f.name));
+
   fields.forEach((f) => {
-    if (schemaOrg[f.name]) ld[f.name] = schemaOrg[f.name];
+    if (schemaOrg[f.name]) {
+      ld[f.name] = schemaOrg[f.name];
+    }
   });
 
-  if (schemaOrg.ratingValue || schemaOrg.ratingCount) {
+  const typeAllowsRating =
+    allowedFieldNames.has("ratingValue") || allowedFieldNames.has("ratingCount");
+  if (typeAllowsRating && (schemaOrg.ratingValue || schemaOrg.ratingCount)) {
     ld.aggregateRating = {
       "@type": "AggregateRating",
       ...(schemaOrg.ratingValue ? { ratingValue: schemaOrg.ratingValue } : {}),
@@ -265,7 +79,11 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
     delete ld.ratingCount;
   }
 
-  if (schemaOrg.price || schemaOrg.priceCurrency) {
+  const typeAllowsPrice =
+    allowedFieldNames.has("price") ||
+    allowedFieldNames.has("priceCurrency") ||
+    allowedFieldNames.has("availability");
+  if (typeAllowsPrice && (schemaOrg.price || schemaOrg.priceCurrency)) {
     ld.offers = {
       "@type": "Offer",
       ...(schemaOrg.price ? { price: schemaOrg.price } : {}),
@@ -279,11 +97,18 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
     delete ld.availability;
   }
 
-  if (schemaOrg.author) {
-    ld.author = { "@type": "Person", name: schemaOrg.author };
-    delete ld.author;
+  const typeAllowsAuthor = allowedFieldNames.has("author");
+  if (typeAllowsAuthor && schemaOrg.author) {
     ld.author = { "@type": "Person", name: schemaOrg.author };
   }
+
+  Object.keys(ld).forEach((key) => {
+    if (key !== "@context" && key !== "@type") {
+      if (!ld[key] || (typeof ld[key] === "string" && ld[key].trim() === "")) {
+        delete ld[key];
+      }
+    }
+  });
 
   return ld;
 }
@@ -291,12 +116,14 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
 export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputProps) {
   const { isPro } = useProEnabled();
   const schemaOrg = (value as Record<string, any>) || {};
+  const originalType = schemaOrg.schemaType || "";
   const [showPreview, setShowPreview] = useState(false);
+  const [selectedType, setSelectedType] = useState(originalType);
   const [faqItems, setFaqItems] = useState<{ question: string; answer: string }[]>(
     schemaOrg.faqItems || [{ question: "", answer: "" }],
   );
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  const selectedType = schemaOrg.schemaType || "";
   const fields = FIELDS_BY_TYPE[selectedType] || [];
   const filledCount = fields.filter((f) => schemaOrg[f.name]).length;
   const totalCount = fields.length;
@@ -306,15 +133,40 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
   };
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    patch("schemaType", e.target.value);
+    const newType = e.target.value;
+    setSelectedType(newType);
+    if (newType !== originalType) {
+      onChange(PatchEvent.from(set({ ...schemaOrg, schemaType: newType })));
+    }
+    if (newType !== "FAQPage") {
+      setFaqItems([{ question: "", answer: "" }]);
+    } else if (!Array.isArray(schemaOrg.faqItems)) {
+      setFaqItems([{ question: "", answer: "" }]);
+    }
   };
 
   const addFaq = () => setFaqItems((prev) => [...prev, { question: "", answer: "" }]);
+
+  const removeFaq = (i: number) => {
+    const updated = faqItems.filter((_, idx) => idx !== i);
+    const final = updated.length > 0 ? updated : [{ question: "", answer: "" }];
+    setFaqItems(final);
+    patch("faqItems", final);
+  };
 
   const updateFaq = (i: number, field: "question" | "answer", val: string) => {
     const updated = faqItems.map((item, idx) => (idx === i ? { ...item, [field]: val } : item));
     setFaqItems(updated);
     patch("faqItems", updated);
+  };
+
+  const getFieldStyle = (fieldName: string) => {
+    const isFocused = focusedField === fieldName;
+    return {
+      ...FIELD_INPUT,
+      borderColor: isFocused ? "var(--card-link-color)" : "var(--card-border-color)",
+      boxShadow: isFocused ? "0 0 0 2px rgba(29, 78, 216, 0.15)" : "none",
+    };
   };
 
   const jsonLd = buildJsonLd(schemaOrg);
@@ -330,10 +182,24 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
           overflow: "hidden",
         }}
       >
-        {/* Header */}
+        <style>{`
+          .schema-date-input::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+          }
+        `}</style>
+
         <div
           style={{
-            padding: "12px 16px",
+            padding: "16px 20px",
             borderBottom: "1px solid var(--card-border-color)",
             display: "flex",
             alignItems: "center",
@@ -370,19 +236,32 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
           )}
         </div>
 
-        {/* Type selector */}
-        <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
+        <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--card-border-color)" }}>
           <div
             style={{
-              fontSize: 11,
-              fontWeight: 600,
+              fontSize: 10,
+              fontWeight: 700,
               color: "var(--card-muted-fg-color)",
-              marginBottom: 6,
+              letterSpacing: 1.5,
+              textTransform: "uppercase",
+              marginBottom: 10,
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
             }}
           >
-            SCHEMA TYPE
+            <div
+              style={{
+                width: 3,
+                height: 12,
+                borderRadius: 2,
+                background: "#a78bfa",
+                flexShrink: 0,
+              }}
+            />
+            Schema Type
           </div>
-          <Select value={selectedType} onChange={handleTypeChange}>
+          <Select value={selectedType} onChange={handleTypeChange} style={{ borderRadius: 8 }}>
             {SCHEMA_TYPES.map((t) => (
               <option key={t.value} value={t.value}>
                 {t.title}
@@ -391,96 +270,342 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
           </Select>
         </div>
 
-        {/* FAQ items */}
         {selectedType === "FAQPage" && (
-          <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
+          <div
+            style={{
+              padding: "16px 20px 24px",
+              borderBottom: "1px solid var(--card-border-color)",
+            }}
+          >
             <div
               style={{
-                fontSize: 11,
-                fontWeight: 600,
+                fontSize: 10,
+                fontWeight: 700,
                 color: "var(--card-muted-fg-color)",
-                marginBottom: 10,
+                letterSpacing: 1.5,
+                textTransform: "uppercase",
+                marginBottom: 16,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
               }}
             >
-              FAQ ITEMS
+              <div
+                style={{
+                  width: 3,
+                  height: 12,
+                  borderRadius: 2,
+                  background: "#3b82f6",
+                  flexShrink: 0,
+                }}
+              />
+              FAQ Items
             </div>
             <Stack space={3}>
               {faqItems.map((item, i) => (
                 // eslint-disable-next-line react/no-array-index-key
                 <div
+                  // eslint-disable-next-line react/no-array-index-key
                   key={i}
-                  style={{ padding: 10, background: "var(--card-border-color)", borderRadius: 8 }}
+                  style={{
+                    padding: "16px",
+                    background: "rgba(120, 120, 120, 0.03)",
+                    border: "1px solid var(--card-border-color)",
+                    borderRadius: 10,
+                    position: "relative",
+                  }}
                 >
-                  <Stack space={2}>
-                    <Text size={1} muted>
-                      {`Question ${i + 1}`}
-                    </Text>
-                    <TextInput
-                      value={item.question}
-                      onChange={(e) =>
-                        updateFaq(i, "question", (e.target as HTMLInputElement).value)
-                      }
-                      placeholder="What is…?"
-                    />
-                    <Text size={1} muted>
-                      Answer
-                    </Text>
-                    <TextInput
-                      value={item.answer}
-                      onChange={(e) => updateFaq(i, "answer", (e.target as HTMLInputElement).value)}
-                      placeholder="The answer is…"
-                    />
+                  {faqItems.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeFaq(i)}
+                      style={{
+                        position: "absolute",
+                        top: 12,
+                        right: 12,
+                        background: "transparent",
+                        border: "none",
+                        color: "var(--card-muted-fg-color)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: 4,
+                        borderRadius: 4,
+                        transition: "color 0.15s, background-color 0.15s",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = "#ef4444";
+                        e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.08)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = "var(--card-muted-fg-color)";
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }}
+                      title="Remove item"
+                    >
+                      <TrashIcon />
+                    </button>
+                  )}
+                  <Stack space={3}>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: "var(--card-muted-fg-color)",
+                          marginBottom: 6,
+                          letterSpacing: 0.3,
+                        }}
+                      >
+                        Question {i + 1}
+                      </div>
+                      <input
+                        type="text"
+                        value={item.question}
+                        onChange={(e) => updateFaq(i, "question", e.target.value)}
+                        placeholder="What is…?"
+                        onFocus={() => setFocusedField(`faq-q-${i}`)}
+                        onBlur={() => setFocusedField(null)}
+                        style={getFieldStyle(`faq-q-${i}`)}
+                      />
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: "var(--card-muted-fg-color)",
+                          marginBottom: 6,
+                          letterSpacing: 0.3,
+                        }}
+                      >
+                        Answer
+                      </div>
+                      <textarea
+                        value={item.answer}
+                        onChange={(e) => updateFaq(i, "answer", e.target.value)}
+                        placeholder="The answer is…"
+                        onFocus={() => setFocusedField(`faq-a-${i}`)}
+                        onBlur={() => setFocusedField(null)}
+                        rows={2}
+                        style={{
+                          ...getFieldStyle(`faq-a-${i}`),
+                          resize: "vertical",
+                          minHeight: 60,
+                          lineHeight: 1.5,
+                        }}
+                      />
+                    </div>
                   </Stack>
                 </div>
               ))}
-              <Button mode="ghost" text="+ Add FAQ Item" onClick={addFaq} fontSize={1} />
+              <Button
+                mode="ghost"
+                text="+ Add FAQ Item"
+                onClick={addFaq}
+                fontSize={1}
+                style={{ borderRadius: 8 }}
+              />
             </Stack>
           </div>
         )}
 
-        {/* Dynamic fields */}
         {fields.length > 0 && (
-          <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--card-border-color)" }}>
+          <div
+            style={{
+              padding: "16px 20px 24px",
+              borderBottom: "1px solid var(--card-border-color)",
+            }}
+          >
             <div
               style={{
-                fontSize: 11,
-                fontWeight: 600,
+                fontSize: 10,
+                fontWeight: 700,
                 color: "var(--card-muted-fg-color)",
-                marginBottom: 10,
+                letterSpacing: 1.5,
+                textTransform: "uppercase",
+                marginBottom: 16,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
               }}
             >
-              FIELDS
+              <div
+                style={{
+                  width: 3,
+                  height: 12,
+                  borderRadius: 2,
+                  background: "#3b82f6",
+                  flexShrink: 0,
+                }}
+              />
+              Schema Fields
             </div>
-            <Stack space={3}>
-              {fields.map((field) => (
-                <div key={field.name}>
-                  <div
-                    style={{
-                      fontSize: 11,
-                      color: "var(--card-muted-fg-color)",
-                      marginBottom: 4,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {field.label}
-                    {schemaOrg[field.name] && (
-                      <span style={{ color: "#22c55e", marginLeft: 6 }}>✓</span>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: "16px 14px",
+              }}
+            >
+              {fields.map((field) => {
+                const isDate = field.type === "date";
+                const isDatetime = field.type === "datetime";
+                const isDescription = field.name === "description" || field.name === "reviewBody";
+                const fullWidth = isFullWidthField(field.name);
+
+                return (
+                  <div key={field.name} style={fullWidth ? { gridColumn: "1 / -1" } : undefined}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginBottom: 6,
+                        gap: 4,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: "var(--card-muted-fg-color)",
+                          letterSpacing: 0.3,
+                        }}
+                      >
+                        {field.label.replace(" (REQUIRED)", "")}
+                        {field.label.includes("(REQUIRED)") && (
+                          <span
+                            style={{
+                              fontSize: 10,
+                              color: "#ef4444",
+                              fontWeight: 700,
+                              marginLeft: 2,
+                            }}
+                          >
+                            *
+                          </span>
+                        )}
+                      </span>
+                      {schemaOrg[field.name] && (
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 3,
+                            fontSize: 10,
+                            fontWeight: 700,
+                            color: "#22c55e",
+                            background: "rgba(34, 197, 94, 0.12)",
+                            padding: "2px 6px",
+                            borderRadius: 99,
+                          }}
+                        >
+                          ✓ Filled
+                        </span>
+                      )}
+                    </div>
+
+                    {isDate && (
+                      <div style={{ position: "relative" }}>
+                        <input
+                          type="date"
+                          value={schemaOrg[field.name] || ""}
+                          onChange={(e) => patch(field.name, e.target.value)}
+                          onFocus={() => setFocusedField(field.name)}
+                          onBlur={() => setFocusedField(null)}
+                          className="schema-date-input"
+                          style={{
+                            ...getFieldStyle(field.name),
+                            paddingRight: "36px",
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: 12,
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            pointerEvents: "none",
+                            display: "flex",
+                            alignItems: "center",
+                            color: "var(--card-muted-fg-color)",
+                          }}
+                        >
+                          <CalendarIcon />
+                        </div>
+                      </div>
+                    )}
+
+                    {isDatetime && (
+                      <div style={{ position: "relative" }}>
+                        <input
+                          type="datetime-local"
+                          value={schemaOrg[field.name] || ""}
+                          onChange={(e) => patch(field.name, e.target.value)}
+                          onFocus={() => setFocusedField(field.name)}
+                          onBlur={() => setFocusedField(null)}
+                          className="schema-date-input"
+                          style={{
+                            ...getFieldStyle(field.name),
+                            paddingRight: "36px",
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: 12,
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            pointerEvents: "none",
+                            display: "flex",
+                            alignItems: "center",
+                            color: "var(--card-muted-fg-color)",
+                          }}
+                        >
+                          <CalendarIcon />
+                        </div>
+                      </div>
+                    )}
+
+                    {isDescription && (
+                      <textarea
+                        value={schemaOrg[field.name] || ""}
+                        onChange={(e) => patch(field.name, e.target.value)}
+                        placeholder={field.placeholder || ""}
+                        onFocus={() => setFocusedField(field.name)}
+                        onBlur={() => setFocusedField(null)}
+                        rows={3}
+                        style={{
+                          ...getFieldStyle(field.name),
+                          resize: "vertical",
+                          minHeight: 80,
+                          lineHeight: 1.5,
+                        }}
+                      />
+                    )}
+
+                    {!isDate && !isDatetime && !isDescription && (
+                      <input
+                        type="text"
+                        value={schemaOrg[field.name] || ""}
+                        onChange={(e) => patch(field.name, e.target.value)}
+                        placeholder={field.placeholder || ""}
+                        onFocus={() => setFocusedField(field.name)}
+                        onBlur={() => setFocusedField(null)}
+                        style={getFieldStyle(field.name)}
+                      />
                     )}
                   </div>
-                  <TextInput
-                    value={schemaOrg[field.name] || ""}
-                    onChange={(e) => patch(field.name, (e.target as HTMLInputElement).value)}
-                    placeholder={field.placeholder || ""}
-                  />
-                </div>
-              ))}
-            </Stack>
+                );
+              })}
+            </div>
           </div>
         )}
 
-        {/* JSON-LD Preview */}
         {jsonLdStr && (
-          <div style={{ padding: "12px 16px" }}>
+          <div style={{ padding: "16px 20px" }}>
             <button
               type="button"
               onClick={() => setShowPreview((v) => !v)}
@@ -531,7 +656,7 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
         )}
 
         {!selectedType && (
-          <div style={{ padding: "16px", textAlign: "center" }}>
+          <div style={{ padding: "20px 16px", textAlign: "center" }}>
             <div style={{ fontSize: 12, color: "var(--card-muted-fg-color)" }}>
               Select a schema type above to get started.
               <br />

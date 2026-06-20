@@ -1,5 +1,8 @@
 import React from "react";
-import { Stack, Card, Flex, Text, Badge } from "@sanity/ui";
+import { Stack, Card, Flex, Text, useTheme } from "@sanity/ui";
+import CheckCircleIcon from "./icons/CheckCircleIcon";
+import EmptyCircleIcon from "./icons/EmptyCircleIcon";
+import ProgressRing from "./icons/ProgressRing";
 
 interface GEOItem {
   label: string;
@@ -24,8 +27,8 @@ export function buildGEOChecklist(value: Record<string, any> | undefined): GEOIt
       description: "Optimal length for AI snippet extraction (100–160 chars)",
     },
     {
-      label: "Meta image present",
-      pass: Boolean(v.metaImage?.asset),
+      label: "OG image present",
+      pass: Boolean(v.openGraph?.image?.asset),
       description: "AI visual search and social sharing require an image",
     },
     {
@@ -49,68 +52,102 @@ function badgeTone(passCount: number, total: number): "positive" | "caution" | "
   return "critical";
 }
 
+function getStatusColor(tone: "positive" | "caution" | "critical"): string {
+  if (tone === "positive") return "#10b981";
+  if (tone === "caution") return "#f59e0b";
+  return "#ef4444";
+}
+
 export default function GEOChecklist({ value }: { value: Record<string, any> | undefined }) {
   const items = buildGEOChecklist(value);
   const passCount = items.filter((i) => i.pass).length;
   const total = items.length;
 
+  const theme = useTheme();
+  const isDarkMode =
+    theme.sanity.v2?.color._dark ??
+    (theme.sanity as unknown as { color: { dark: boolean } }).color.dark;
+
+  const tone = badgeTone(passCount, total);
+  const statusColor = getStatusColor(tone);
+
   return (
-    <Card padding={3} radius={2} shadow={1}>
-      <Stack space={3}>
-        <Flex align="center" justify="space-between">
-          <Stack space={1}>
-            <Text size={2} weight="semibold">
+    <Card
+      padding={4}
+      radius={3}
+      style={{
+        background: "var(--card-bg-color)",
+        borderWidth: "1px 1px 1px 4px",
+        borderStyle: "solid",
+        borderColor: `var(--card-border-color) var(--card-border-color) var(--card-border-color) ${statusColor}`,
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+      }}
+    >
+      <Stack space={4}>
+        <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
+          <ProgressRing
+            value={passCount}
+            total={total}
+            color={statusColor}
+            isDarkMode={isDarkMode}
+            text={`${passCount}/${total}`}
+            fontSize="14px"
+          />
+
+          <Stack space={2} style={{ flexGrow: 1 }}>
+            <Text size={2} weight="bold" style={{ color: "var(--card-fg-color)" }}>
               GEO Score AI Search Visibility
             </Text>
-            <Text size={1} muted style={{ marginTop: "10px" }}>
+            <Text size={1} muted style={{ color: "var(--card-muted-fg-color)", lineHeight: 1.4 }}>
               How well this page is optimised for ChatGPT, Perplexity, and Google AI Overviews
             </Text>
           </Stack>
-          <Badge tone={badgeTone(passCount, total)} padding={2}>
-            {passCount}/{total}
-          </Badge>
         </Flex>
 
-        <Stack space={4} style={{ marginTop: "15px" }}>
-          {items.map((item) => (
-            <Flex key={item.label} align="flex-start" gap={2}>
-              <div style={{ paddingTop: 2, flexShrink: 0 }}>
-                <div
-                  style={{
-                    width: 14,
-                    height: 14,
-                    borderRadius: "50%",
-                    backgroundColor: item.pass ? "#43d675" : "#e2e8f0",
-                    border: item.pass ? "none" : "2px solid #94a3b8",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {item.pass && (
-                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                      <path
-                        d="M1 4L3 6L7 2"
-                        stroke="white"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  )}
-                </div>
-              </div>
-              <Stack space={2}>
-                <Text size={1} weight={item.pass ? "semibold" : "regular"}>
-                  {item.label}
-                </Text>
-                {!item.pass && (
-                  <Text size={1} muted>
-                    {item.description}
+        <Stack space={3} style={{ marginTop: 4 }}>
+          {items.map((item) => {
+            const hasDescription = !item.pass && item.description;
+            const Icon = item.pass ? (
+              <CheckCircleIcon
+                isDarkMode={isDarkMode}
+                style={hasDescription ? { marginTop: 2 } : undefined}
+              />
+            ) : (
+              <EmptyCircleIcon
+                isDarkMode={isDarkMode}
+                style={hasDescription ? { marginTop: 2 } : undefined}
+              />
+            );
+
+            return (
+              <Flex
+                key={item.label}
+                align={hasDescription ? "flex-start" : "center"}
+                gap={3}
+                style={{ padding: "6px 0" }}
+              >
+                {Icon}
+                <Flex direction="column" gap={1}>
+                  <Text
+                    size={1}
+                    weight={item.pass ? "semibold" : "medium"}
+                    style={{ color: "var(--card-fg-color)" }}
+                  >
+                    {item.label}
                   </Text>
-                )}
-              </Stack>
-            </Flex>
-          ))}
+                  {hasDescription && (
+                    <Text
+                      size={1}
+                      muted
+                      style={{ color: "var(--card-muted-fg-color)", marginTop: 2 }}
+                    >
+                      {item.description}
+                    </Text>
+                  )}
+                </Flex>
+              </Flex>
+            );
+          })}
         </Stack>
       </Stack>
     </Card>
