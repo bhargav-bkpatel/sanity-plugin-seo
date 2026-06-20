@@ -7,9 +7,9 @@ import ErrorCircleIcon from "./icons/ErrorCircleIcon";
 import ProgressRing from "./icons/ProgressRing";
 
 const DOT_COLORS: Record<string, string> = {
-  green: "#10b981", // Emerald 500
-  orange: "#f59e0b", // Amber 500
-  red: "#ef4444", // Rose 500
+  green: "#10b981",
+  orange: "#f59e0b",
+  red: "#ef4444",
 };
 
 interface Props {

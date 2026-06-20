@@ -1,13 +1,3 @@
--- ============================================================
--- sanity-plugin-seo license validation schema
--- Run this in Supabase SQL Editor (Database > SQL Editor)
--- ============================================================
-
--- ----------------------------------------------------------------
--- 1. licenses
---    One row per sold license. Populated by the Lemon Squeezy
---    webhook; never written from the browser.
--- ----------------------------------------------------------------
 CREATE TABLE public.licenses (
   id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   license_key     TEXT        NOT NULL UNIQUE,
@@ -26,13 +16,11 @@ CREATE TABLE public.licenses (
 
 ALTER TABLE public.licenses ENABLE ROW LEVEL SECURITY;
 
--- Service-role key bypasses RLS; anon/public roles get nothing
 CREATE POLICY "service role only" ON public.licenses
   USING (false);
 
 CREATE INDEX licenses_license_key_idx ON public.licenses (license_key);
 
--- Auto-update updated_at
 CREATE OR REPLACE FUNCTION public.set_updated_at()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN
@@ -45,12 +33,6 @@ CREATE TRIGGER licenses_updated_at
   BEFORE UPDATE ON public.licenses
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
-
--- ----------------------------------------------------------------
--- 2. license_projects
---    Maps one license key to one or many Sanity project IDs.
---    Enforces seat limits: count of rows per license_key <= seats_limit.
--- ----------------------------------------------------------------
 CREATE TABLE public.license_projects (
   id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   license_key   TEXT        NOT NULL REFERENCES public.licenses (license_key) ON DELETE CASCADE,
@@ -66,19 +48,13 @@ CREATE POLICY "service role only" ON public.license_projects
 
 CREATE INDEX license_projects_license_key_idx ON public.license_projects (license_key);
 
-
--- ----------------------------------------------------------------
--- 3. usage_logs
---    Append-only audit log. Never updated or deleted (use retention
---    policies in Supabase if you want automatic pruning).
--- ----------------------------------------------------------------
 CREATE TABLE public.usage_logs (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   license_key TEXT        NOT NULL,
   project_id  TEXT,
   valid       BOOLEAN     NOT NULL,
-  reason      TEXT,                   -- failure reason, NULL on success
-  ip_address  TEXT,                   -- set by the API handler
+  reason      TEXT,
+  ip_address  TEXT,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

@@ -22,7 +22,6 @@ export type SchemaOrgData = {
   startDate?: string;
   endDate?: string;
   location?: string;
-  // FAQ
   faqItems?: Array<{ question: string; answer: string }>;
 };
 
@@ -59,12 +58,10 @@ export type Seo = {
     site?: string;
     handle?: string;
   };
-  // Pro workflow
   seoStatus?: "draft" | "review" | "approved";
   seoReviewNotes?: string;
 };
 
-/** Shape of the seo object returned by a GROQ query — use in your frontend project */
 export interface SeoData {
   metaTitle?: string;
   metaDescription?: string;

@@ -31,12 +31,9 @@ export default function SchemaWizard({
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = e.target.value;
     setSelectedType(newType);
-    // Only emit change if type is different from original saved state
     if (newType !== originalType) {
-      // Preserve all existing data, only change the type
       onChange(PatchEvent.from(set({ ...schemaOrg, schemaType: newType }, ["schemaOrg"])));
     }
-    // Keep FAQ items if switching to FAQPage, otherwise reset
     if (newType !== "FAQPage") {
       setFaqItems([{ question: "", answer: "" }]);
     } else if (!Array.isArray(schemaOrg.faqItems)) {

@@ -18,7 +18,6 @@ export function computeSEOScore(value: Record<string, any> | undefined): SEOScor
   const v = value || {};
   const checks: SEOCheck[] = [];
 
-  // Title — 25 pts
   const titleLen = (v.metaTitle || "").length;
   if (titleLen >= 50 && titleLen <= 60) {
     checks.push({
@@ -46,7 +45,6 @@ export function computeSEOScore(value: Record<string, any> | undefined): SEOScor
     });
   }
 
-  // Description — 25 pts
   const descLen = (v.metaDescription || "").length;
   if (descLen >= 100 && descLen <= 160) {
     checks.push({
@@ -74,7 +72,6 @@ export function computeSEOScore(value: Record<string, any> | undefined): SEOScor
     });
   }
 
-  // Focus keyword — 20 pts
   const kw = (v.focusKeyword || "").toLowerCase().trim();
   if (kw) {
     const inTitle = v.metaTitle?.toLowerCase().includes(kw);
@@ -114,7 +111,6 @@ export function computeSEOScore(value: Record<string, any> | undefined): SEOScor
     });
   }
 
-  // Open Graph — 20 pts (includes image for social sharing)
   const og = v.openGraph || {};
   if (og.title && og.description && og.image?.asset) {
     checks.push({
@@ -142,7 +138,6 @@ export function computeSEOScore(value: Record<string, any> | undefined): SEOScor
     });
   }
 
-  // Twitter — 10 pts
   if (v.twitter?.cardType) {
     checks.push({
       name: "Twitter Card",

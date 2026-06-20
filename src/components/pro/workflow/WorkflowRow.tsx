@@ -238,8 +238,6 @@ export default function WorkflowRow({
   );
 }
 
-// ── Sub-sections ─────────────────────────────────────────────────────────────
-
 function SectionHeader({
   icon: Icon,
   title,

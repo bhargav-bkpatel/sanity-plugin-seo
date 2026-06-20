@@ -36,7 +36,6 @@ function buildMetaTags(
   if (v.metaTitle) lines.push(`<title>${v.metaTitle}</title>`);
   if (v.metaDescription) lines.push(`<meta name="description" content="${v.metaDescription}" />`);
 
-  // Robots
   const robotsParts: string[] = [];
   if (v.nofollowAttributes) robotsParts.push("noindex", "nofollow");
   if (Array.isArray(v.robotsMeta) && v.robotsMeta.length > 0) {
@@ -47,11 +46,9 @@ function buildMetaTags(
   if (robotsParts.length > 0)
     lines.push(`<meta name="robots" content="${robotsParts.join(", ")}" />`);
 
-  // Keywords
   if (Array.isArray(v.seoKeywords) && v.seoKeywords.length > 0)
     lines.push(`<meta name="keywords" content="${v.seoKeywords.join(", ")}" />`);
 
-  // Open Graph
   const og = v.openGraph || {};
   if (og.title) lines.push(`<meta property="og:title" content="${og.title}" />`);
   if (og.description) lines.push(`<meta property="og:description" content="${og.description}" />`);
@@ -62,13 +59,11 @@ function buildMetaTags(
     lines.push(`<meta property="og:image" content="${ogImageUrl}" />`);
   }
 
-  // Twitter
   const tw = v.twitter || {};
   if (tw.cardType) lines.push(`<meta name="twitter:card" content="${tw.cardType}" />`);
   if (tw.site) lines.push(`<meta name="twitter:site" content="${tw.site}" />`);
   if (tw.creator) lines.push(`<meta name="twitter:creator" content="${tw.creator}" />`);
 
-  // hreflang
   if (Array.isArray(v.hreflang)) {
     v.hreflang.forEach((h: any) => {
       if (h.locale && h.url)
@@ -76,7 +71,6 @@ function buildMetaTags(
     });
   }
 
-  // Additional Meta Tags
   if (Array.isArray(v.additionalMetaTags)) {
     v.additionalMetaTags.forEach((tag: any) => {
       if (Array.isArray(tag.metaAttributes)) {

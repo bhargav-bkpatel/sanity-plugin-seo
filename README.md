@@ -139,11 +139,19 @@ export default defineConfig({
 
 Unlock team workflows, bulk optimization, and advanced schema management.
 
-```
+```ts
 seoMetaFields({
-  proFeature: process.env.SANITY_STUDIO_SEO_LICENSE, // Pro features coming soon
+  proFeature: process.env.SANITY_STUDIO_SEO_LICENSE!,
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
 });
 ```
+
+| Env variable                | Value                                                                                             |
+| --------------------------- | ------------------------------------------------------------------------------------------------- |
+| `SANITY_STUDIO_SEO_LICENSE` | Your license key from Lemon Squeezy                                                               |
+| `SANITY_STUDIO_PROJECT_ID`  | Your Sanity project ID (find it in `sanity.json` or [manage.sanity.io](https://manage.sanity.io)) |
+
+> Sanity Studio env vars must be prefixed with `SANITY_STUDIO_` to be included in the browser bundle.
 
 ### Complete Configuration
 
@@ -199,20 +207,21 @@ This adds a fully-featured SEO panel with four tabs:
 
 All options are optional. The plugin works great with zero configuration.
 
-| Option               | Type                                | Default          | Description                                                 |
-| -------------------- | ----------------------------------- | ---------------- | ----------------------------------------------------------- |
+| Option               | Type                                | Default          | Description                                                       |
+| -------------------- | ----------------------------------- | ---------------- | ----------------------------------------------------------------- |
 | **Content Fields**   |
-| `bodyField`          | `string`                            | `'body'`         | Portable Text field for AI analysis and readability scoring |
-| `slugField`          | `string`                            | `'slug'`         | Slug field for URL preview in SERP                          |
+| `bodyField`          | `string`                            | `'body'`         | Portable Text field for AI analysis and readability scoring       |
+| `slugField`          | `string`                            | `'slug'`         | Slug field for URL preview in SERP                                |
 | **AI Features**      |
-| `aiFeature`          | `object`                            | —                | Enable AI keyword and content suggestions                   |
-| `aiFeature.provider` | `'openai' \| 'anthropic' \| 'groq'` | —                | AI provider (OpenAI/Anthropic/Groq)                         |
-| `aiFeature.apiKey`   | `string`                            | —                | API key from your provider                                  |
-| `aiFeature.model`    | `string`                            | provider default | Model ID (e.g., `gpt-4o-mini`, `claude-haiku-4-5-20251001`) |
+| `aiFeature`          | `object`                            | —                | Enable AI keyword and content suggestions                         |
+| `aiFeature.provider` | `'openai' \| 'anthropic' \| 'groq'` | —                | AI provider (OpenAI/Anthropic/Groq)                               |
+| `aiFeature.apiKey`   | `string`                            | —                | API key from your provider                                        |
+| `aiFeature.model`    | `string`                            | provider default | Model ID (e.g., `gpt-4o-mini`, `claude-haiku-4-5-20251001`)       |
 | **Pro Features**     |
-| `proFeature`         | `string`                            | —                | Pro license key (coming soon)                               |
+| `proFeature`         | `string`                            | —                | Your Lemon Squeezy license key                                    |
+| `projectId`          | `string`                            | —                | Your Sanity project ID — used for seat-binding (required for Pro) |
 | **UI**               |
-| `dashboard`          | `boolean`                           | `true`           | Show SEO Health & Optimizer in Studio toolbar               |
+| `dashboard`          | `boolean`                           | `true`           | Show SEO Health & Optimizer in Studio toolbar                     |
 
 ## Framework Integration Guides
 
@@ -1176,26 +1185,34 @@ Top-level tool that shows every document's review status in one place.
 
 Generate meta titles and descriptions for every page using your configured AI provider. Pick a target field in the SEO Optimizer, select pages, and let it run.
 
-## Pro License Setup — Coming Soon
+## Pro License Setup
 
-> Not available yet. Watch the [npm package](https://www.npmjs.com/package/sanity-plugin-seo) for launch.
+1. Purchase a license at [sanity-seo-plugin-latest.vercel.app](https://sanity-seo-plugin-latest.vercel.app/)
+2. Add all three values to your `.env` file:
 
-When it launches:
-
-1. Purchase a license (link shared on launch)
-2. Add the key to your env file:
-
-```
-SANITY_STUDIO_SEO_LICENSE=your-license-key-here
+```bash
+SANITY_STUDIO_SEO_LICENSE=XXXX-XXXX-XXXX-XXXX
+SANITY_STUDIO_PROJECT_ID=your-sanity-project-id
 ```
 
-3. Pass it to the plugin:
+3. Pass them to the plugin in a single config object:
 
-```
-seoMetaFields({
-  proFeature: process.env.SANITY_STUDIO_SEO_LICENSE,
+```ts
+// sanity.config.ts
+import { defineConfig } from "sanity";
+import { seoMetaFields } from "sanity-plugin-seo";
+
+export default defineConfig({
+  plugins: [
+    seoMetaFields({
+      proFeature: process.env.SANITY_STUDIO_SEO_LICENSE!,
+      projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
+    }),
+  ],
 });
 ```
+
+**Where to find your Sanity project ID:** open `sanity.json` in your Studio root, or go to [manage.sanity.io](https://manage.sanity.io) → your project → Settings.
 
 > Sanity Studio env vars must be prefixed with `SANITY_STUDIO_` to be included in the browser bundle.
 

@@ -3,23 +3,14 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { createClient } from "@supabase/supabase-js";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-// ---------------------------------------------------------------------------
-// Disable Vercel's default body parser so we can read the raw bytes and
-// verify the HMAC-SHA256 signature from Lemon Squeezy.
-// ---------------------------------------------------------------------------
 export const config = { api: { bodyParser: false } };
 
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!);
 
-// ---------------------------------------------------------------------------
-// POST /api/webhooks/lemon-squeezy
-// ---------------------------------------------------------------------------
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     return res.status(405).end("Method not allowed");
   }
-
-  // ---- 1. Read the raw body -------------------------------------------
   let rawBody: Buffer;
   try {
     rawBody = await readRawBody(req);
@@ -27,13 +18,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).end("Could not read body");
   }
 
-  // ---- 2. Verify signature -------------------------------------------
   const signature = req.headers["x-signature"] as string | undefined;
   if (!signature || !verifySignature(rawBody, signature)) {
     return res.status(401).end("Invalid signature");
   }
-
-  // ---- 3. Parse payload ----------------------------------------------
   let payload: LSWebhookPayload;
   try {
     payload = JSON.parse(rawBody.toString("utf8")) as LSWebhookPayload;
@@ -62,28 +50,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         break;
 
       default:
-        // Acknowledge events we don't handle so LS stops retrying
         break;
     }
   } catch (err) {
     console.error(`[ls-webhook] Error handling ${event}:`, err);
-    // Return 500 so Lemon Squeezy retries the delivery
     return res.status(500).end("Handler error");
   }
 
   return res.status(200).end("OK");
 }
 
-// ---------------------------------------------------------------------------
-// Event handlers
-// ---------------------------------------------------------------------------
-
 async function handleOrderCreated(payload: LSWebhookPayload) {
   const attrs = payload.data?.attributes ?? {};
   const item = attrs.first_order_item ?? {};
 
   const licenseKey: string | undefined = item.license_key;
-  if (!licenseKey) return; // some products have no license key
+  if (!licenseKey) return;
 
   await upsertLicense({
     license_key: licenseKey,
@@ -92,7 +74,7 @@ async function handleOrderCreated(payload: LSWebhookPayload) {
     order_id: String(payload.data?.id ?? ""),
     product_id: String(item.product_id ?? ""),
     status: "active",
-    seats_limit: 1, // default; overridden by license_key_created if seats differ
+    seats_limit: 1,
     edition: "pro",
   });
 }
@@ -135,10 +117,6 @@ async function handleLicenseKeyDeactivated(payload: LSWebhookPayload) {
   await supabase.from("licenses").update({ status: "revoked" }).eq("license_key", licenseKey);
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function mapLSStatus(lsStatus: string | undefined): "active" | "expired" | "revoked" {
   if (lsStatus === "active" || lsStatus === "inactive") return "active";
   if (lsStatus === "expired") return "expired";
@@ -174,9 +152,6 @@ function readRawBody(req: VercelRequest): Promise<Buffer> {
   });
 }
 
-// ---------------------------------------------------------------------------
-// Types — minimal shapes we need from the Lemon Squeezy webhook payload
-// ---------------------------------------------------------------------------
 interface LSWebhookPayload {
   meta?: { event_name?: string; webhook_id?: string };
   data?: {

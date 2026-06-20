@@ -47,4 +47,13 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ["api/**/*.ts"],
+      rules: {
+        "no-console": "off",
+      },
+    },
+  ],
 };
+

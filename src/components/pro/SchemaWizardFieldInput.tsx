@@ -49,7 +49,6 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
     "@type": schemaOrg.schemaType,
   };
 
-  // Special handling for FAQPage
   if (schemaOrg.schemaType === "FAQPage" && Array.isArray(schemaOrg.faqItems)) {
     ld.mainEntity = schemaOrg.faqItems.map((item: { question: string; answer: string }) => ({
       "@type": "Question",
@@ -59,18 +58,15 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
     return ld;
   }
 
-  // Get allowed fields for this schema type
   const fields = FIELDS_BY_TYPE[schemaOrg.schemaType] || [];
   const allowedFieldNames = new Set(fields.map((f) => f.name));
 
-  // Only add fields that are allowed for this type AND have values
   fields.forEach((f) => {
     if (schemaOrg[f.name]) {
       ld[f.name] = schemaOrg[f.name];
     }
   });
 
-  // Only transform fields if they're allowed for this type
   const typeAllowsRating =
     allowedFieldNames.has("ratingValue") || allowedFieldNames.has("ratingCount");
   if (typeAllowsRating && (schemaOrg.ratingValue || schemaOrg.ratingCount)) {
@@ -101,13 +97,11 @@ function buildJsonLd(schemaOrg: Record<string, any>): Record<string, any> | null
     delete ld.availability;
   }
 
-  // Only add author if this type allows it
   const typeAllowsAuthor = allowedFieldNames.has("author");
   if (typeAllowsAuthor && schemaOrg.author) {
     ld.author = { "@type": "Person", name: schemaOrg.author };
   }
 
-  // Clean up any remaining empty values
   Object.keys(ld).forEach((key) => {
     if (key !== "@context" && key !== "@type") {
       if (!ld[key] || (typeof ld[key] === "string" && ld[key].trim() === "")) {
@@ -141,11 +135,9 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = e.target.value;
     setSelectedType(newType);
-    // Only emit change if type is different from original saved state
     if (newType !== originalType) {
       onChange(PatchEvent.from(set({ ...schemaOrg, schemaType: newType })));
     }
-    // Keep FAQ items if switching to FAQPage, otherwise reset
     if (newType !== "FAQPage") {
       setFaqItems([{ question: "", answer: "" }]);
     } else if (!Array.isArray(schemaOrg.faqItems)) {

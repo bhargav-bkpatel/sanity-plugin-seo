@@ -5,7 +5,6 @@ export default defineConfig({
   dist: "dist",
   tsconfig: "tsconfig.json",
 
-  // Remove this block to enable strict export validation
   extract: {
     rules: {
       "ae-forgotten-export": "off",

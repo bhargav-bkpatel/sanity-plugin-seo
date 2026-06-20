@@ -19,7 +19,7 @@ export default function ProgressRing({
 }: ProgressRingProps) {
   const radius = 28;
   const strokeWidth = 5.5;
-  const circumference = 2 * Math.PI * radius; // 175.929
+  const circumference = 2 * Math.PI * radius;
   const percentage = total > 0 ? value / total : 0;
   const strokeDashoffset = circumference - percentage * circumference;
 

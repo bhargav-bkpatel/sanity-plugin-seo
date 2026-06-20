@@ -2,10 +2,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-// ---------------------------------------------------------------------------
-// Supabase client — uses the service-role key so RLS policies don't block us.
-// NEVER expose SUPABASE_SERVICE_KEY to the browser.
-// ---------------------------------------------------------------------------
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!);
 
 const CORS = {
@@ -14,12 +10,7 @@ const CORS = {
   "Access-Control-Allow-Headers": "Content-Type",
 } as const;
 
-// ---------------------------------------------------------------------------
-// POST /api/validate-license
-// Body: { licenseKey: string; projectId: string }
-// ---------------------------------------------------------------------------
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS pre-flight
   if (req.method === "OPTIONS") {
     Object.entries(CORS).forEach(([k, v]) => res.setHeader(k, v));
     return res.status(204).end();
@@ -44,7 +35,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const pid = projectId.trim();
   const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0] ?? null;
 
-  // ---- 1. Look up the license ----------------------------------------
   const { data: license, error: licErr } = await supabase
     .from("licenses")
     .select("id, status, seats_limit, expires_at, edition")
@@ -56,21 +46,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({ valid: false, reason: "License not found" });
   }
 
-  // ---- 2. Status check -----------------------------------------------
   if (license.status !== "active") {
     await log(key, pid, ip, false, `License is ${license.status}`);
     return res.status(200).json({ valid: false, reason: `License is ${license.status}` });
   }
-
-  // ---- 3. Expiry check -----------------------------------------------
   if (license.expires_at && new Date(license.expires_at) < new Date()) {
-    // Mark it expired in-place so subsequent requests skip the date math
     await supabase.from("licenses").update({ status: "expired" }).eq("id", license.id);
     await log(key, pid, ip, false, "License expired");
     return res.status(200).json({ valid: false, reason: "License has expired" });
   }
-
-  // ---- 4. Project binding / seat limit check -------------------------
   const { data: existingBinding } = await supabase
     .from("license_projects")
     .select("id")
@@ -95,27 +79,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    // Bind this new project to the license
     const { error: insertErr } = await supabase
       .from("license_projects")
       .insert({ license_key: key, project_id: pid });
 
     if (insertErr && insertErr.code !== "23505") {
-      // 23505 = unique violation (race condition: another request inserted first)
-      // In that case the binding already exists — continue as valid
       await log(key, pid, ip, false, "Failed to bind project");
       return res.status(500).json({ valid: false, reason: "Internal error binding project" });
     }
   }
 
-  // ---- 5. All checks passed ------------------------------------------
   await log(key, pid, ip, true, null);
   return res.status(200).json({ valid: true, edition: license.edition });
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 async function log(
   licenseKey: string,
   projectId: string,

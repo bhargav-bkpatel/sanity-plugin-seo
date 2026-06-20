@@ -28,7 +28,7 @@ const CheckRow = ({
   justFixed: boolean;
   isDarkMode: boolean;
 }) => {
-  const passColor = "#10b981"; // Green
+  const passColor = "#10b981";
 
   const hasDescription = !check.pass && !justFixed && (check.description || check.fixHint);
   const showFixButton = !check.pass && !justFixed && check.onFix && check.fixLabel;
@@ -138,7 +138,6 @@ export default function AdvancedValidation({ value, onChange }: Props) {
     async function runChecks() {
       const results: CheckResult[] = [];
 
-      // 1. Duplicate meta title
       const metaTitle: string = value?.metaTitle || "";
       if (metaTitle) {
         const dupId = await client.fetch<string | null>(
@@ -162,7 +161,6 @@ export default function AdvancedValidation({ value, onChange }: Props) {
         });
       }
 
-      // 2. Missing OG image
       const hasOgImage: boolean = Boolean(value?.openGraph?.image?.asset);
       results.push({
         key: "ogImage",
@@ -172,7 +170,6 @@ export default function AdvancedValidation({ value, onChange }: Props) {
         fixHint: hasOgImage ? undefined : "→ Go to Social Sharing tab to add an OG image.",
       });
 
-      // 4. Missing OG title
       const hasOgTitle: boolean = Boolean(value?.openGraph?.title);
       const fixOgTitle = () => {
         if (value?.metaTitle) {
@@ -190,7 +187,6 @@ export default function AdvancedValidation({ value, onChange }: Props) {
         fixLabel: hasOgTitle ? undefined : "Copy from meta title",
       });
 
-      // 5. Focus keyword in meta title
       const focusKeyword: string = (value?.focusKeyword || "").trim().toLowerCase();
       const titleLower: string = metaTitle.toLowerCase();
       const keywordInTitle =
@@ -208,7 +204,6 @@ export default function AdvancedValidation({ value, onChange }: Props) {
         description: focusKeywordDesc,
       });
 
-      // 7. Meta description length
       const metaDesc: string = value?.metaDescription || "";
       const descLen = metaDesc.length;
       const goodDescLen = descLen >= 100 && descLen <= 160;

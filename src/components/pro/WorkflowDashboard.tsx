@@ -25,8 +25,6 @@ export default function WorkflowDashboard() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [patching, setPatching] = useState<Record<string, boolean>>({});
 
-  // ── Data fetching ───────────────────────────────────────────────────────────
-
   const fetchDocs = useCallback(async () => {
     setLoading(true);
     try {
@@ -58,8 +56,6 @@ export default function WorkflowDashboard() {
     fetchDocs();
   }, [fetchDocs]);
 
-  // ── Mutations ───────────────────────────────────────────────────────────────
-
   const patchStatus = useCallback(
     async (doc: WorkflowDoc, newStatus: WorkflowStatus) => {
       setPatching((p) => ({ ...p, [doc._id]: true }));
@@ -83,8 +79,6 @@ export default function WorkflowDashboard() {
     [client],
   );
 
-  // ── Derived values ──────────────────────────────────────────────────────────
-
   const draftCount = docs.filter((d) => d.seoStatus === "draft").length;
   const reviewCount = docs.filter((d) => d.seoStatus === "review").length;
   const approvedCount = docs.filter((d) => d.seoStatus === "approved").length;
@@ -99,7 +93,6 @@ export default function WorkflowDashboard() {
     return true;
   });
 
-  // ─── Pagination ─────────────────────────────────────────────────────────────
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
 
@@ -110,8 +103,6 @@ export default function WorkflowDashboard() {
   const paginatedDocs = useMemo(() => {
     return visible.slice(page * pageSize, (page + 1) * pageSize);
   }, [visible, page, pageSize]);
-
-  // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
     <ProGate feature="SEO Workflow Dashboard" isPro={isPro} variant="page">
@@ -227,8 +218,6 @@ export default function WorkflowDashboard() {
     </ProGate>
   );
 }
-
-// ── Local layout components ──────────────────────────────────────────────────
 
 function Header({
   loading,

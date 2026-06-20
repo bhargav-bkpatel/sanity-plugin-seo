@@ -11,7 +11,6 @@ export default function useProEnabled(): { isPro: boolean; validating: boolean }
       setValidating(isLicenseValidating());
     };
     window.addEventListener(SEO_PRO_EVENT, handler);
-    // Sync immediately in case validation already finished before mount
     handler();
     return () => window.removeEventListener(SEO_PRO_EVENT, handler);
   }, []);
