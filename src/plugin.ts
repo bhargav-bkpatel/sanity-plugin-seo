@@ -14,7 +14,7 @@ const seoMetaFields = definePlugin((config: PluginConfig = {}) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tools: any[] = [];
 
-  const DEFAULT_VALIDATE_URL = "https://sanity-plugin-seo-dev.vercel.app/api/validate-license";
+  const DEFAULT_VALIDATE_URL = "https://sanity-plugin-seo.vercel.app/api/validate-license";
 
   if (config.proFeature) {
     if (config.projectId) {
