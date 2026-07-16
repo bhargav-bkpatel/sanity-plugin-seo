@@ -4,7 +4,7 @@ import { SparklesIcon } from "@sanity/icons";
 import { useFormValue } from "sanity";
 import { getPluginConfig } from "../config";
 import { generateSEOContent, AIField } from "../utils/aiGenerate";
-import portableTextToString from "../utils/portableTextToString";
+import { resolveBodyContent, getBodyFieldPaths } from "../utils/resolveBodyContent";
 
 interface Props {
   field: AIField;
@@ -17,9 +17,9 @@ export default function AIGenerateButton({ field, focusKeyword = "", onGenerate 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const bodyField = config.bodyField || "body";
-  const bodyValue = useFormValue([bodyField]);
-  const bodyText = portableTextToString(bodyValue);
+  const docValue = useFormValue([]);
+  const bodyFieldPaths = getBodyFieldPaths(config.bodyFields, config.bodyField);
+  const bodyText = resolveBodyContent(docValue, bodyFieldPaths);
 
   const handleGenerate = useCallback(async () => {
     if (!config.aiFeature) return;
@@ -52,7 +52,7 @@ export default function AIGenerateButton({ field, focusKeyword = "", onGenerate 
         />
         {!bodyText && (
           <Text size={1} muted>
-            (Add a {bodyField} field for better results)
+            (Add body content for better results)
           </Text>
         )}
       </Flex>

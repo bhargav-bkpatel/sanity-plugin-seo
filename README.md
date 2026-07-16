@@ -24,7 +24,7 @@ The complete SEO toolkit for Sanity Studio. Empower your team with live SEO scor
 
 ## Demo Video
 
-![Demo](https://raw.githubusercontent.com/bhargav-bkpatel/sanity-plugin-seo/main/public/assets/demo-2.gif)
+![Demo](https://raw.githubusercontent.com/bhargav-bkpatel/sanity-plugin-seo/main/public/assets/demo-3.gif)
 
 ## Complete Feature Set
 
@@ -128,7 +128,7 @@ export default defineConfig({
         apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
         model: "gpt-4o-mini", // optional
       },
-      bodyField: "body",
+      bodyFields: ["body"], // single field — or pass multiple, see bodyFields docs below
       slugField: "slug",
     }),
   ],
@@ -168,8 +168,12 @@ export default defineConfig({
         apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
         model: "gpt-4o-mini",
       },
-      // Content field names in your schema
-      bodyField: "body",
+      // Body content fields for AI analysis — string, string path, or Sanity path array
+      bodyFields: [
+        "body",                          // simple field
+        "sections[].content",            // array traversal
+        ["sections", "columns", "body"], // Sanity native path array
+      ],
       slugField: "slug",
       // Show SEO Health + Optimizer in Studio toolbar (default: true)
       dashboard: true,
@@ -207,21 +211,22 @@ This adds a fully-featured SEO panel with four tabs:
 
 All options are optional. The plugin works great with zero configuration.
 
-| Option               | Type                                | Default          | Description                                                       |
-| -------------------- | ----------------------------------- | ---------------- | ----------------------------------------------------------------- |
+| Option               | Type                                | Default          | Description                                                                                                                         |
+| -------------------- | ----------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | **Content Fields**   |
-| `bodyField`          | `string`                            | `'body'`         | Portable Text field for AI analysis and readability scoring       |
-| `slugField`          | `string`                            | `'slug'`         | Slug field for URL preview in SERP                                |
+| `bodyField`          | `string`                            | `'body'`         | Single body field name (legacy — prefer `bodyFields`)                                                                               |
+| `bodyFields`         | `Array<string \| string[]>`         | —                | One or more body field paths; each item is a string path (`'sections[].content'`) or a Sanity path array (`['sections','content']`) |
+| `slugField`          | `string`                            | `'slug'`         | Slug field for URL preview in SERP                                                                                                  |
 | **AI Features**      |
-| `aiFeature`          | `object`                            | —                | Enable AI keyword and content suggestions                         |
-| `aiFeature.provider` | `'openai' \| 'anthropic' \| 'groq'` | —                | AI provider (OpenAI/Anthropic/Groq)                               |
-| `aiFeature.apiKey`   | `string`                            | —                | API key from your provider                                        |
-| `aiFeature.model`    | `string`                            | provider default | Model ID (e.g., `gpt-4o-mini`, `claude-haiku-4-5-20251001`)       |
+| `aiFeature`          | `object`                            | —                | Enable AI keyword and content suggestions                                                                                           |
+| `aiFeature.provider` | `'openai' \| 'anthropic' \| 'groq'` | —                | AI provider (OpenAI/Anthropic/Groq)                                                                                                 |
+| `aiFeature.apiKey`   | `string`                            | —                | API key from your provider                                                                                                          |
+| `aiFeature.model`    | `string`                            | provider default | Model ID (e.g., `gpt-4o-mini`, `claude-haiku-4-5-20251001`)                                                                         |
 | **Pro Features**     |
-| `proFeature`         | `string`                            | —                | Your Lemon Squeezy license key                                    |
-| `projectId`          | `string`                            | —                | Your Sanity project ID — used for seat-binding (required for Pro) |
+| `proFeature`         | `string`                            | —                | Your Lemon Squeezy license key                                                                                                      |
+| `projectId`          | `string`                            | —                | Your Sanity project ID — used for seat-binding (required for Pro)                                                                   |
 | **UI**               |
-| `dashboard`          | `boolean`                           | `true`           | Show SEO Health & Optimizer in Studio toolbar                     |
+| `dashboard`          | `boolean`                           | `true`           | Show SEO Health & Optimizer in Studio toolbar                                                                                       |
 
 ## Framework Integration Guides
 
@@ -1099,6 +1104,35 @@ const pageQuery = groq`*[_type == "page" && slug.current == $slug][0]{
 | `seoStatus`                 | `string`   | `draft` \| `review` \| `approved` |
 | `seoReviewNotes`            | `string`   | Reviewer notes                    |
 
+## Body Fields (`bodyFields`)
+
+`bodyFields` accepts an array where each item is either a **string path** or a **Sanity path array**:
+
+```ts
+seoMetaFields({
+  bodyFields: [
+    "body", // simple field
+    "excerpt", // plain string or Portable Text
+    "sections[].content", // string with '[]. ' array traversal
+    "sections[].columns[].body", // nested array traversal
+    ["sections", "columns", "content"], // Sanity native path array
+  ],
+});
+```
+
+**Path formats**
+
+| Item                              | Resolves to                                                  |
+| --------------------------------- | ------------------------------------------------------------ |
+| `"body"`                          | `document.body`                                              |
+| `"sections[].content"`            | `.content` from every item in `document.sections`            |
+| `"sections[].columns[].body"`     | nested array traversal                                       |
+| `["sections", "columns", "body"]` | `document.sections.columns.body` (direct path, no iteration) |
+
+Fields are resolved in order — earlier fields are higher priority when the AI prompt trims to 2000 characters.
+
+> `bodyField: "body"` (single string) still works and is kept for backwards compatibility. `bodyFields` takes precedence when both are set.
+
 ## Free Features
 
 ### Readability Score
@@ -1229,7 +1263,7 @@ seoMetaFields({
     apiKey: process.env.SANITY_STUDIO_OPENAI_KEY!,
     model: "gpt-4o-mini",
   },
-  bodyField: "body",
+  bodyFields: ["body"],
 });
 ```
 
@@ -1244,7 +1278,7 @@ seoMetaFields({
     apiKey: process.env.SANITY_STUDIO_ANTHROPIC_KEY!,
     model: "claude-haiku-4-5-20251001",
   },
-  bodyField: "body",
+  bodyFields: ["body"],
 });
 ```
 
@@ -1259,7 +1293,7 @@ seoMetaFields({
     apiKey: process.env.SANITY_STUDIO_GROQ_KEY!,
     model: "llama-3.3-70b-versatile",
   },
-  bodyField: "body",
+  bodyFields: ["body"],
 });
 ```
 

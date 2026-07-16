@@ -4,7 +4,7 @@ import { SparklesIcon } from "@sanity/icons";
 import { useFormValue } from "sanity";
 import { getPluginConfig } from "../config";
 import { generateSEOContent } from "../utils/aiGenerate";
-import portableTextToString from "../utils/portableTextToString";
+import { resolveBodyContent, getBodyFieldPaths } from "../utils/resolveBodyContent";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
@@ -18,9 +18,9 @@ export default function AIKeywordsSection({ value, onChange }: Props) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const bodyField = config.bodyField || "body";
-  const bodyValue = useFormValue([bodyField]);
-  const bodyText = portableTextToString(bodyValue);
+  const docValue = useFormValue([]);
+  const bodyFieldPaths = getBodyFieldPaths(config.bodyFields, config.bodyField);
+  const bodyText = resolveBodyContent(docValue, bodyFieldPaths);
   const focusKeyword = value?.focusKeyword || "";
   const existing: string[] = value?.seoKeywords || [];
 
