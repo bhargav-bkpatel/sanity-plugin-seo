@@ -22,6 +22,7 @@ export interface PluginConfig {
   validateUrl?: string;
   aiFeature?: AIConfig;
   bodyField?: string;
+  bodyFields?: Array<string | string[]>;
   slugField?: string;
   defaultFetchType?: string;
   dashboard?: boolean;
