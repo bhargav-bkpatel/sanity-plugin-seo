@@ -1221,7 +1221,7 @@ Generate meta titles and descriptions for every page using your configured AI pr
 
 ## Pro License Setup
 
-1. Purchase a license at [sanity-seo-plugin-latest.vercel.app](https://sanity-seo-plugin-latest.vercel.app/)
+1. Purchase a license at [sanity-seo-plugin.bkpatel.com](https://sanity-seo-plugin.bkpatel.com/)
 2. Add all three values to your `.env` file:
 
 ```bash
