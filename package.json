@@ -1,6 +1,6 @@
 {
   "name": "sanity-plugin-seo",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "homepage": "https://sanity-seo-plugin.bkpatel.com/",
   "description": "Complete SEO toolkit for Sanity Studio with live scoring, AI suggestions, team workflows, and 30+ structured data types. Free and AI tiers live. Pro coming soon.",
   "keywords": [
@@ -108,11 +108,10 @@
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
-    "@sanity/icons": "^3.7.4",
-    "@sanity/ui": "^3",
+    "@sanity/ui": "^2.16 || ^3 || ^4",
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19",
-    "sanity": "^3 || ^4 || ^5",
+    "sanity": "^3 || ^4 || ^5 || ^6",
     "styled-components": "^6"
   },
   "sanityPlugin": {
@@ -126,5 +125,10 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "peerDependenciesMeta": {
+    "@sanity/ui": {
+      "optional": true
+    }
   }
 }

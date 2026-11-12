@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ObjectInputProps, PatchEvent, set } from "sanity";
-import { Select, Button, Stack } from "@sanity/ui";
+import { Select, Button, Flex } from "@sanity/ui";
 import useProEnabled from "../../hooks/useProEnabled";
 import ProGate from "./ProGate";
 import { SCHEMA_TYPES, FIELDS_BY_TYPE } from "../../constants/schemaTypes";
@@ -301,7 +301,7 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
               />
               FAQ Items
             </div>
-            <Stack space={3}>
+            <Flex direction="column" gap={3}>
               {faqItems.map((item, i) => (
                 // eslint-disable-next-line react/no-array-index-key
                 <div
@@ -347,7 +347,7 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
                       <TrashIcon />
                     </button>
                   )}
-                  <Stack space={3}>
+                  <Flex direction="column" gap={3}>
                     <div>
                       <div
                         style={{
@@ -397,7 +397,7 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
                         }}
                       />
                     </div>
-                  </Stack>
+                  </Flex>
                 </div>
               ))}
               <Button
@@ -407,7 +407,7 @@ export default function SchemaWizardFieldInput({ value, onChange }: ObjectInputP
                 fontSize={1}
                 style={{ borderRadius: 8 }}
               />
-            </Stack>
+            </Flex>
           </div>
         )}
 

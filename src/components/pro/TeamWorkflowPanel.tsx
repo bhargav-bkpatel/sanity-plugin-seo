@@ -1,6 +1,6 @@
 import React from "react";
 import { PatchEvent, set } from "sanity";
-import { CheckmarkCircleIcon, EditIcon, ClockIcon } from "@sanity/icons";
+import { CheckmarkCircleIcon, EditIcon, ClockIcon } from "../icons/sanityIcons";
 import useProEnabled from "../../hooks/useProEnabled";
 import ProGate from "./ProGate";
 

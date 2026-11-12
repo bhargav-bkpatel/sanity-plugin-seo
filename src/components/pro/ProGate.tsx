@@ -1,5 +1,5 @@
 import React from "react";
-import { SparklesIcon, LockIcon } from "@sanity/icons";
+import { SparklesIcon, LockIcon } from "../icons/sanityIcons";
 
 interface Props {
   feature: string;

@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from "react";
 import { StringInputProps, useFormValue, useClient, set } from "sanity";
-import { Stack, Text, Flex } from "@sanity/ui";
+import { Text, Flex } from "@sanity/ui";
 import AIGenerateButton from "./AIGenerateButton";
 import { getReadabilityScore } from "../utils/readability";
 
@@ -98,14 +98,14 @@ const SEODescriptionFeedback = ({
   const props = { value, onChange, renderDefault, path, ...rest };
 
   return (
-    <Stack space={3}>
+    <Flex direction="column" gap={3}>
       {renderDefault(props)}
       <AIGenerateButton
         field="description"
         focusKeyword={focusKeyword}
         onGenerate={handleAIGenerate}
       />
-      <Stack space={2}>
+      <Flex direction="column" gap={2}>
         {items.map((item) => (
           <Flex key={item.text} align="center" gap={2}>
             {DOT(item.color)}
@@ -114,8 +114,8 @@ const SEODescriptionFeedback = ({
             </Text>
           </Flex>
         ))}
-      </Stack>
-    </Stack>
+      </Flex>
+    </Flex>
   );
 };
 

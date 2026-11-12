@@ -1,5 +1,6 @@
 import React from "react";
-import { Stack, Card, Flex, Text, Box, useTheme, Badge } from "@sanity/ui";
+import { Card, Flex, Text, Box, Badge } from "@sanity/ui";
+import useIsDarkMode from "../hooks/useIsDarkMode";
 import { SEOScoreResult } from "../utils/seoScore";
 import CheckCircleIcon from "./icons/CheckCircleIcon";
 import AlertCircleIcon from "./icons/AlertCircleIcon";
@@ -65,10 +66,7 @@ const CheckRow = ({
 
 export default function SEOScoreDisplay({ result }: Props) {
   const { score, color, label, checks } = result;
-  const theme = useTheme();
-  const isDarkMode =
-    theme.sanity.v2?.color._dark ??
-    (theme.sanity as unknown as { color: { dark: boolean } }).color.dark;
+  const isDarkMode = useIsDarkMode();
 
   const barColor = DOT_COLORS[color];
 
@@ -91,7 +89,7 @@ export default function SEOScoreDisplay({ result }: Props) {
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
       }}
     >
-      <Stack space={4}>
+      <Flex direction="column" gap={4}>
         <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
           <ProgressRing
             value={score}
@@ -102,7 +100,7 @@ export default function SEOScoreDisplay({ result }: Props) {
             fontSize="18px"
           />
 
-          <Stack space={3} style={{ flexGrow: 1 }}>
+          <Flex direction="column" gap={3} style={{ flexGrow: 1 }}>
             <Text size={2} weight="bold" style={{ color: "var(--card-fg-color)" }}>
               SEO Score
             </Text>
@@ -111,15 +109,15 @@ export default function SEOScoreDisplay({ result }: Props) {
                 {label}
               </Badge>
             </Box>
-          </Stack>
+          </Flex>
         </Flex>
 
-        <Stack space={3} style={{ marginTop: 4 }}>
+        <Flex direction="column" gap={3} style={{ marginTop: 4 }}>
           {checks.map((c) => (
             <CheckRow key={c.name} check={c} isDarkMode={isDarkMode} />
           ))}
-        </Stack>
-      </Stack>
+        </Flex>
+      </Flex>
     </Card>
   );
 }

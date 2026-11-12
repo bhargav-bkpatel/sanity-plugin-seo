@@ -2,7 +2,7 @@
 
 ## ⚡ Sanity Plugin SEO
 
-[![npm version](https://img.shields.io/badge/npm-v1.4.0-blue)](https://www.npmjs.com/package/sanity-plugin-seo)
+[![npm version](https://img.shields.io/npm/v/sanity-plugin-seo)](https://www.npmjs.com/package/sanity-plugin-seo)
 [![npm downloads](https://img.shields.io/badge/downloads-22k-brightgreen)](https://www.npmjs.com/package/sanity-plugin-seo)
 [![TypeScript](https://img.shields.io/badge/types-TypeScript-blue)](https://www.typescriptlang.org/)
 
@@ -11,6 +11,7 @@
 [![Sanity V3](https://img.shields.io/badge/Sanity%20V3-supported-4e5452?style=flat)](https://www.sanity.io/)
 [![Sanity V4](https://img.shields.io/badge/Sanity%20V4-supported-4e5452?style=flat)](https://www.sanity.io/)
 [![Sanity V5](https://img.shields.io/badge/Sanity%20V5-supported-4e5452?style=flat)](https://www.sanity.io/)
+[![Sanity V6](https://img.shields.io/badge/Sanity%20V6-supported-4e5452?style=flat)](https://www.sanity.io/)
 
 **Framework Support:**
 
@@ -91,7 +92,10 @@ yarn add sanity-plugin-seo    # or
 pnpm add sanity-plugin-seo
 ```
 
-**Compatibility:** Sanity Studio v3, v4, and v5
+**Compatibility:** Sanity Studio v3, v4, v5 and v6, React 18 or 19. The plugin uses your Studio's own `@sanity/ui`
+(2.16, 3 or 4), so there is nothing extra to install.
+
+> **New in 1.4.7:** Sanity Studio v6 support. Upgrade with `npm install sanity-plugin-seo@latest`.
 
 ## 2. Configure in Sanity Studio
 

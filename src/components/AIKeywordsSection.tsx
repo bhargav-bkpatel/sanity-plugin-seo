@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
-import { Stack, Card, Flex, Text, Button } from "@sanity/ui";
-import { SparklesIcon } from "@sanity/icons";
+import { Card, Flex, Text, Button } from "@sanity/ui";
 import { useFormValue } from "sanity";
+import { SparklesIcon } from "./icons/sanityIcons";
 import { getPluginConfig } from "../config";
 import { generateSEOContent } from "../utils/aiGenerate";
 import { resolveBodyContent, getBodyFieldPaths } from "../utils/resolveBodyContent";
@@ -51,7 +51,7 @@ export default function AIKeywordsSection({ value, onChange }: Props) {
 
   return (
     <Card padding={3} radius={2} shadow={1}>
-      <Stack space={3}>
+      <Flex direction="column" gap={3}>
         <Flex align="center" justify="space-between">
           <Text size={2} weight="semibold">
             AI Keyword Suggestions
@@ -73,7 +73,7 @@ export default function AIKeywordsSection({ value, onChange }: Props) {
           </Card>
         )}
         {suggestions.length > 0 && (
-          <Stack space={2}>
+          <Flex direction="column" gap={2}>
             <Text size={1} muted>
               Click a keyword to add it:
             </Text>
@@ -97,9 +97,9 @@ export default function AIKeywordsSection({ value, onChange }: Props) {
                 </button>
               ))}
             </Flex>
-          </Stack>
+          </Flex>
         )}
-      </Stack>
+      </Flex>
     </Card>
   );
 }

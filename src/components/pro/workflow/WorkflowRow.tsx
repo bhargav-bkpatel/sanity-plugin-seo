@@ -7,7 +7,7 @@ import {
   LaunchIcon,
   ChevronDownIcon,
   WarningOutlineIcon,
-} from "@sanity/icons";
+} from "../../icons/sanityIcons";
 import { scoreColor, scoreLabel } from "../bulk/types";
 import { WorkflowDoc, WorkflowStatus, STATUS_CFG } from "./types";
 

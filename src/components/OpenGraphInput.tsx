@@ -1,6 +1,6 @@
 import React from "react";
 import { ObjectInputProps } from "sanity";
-import { Stack } from "@sanity/ui";
+import { Flex } from "@sanity/ui";
 import SocialPreviewCard from "./SocialPreviewCard";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -9,10 +9,10 @@ const OpenGraphInput = ({ renderDefault, path, value, ...rest }: ObjectInputProp
   const props = { renderDefault, path, value, ...rest };
 
   return (
-    <Stack space={4}>
+    <Flex direction="column" gap={4}>
       {renderDefault(props)}
       <SocialPreviewCard value={value as Record<string, any> | undefined} />
-    </Stack>
+    </Flex>
   );
 };
 
