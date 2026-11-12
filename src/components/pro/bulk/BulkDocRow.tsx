@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronDownIcon, CheckmarkCircleIcon, EditIcon } from "@sanity/icons";
+import { ChevronDownIcon, CheckmarkCircleIcon, EditIcon } from "../../icons/sanityIcons";
 import { BulkDoc, RowEdit, scoreColor } from "./types";
 import ScoreBar from "./ScoreBar";
 

@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { ObjectInputProps, PatchEvent, set, MemberField } from "sanity";
-import { Stack, Box } from "@sanity/ui";
+import { Box, Flex } from "@sanity/ui";
 import AIKeywordsSection from "./AIKeywordsSection";
 import { computeSEOScore } from "../utils/seoScore";
 import SEOScoreDisplay from "./SEOScoreDisplay";
@@ -51,7 +51,7 @@ const SEOMetaFieldsWrapper = ({
   const filteredMembers = props.members.filter((m: any) => m.name !== "nofollowAttributes");
 
   return (
-    <Stack space={4}>
+    <Flex direction="column" gap={4}>
       <SEOScoreDisplay result={scoreResult} />
 
       {(isAllFields || activeGroup === "social") && <GEOChecklist value={value} />}
@@ -96,7 +96,7 @@ const SEOMetaFieldsWrapper = ({
           <MetaTagsPreview value={value} />
         </>
       )}
-    </Stack>
+    </Flex>
   );
 };
 

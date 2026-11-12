@@ -1,5 +1,5 @@
 import { definePlugin } from "sanity";
-import { SparklesIcon, DocumentsIcon, ActivityIcon } from "@sanity/icons";
+import { DocumentsIcon, ActivityIcon, SparklesIcon } from "./components/icons/sanityIcons";
 import types from "./schemas/types";
 import { PluginConfig } from "./types/PluginConfig";
 import { setPluginConfig, setProEnabled, setLicenseValidating } from "./config";
