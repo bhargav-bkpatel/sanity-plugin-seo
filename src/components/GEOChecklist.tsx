@@ -1,5 +1,6 @@
 import React from "react";
-import { Stack, Card, Flex, Text, useTheme } from "@sanity/ui";
+import { Card, Flex, Text } from "@sanity/ui";
+import useIsDarkMode from "../hooks/useIsDarkMode";
 import CheckCircleIcon from "./icons/CheckCircleIcon";
 import EmptyCircleIcon from "./icons/EmptyCircleIcon";
 import ProgressRing from "./icons/ProgressRing";
@@ -63,10 +64,7 @@ export default function GEOChecklist({ value }: { value: Record<string, any> | u
   const passCount = items.filter((i) => i.pass).length;
   const total = items.length;
 
-  const theme = useTheme();
-  const isDarkMode =
-    theme.sanity.v2?.color._dark ??
-    (theme.sanity as unknown as { color: { dark: boolean } }).color.dark;
+  const isDarkMode = useIsDarkMode();
 
   const tone = badgeTone(passCount, total);
   const statusColor = getStatusColor(tone);
@@ -83,7 +81,7 @@ export default function GEOChecklist({ value }: { value: Record<string, any> | u
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
       }}
     >
-      <Stack space={4}>
+      <Flex direction="column" gap={4}>
         <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
           <ProgressRing
             value={passCount}
@@ -94,17 +92,17 @@ export default function GEOChecklist({ value }: { value: Record<string, any> | u
             fontSize="14px"
           />
 
-          <Stack space={2} style={{ flexGrow: 1 }}>
+          <Flex direction="column" gap={2} style={{ flexGrow: 1 }}>
             <Text size={2} weight="bold" style={{ color: "var(--card-fg-color)" }}>
               GEO Score AI Search Visibility
             </Text>
             <Text size={1} muted style={{ color: "var(--card-muted-fg-color)", lineHeight: 1.4 }}>
               How well this page is optimised for ChatGPT, Perplexity, and Google AI Overviews
             </Text>
-          </Stack>
+          </Flex>
         </Flex>
 
-        <Stack space={3} style={{ marginTop: 4 }}>
+        <Flex direction="column" gap={3} style={{ marginTop: 4 }}>
           {items.map((item) => {
             const hasDescription = !item.pass && item.description;
             const Icon = item.pass ? (
@@ -148,8 +146,8 @@ export default function GEOChecklist({ value }: { value: Record<string, any> | u
               </Flex>
             );
           })}
-        </Stack>
-      </Stack>
+        </Flex>
+      </Flex>
     </Card>
   );
 }

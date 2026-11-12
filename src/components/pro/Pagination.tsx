@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@sanity/icons";
+import { ChevronRightIcon, ChevronLeftIcon } from "../icons/sanityIcons";
 
 interface PaginationProps {
   page: number;

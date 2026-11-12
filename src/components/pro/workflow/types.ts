@@ -1,4 +1,4 @@
-import { EditIcon, ClockIcon, CheckmarkCircleIcon } from "@sanity/icons";
+import { EditIcon, ClockIcon, CheckmarkCircleIcon } from "../../icons/sanityIcons";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 

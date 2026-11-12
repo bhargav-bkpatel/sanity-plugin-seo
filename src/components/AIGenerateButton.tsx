@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
-import { Flex, Button, Text, Stack, Card } from "@sanity/ui";
-import { SparklesIcon } from "@sanity/icons";
+import { Flex, Button, Text, Card } from "@sanity/ui";
 import { useFormValue } from "sanity";
+import { SparklesIcon } from "./icons/sanityIcons";
 import { getPluginConfig } from "../config";
 import { generateSEOContent, AIField } from "../utils/aiGenerate";
 import { resolveBodyContent, getBodyFieldPaths } from "../utils/resolveBodyContent";
@@ -38,7 +38,7 @@ export default function AIGenerateButton({ field, focusKeyword = "", onGenerate 
   if (!config.aiFeature) return null;
 
   return (
-    <Stack space={1}>
+    <Flex direction="column" gap={1}>
       <Flex align="center" gap={2}>
         <Button
           mode="ghost"
@@ -61,6 +61,6 @@ export default function AIGenerateButton({ field, focusKeyword = "", onGenerate 
           <Text size={1}>{error}</Text>
         </Card>
       )}
-    </Stack>
+    </Flex>
   );
 }

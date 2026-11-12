@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from "react";
 import { StringInputProps, useFormValue, useClient, set } from "sanity";
-import { Stack, Text, Flex } from "@sanity/ui";
+import { Text, Flex } from "@sanity/ui";
 import AIGenerateButton from "./AIGenerateButton";
 
 const DOT = (color: string) => (
@@ -96,10 +96,10 @@ const SEOTitleFeedback = ({ value, onChange, renderDefault, path, ...rest }: Str
   const props = { value, onChange, renderDefault, path, ...rest };
 
   return (
-    <Stack space={3}>
+    <Flex direction="column" gap={3}>
       {renderDefault(props)}
       <AIGenerateButton field="title" focusKeyword={focusKeyword} onGenerate={handleAIGenerate} />
-      <Stack space={2}>
+      <Flex direction="column" gap={2}>
         {feedbackItems.map((item) => (
           <Flex key={item.text} align="center" gap={2}>
             {DOT(item.color)}
@@ -108,8 +108,8 @@ const SEOTitleFeedback = ({ value, onChange, renderDefault, path, ...rest }: Str
             </Text>
           </Flex>
         ))}
-      </Stack>
-    </Stack>
+      </Flex>
+    </Flex>
   );
 };
 

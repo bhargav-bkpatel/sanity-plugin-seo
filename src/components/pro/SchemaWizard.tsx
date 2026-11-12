@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Stack, Text, Select, Button, TextInput } from "@sanity/ui";
+import { Card, Text, Select, Button, TextInput, Flex } from "@sanity/ui";
 import { PatchEvent, set } from "sanity";
 import useProEnabled from "../../hooks/useProEnabled";
 import ProGate from "./ProGate";
@@ -52,12 +52,12 @@ export default function SchemaWizard({
   return (
     <ProGate feature="Schema.org Wizard (30+ Types)" isPro={isPro}>
       <Card padding={3} radius={2} shadow={1}>
-        <Stack space={4}>
+        <Flex direction="column" gap={4}>
           <Text size={2} weight="semibold">
             Schema.org Structured Data
           </Text>
 
-          <Stack space={2}>
+          <Flex direction="column" gap={2}>
             <Text size={1} muted>
               Schema Type
             </Text>
@@ -68,10 +68,10 @@ export default function SchemaWizard({
                 </option>
               ))}
             </Select>
-          </Stack>
+          </Flex>
 
           {selectedType === "FAQPage" && (
-            <Stack space={3}>
+            <Flex direction="column" gap={3}>
               <Text size={1} weight="semibold">
                 FAQ Items
               </Text>
@@ -83,7 +83,7 @@ export default function SchemaWizard({
                   radius={2}
                   style={{ border: "1px solid var(--card-border-color)" }}
                 >
-                  <Stack space={2}>
+                  <Flex direction="column" gap={2}>
                     <Text size={1} muted>
                       Question {i + 1}
                     </Text>
@@ -102,15 +102,15 @@ export default function SchemaWizard({
                       onChange={(e) => updateFaq(i, "answer", (e.target as HTMLInputElement).value)}
                       placeholder="The answer is…"
                     />
-                  </Stack>
+                  </Flex>
                 </Card>
               ))}
               <Button mode="ghost" text="+ Add FAQ Item" onClick={addFaq} fontSize={1} />
-            </Stack>
+            </Flex>
           )}
 
           {fields.map((field) => (
-            <Stack key={field.name} space={2}>
+            <Flex direction="column" key={field.name} gap={2}>
               <Text size={1} muted>
                 {field.label}
               </Text>
@@ -119,7 +119,7 @@ export default function SchemaWizard({
                 onChange={(e) => patch(field.name, (e.target as HTMLInputElement).value)}
                 placeholder={field.placeholder || ""}
               />
-            </Stack>
+            </Flex>
           ))}
 
           {selectedType && (
@@ -127,7 +127,7 @@ export default function SchemaWizard({
               Schema.org JSON-LD will be generated automatically from these fields.
             </Text>
           )}
-        </Stack>
+        </Flex>
       </Card>
     </ProGate>
   );

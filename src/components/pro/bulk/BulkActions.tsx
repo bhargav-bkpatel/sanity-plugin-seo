@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { DownloadIcon, UploadIcon } from "@sanity/icons";
+import { DownloadIcon, UploadIcon } from "../../icons/sanityIcons";
 import { BulkTab } from "./types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

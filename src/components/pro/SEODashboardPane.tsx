@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useClient } from "sanity";
 import { IntentLink } from "sanity/router";
-import { Stack, Text, Flex, Spinner, Box } from "@sanity/ui";
-import { RefreshIcon, ActivityIcon } from "@sanity/icons";
+import { Text, Flex, Spinner, Box } from "@sanity/ui";
+import { RefreshIcon, ActivityIcon } from "../icons/sanityIcons";
 import useProEnabled from "../../hooks/useProEnabled";
 import { computeSEOScore } from "../../utils/seoScore";
 import ProGate from "./ProGate";
@@ -490,7 +490,7 @@ export default function SEODashboardPane() {
   return (
     <Box style={{ minHeight: "100vh", background: "var(--card-bg-color)", padding: "32px 40px" }}>
       <div style={{ maxWidth: 1040, margin: "0 auto" }}>
-        <Stack space={5}>
+        <Flex direction="column" gap={5}>
           <div
             style={{
               background: "var(--card-bg-color)",
@@ -731,7 +731,7 @@ export default function SEODashboardPane() {
                 ))}
               </div>
 
-              <Stack space={2}>
+              <Flex direction="column" gap={2}>
                 {filtered.length === 0 && (
                   <div
                     style={{
@@ -751,7 +751,7 @@ export default function SEODashboardPane() {
                 {filtered.slice(page * pageSize, (page + 1) * pageSize).map((doc) => (
                   <DashboardRow doc={doc} key={doc._id} />
                 ))}
-              </Stack>
+              </Flex>
 
               <Pagination
                 page={page}
@@ -762,7 +762,7 @@ export default function SEODashboardPane() {
               />
             </div>
           )}
-        </Stack>
+        </Flex>
       </div>
     </Box>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { Stack, Text, Box } from "@sanity/ui";
-import { RefreshIcon, SearchIcon, DownloadIcon } from "@sanity/icons";
+import { Text, Box, Flex } from "@sanity/ui";
 import { useClient } from "sanity";
+import { RefreshIcon, SearchIcon, DownloadIcon } from "../icons/sanityIcons";
 import useProEnabled from "../../hooks/useProEnabled";
 import { computeSEOScore } from "../../utils/seoScore";
 import ProGate from "./ProGate";
@@ -430,7 +430,7 @@ export default function BulkSEOPanel() {
     <ProGate feature="SEO Optimizer" isPro={isPro} variant="page">
       <Box style={{ minHeight: "100vh", background: "var(--card-bg-color)", padding: "32px 40px" }}>
         <div style={{ maxWidth: 1040, margin: "0 auto" }}>
-          <Stack space={5}>
+          <Flex direction="column" gap={5}>
             <div
               style={{
                 background: "var(--card-bg-color)",
@@ -664,7 +664,7 @@ export default function BulkSEOPanel() {
                   <div />
                 </div>
 
-                <Stack space={3}>
+                <Flex direction="column" gap={3}>
                   {paginatedDocs.map((doc) => (
                     <BulkDocRow
                       key={doc._id}
@@ -688,7 +688,7 @@ export default function BulkSEOPanel() {
                       onSave={saveRow}
                     />
                   ))}
-                </Stack>
+                </Flex>
 
                 <Pagination
                   page={page}
@@ -813,7 +813,7 @@ export default function BulkSEOPanel() {
                 </button>
               </div>
             )}
-          </Stack>
+          </Flex>
         </div>
       </Box>
     </ProGate>

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Card, Stack, Text, Flex, Button, useTheme } from "@sanity/ui";
-import { EarthGlobeIcon } from "@sanity/icons";
+import { Card, Text, Flex, Button } from "@sanity/ui";
 import { useFormValue } from "sanity";
+import { EarthGlobeIcon } from "../icons/sanityIcons";
+import useIsDarkMode from "../../hooks/useIsDarkMode";
 import { getPluginConfig } from "../../config";
 import useProEnabled from "../../hooks/useProEnabled";
 import ProGate from "./ProGate";
@@ -115,10 +116,7 @@ function DesktopSERP({
   baseUrl: string;
   slug: string;
 }) {
-  const theme = useTheme();
-  const isDarkMode =
-    theme.sanity.v2?.color._dark ??
-    (theme.sanity as unknown as { color: { dark: boolean } }).color.dark;
+  const isDarkMode = useIsDarkMode();
 
   const colors = {
     iconBg: isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
@@ -221,10 +219,7 @@ function MobileSERP({
   baseUrl: string;
   slug: string;
 }) {
-  const theme = useTheme();
-  const isDarkMode =
-    theme.sanity.v2?.color._dark ??
-    (theme.sanity as unknown as { color: { dark: boolean } }).color.dark;
+  const isDarkMode = useIsDarkMode();
 
   const colors = {
     iconBg: isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
@@ -318,10 +313,7 @@ function MobileSERP({
 export default function SERPPreview({ value }: Props) {
   const [mode, setMode] = useState<"desktop" | "mobile">("desktop");
   const { isPro } = useProEnabled();
-  const theme = useTheme();
-  const isDarkMode =
-    theme.sanity.v2?.color._dark ??
-    (theme.sanity as unknown as { color: { dark: boolean } }).color.dark;
+  const isDarkMode = useIsDarkMode();
 
   const config = getPluginConfig();
   const baseUrl = config.baseUrl || "https://example.com";
@@ -344,7 +336,7 @@ export default function SERPPreview({ value }: Props) {
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
         }}
       >
-        <Stack space={4}>
+        <Flex direction="column" gap={4}>
           <Flex align="center" justify="space-between">
             <Text size={2} weight="bold" style={{ color: "var(--card-fg-color)" }}>
               SERP Preview
@@ -420,7 +412,7 @@ export default function SERPPreview({ value }: Props) {
               </div>
             )}
           </div>
-        </Stack>
+        </Flex>
       </Card>
     </ProGate>
   );

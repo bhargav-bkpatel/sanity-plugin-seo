@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useWorkspace } from "sanity";
-import { Stack, Card, Flex, Text, Button, Code, Box, useTheme } from "@sanity/ui";
-import { CodeBlockIcon } from "@sanity/icons";
+import { Card, Flex, Text, Button, Box } from "@sanity/ui";
+import { CodeBlockIcon } from "./icons/sanityIcons";
+import useIsDarkMode from "../hooks/useIsDarkMode";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -97,10 +98,7 @@ export default function MetaTagsPreview({ value }: { value: Record<string, any> 
   const { projectId, dataset } = useWorkspace();
   const [open, setOpen] = useState(false);
   const tags = buildMetaTags(value, projectId, dataset);
-  const theme = useTheme();
-  const isDarkMode =
-    theme.sanity.v2?.color._dark ??
-    (theme.sanity as unknown as { color: { dark: boolean } }).color.dark;
+  const isDarkMode = useIsDarkMode();
 
   return (
     <Card
@@ -114,7 +112,7 @@ export default function MetaTagsPreview({ value }: { value: Record<string, any> 
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
       }}
     >
-      <Stack space={4}>
+      <Flex direction="column" gap={4}>
         <Flex align="center" justify="space-between">
           <Flex align="center" gap={3}>
             <CodeBlockIcon style={{ color: "#64748b", fontSize: 20 }} />
@@ -144,9 +142,9 @@ export default function MetaTagsPreview({ value }: { value: Record<string, any> 
               maxHeight: 320,
             }}
           >
-            <Code
-              language="html"
+            <pre
               style={{
+                margin: 0,
                 fontSize: 12,
                 color: "var(--card-code-fg-color)",
                 whiteSpace: "pre",
@@ -154,11 +152,11 @@ export default function MetaTagsPreview({ value }: { value: Record<string, any> 
                 lineHeight: 1.5,
               }}
             >
-              {tags || "<!-- No SEO fields filled in yet -->"}
-            </Code>
+              <code>{tags || "<!-- No SEO fields filled in yet -->"}</code>
+            </pre>
           </Box>
         )}
-      </Stack>
+      </Flex>
     </Card>
   );
 }
